@@ -1,66 +1,65 @@
-open Sudoku
-open Format
-open Hint
-(*F# open FSharp.Compatibility.OCaml F#*)
+module console.Console
 
-let drawDigitCellContents (given : digit option) (current : cellContents) : consoleChar = 
+open core.Sudoku
+
+let drawDigitCellContents (given : digit option) (current : cellContents) : Format.consoleChar = 
     match given, current with
-    | Some s, _ -> ColouredDigit(s, Blue, DefaultColour)
-    | None, BigNumber s -> ColouredDigit(s, Red, DefaultColour)
-    | None, PencilMarks _ -> CChar '.'
+    | Some s, _ -> Format.ColouredDigit(s, Format.Blue, Format.DefaultColour)
+    | None, BigNumber s -> Format.ColouredDigit(s, Format.Red, Format.DefaultColour)
+    | None, PencilMarks _ -> Format.CChar '.'
 
-let drawDigitCellString (given : digit option) (current : cellContents) : consoleString =
+let drawDigitCellString (given : digit option) (current : cellContents) : Format.consoleString =
     [drawDigitCellContents given current]
 
-let drawBigNumber (annotation : annotation) (digit : digit) : consoleChar =
+let drawBigNumber (annotation : core.Hint.annotation) (digit : digit) : Format.consoleChar =
     if annotation.primaryHintHouse then
         match annotation.given with
-        | Some _ -> ColouredDigit(digit, Cyan, DefaultColour)
-        | None -> ColouredDigit(digit, Yellow, DefaultColour)
+        | Some _ -> Format.ColouredDigit(digit, Format.Cyan, Format.DefaultColour)
+        | None -> Format.ColouredDigit(digit, Format.Yellow, Format.DefaultColour)
     else if annotation.secondaryHintHouse then
         match annotation.given with
-        | Some _ -> ColouredDigit(digit, DefaultColour, Blue)
-        | None -> ColouredDigit(digit, DefaultColour, Red)
+        | Some _ -> Format.ColouredDigit(digit, Format.DefaultColour, Format.Blue)
+        | None -> Format.ColouredDigit(digit, Format.DefaultColour, Format.Red)
     else
         match annotation.given with
-        | Some _ -> ColouredDigit(digit, Blue, White)
-        | None -> ColouredDigit(digit, Red, DefaultColour)
+        | Some _ -> Format.ColouredDigit(digit, Format.Blue, Format.White)
+        | None -> Format.ColouredDigit(digit, Format.Red, Format.DefaultColour)
 
-let drawPencilMarks (annotation : Hint.annotation) (candidate : digit) (candidates : digits) : consoleChar =
+let drawPencilMarks (annotation : core.Hint.annotation) (candidate : digit) (candidates : digits) : Format.consoleChar =
     match annotation.setValue with
     | Some vv when vv = candidate -> 
-        ColouredDigit(candidate, Red, DefaultColour)
+        Format.ColouredDigit(candidate, Format.Red, Format.DefaultColour)
     | Some _ when Digits.contains candidate candidates -> 
-        ColouredDigit(candidate, Green, DefaultColour)
+        Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
     | _ ->
         (match annotation.setValueReduction with
          | Some svr when svr = candidate && Digits.contains candidate candidates -> 
-            ColouredDigit(candidate, Green, DefaultColour)
+            Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
          | _ ->
             (if Digits.contains candidate annotation.reductions then
-                ColouredDigit(candidate, Green, DefaultColour)
+                Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
              else if Digits.contains candidate annotation.pointers then
-                ColouredDigit(candidate, Magenta, DefaultColour)
+                Format.ColouredDigit(candidate, Format.Magenta, Format.DefaultColour)
              else if Digits.contains candidate annotation.focus && Digits.contains candidate candidates then
-                ColouredDigit(candidate, Yellow, DefaultColour)
+                Format.ColouredDigit(candidate, Format.Yellow, Format.DefaultColour)
              else if annotation.primaryHintHouse then
-                if Digits.contains candidate candidates then ColouredDigit(candidate, Cyan, DefaultColour)
-                else CChar ' '
+                if Digits.contains candidate candidates then Format.ColouredDigit(candidate, Format.Cyan, Format.DefaultColour)
+                else Format.CChar ' '
              else if annotation.secondaryHintHouse then
-                if Digits.contains candidate candidates then ColouredDigit(candidate, Green, DefaultColour)
-                else CChar ' '
+                if Digits.contains candidate candidates then Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
+                else Format.CChar ' '
              else
-                if Digits.contains candidate candidates then ColouredDigit(candidate, Green, DefaultColour)
-                else CChar ' '))
+                if Digits.contains candidate candidates then Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
+                else Format.CChar ' '))
 
-let drawDigitCellContentAnnotations centreCandidate (annotations : (cell * Hint.annotation) list) (cell : cell) (candidate : digit) : consoleChar = 
+let drawDigitCellContentAnnotations centreCandidate (annotations : (cell * core.Hint.annotation) list) (cell : cell) (candidate : digit) : Format.consoleChar = 
 
     let annotation = Smap.get Cell.comparer cell annotations in
 
     match annotation.current with
     | BigNumber s when centreCandidate = candidate -> drawBigNumber annotation s
-    | BigNumber _ -> ColouredString(" ", Blue, White)
+    | BigNumber _ -> Format.ColouredString(" ", Format.Blue, Format.White)
     | PencilMarks digits -> drawPencilMarks annotation candidate digits
 
-let drawDigitCellContentAnnotationString (centreCandidate : digit) (annotations : (cell * Hint.annotation) list) (cell : cell) (candidate : digit) : consoleString =
+let drawDigitCellContentAnnotationString (centreCandidate : digit) (annotations : (cell * core.Hint.annotation) list) (cell : cell) (candidate : digit) : Format.consoleString =
     [drawDigitCellContentAnnotations centreCandidate annotations cell candidate]

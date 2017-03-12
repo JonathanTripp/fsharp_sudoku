@@ -1,5 +1,7 @@
-open Format
+module console.Console
 
-val drawDigitCellString : digit option -> cellContents -> consoleString
+open core.Sudoku
 
-val drawDigitCellContentAnnotationString : digit -> (cell * Hint.annotation) list -> cell -> digit -> consoleString
+val drawDigitCellString : digit option -> cellContents -> Format.consoleString
+
+val drawDigitCellContentAnnotationString : digit -> (cell * core.Hint.annotation) list -> cell -> digit -> Format.consoleString
