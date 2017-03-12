@@ -1,12 +1,13 @@
+module core.Sudoku
+
 type size = int
 type column = | CColumn of int
-module Column : sig
+module Column =
   val comparer : column -> column -> int
   val make : int -> column
   val to_string : column -> string
-end
 type columns = | CColumns of column list
-module Columns : sig
+module Columns =
   val count : columns -> int
   val drop : int -> columns -> columns
   val make : column list -> columns
@@ -15,15 +16,14 @@ module Columns : sig
   val to_list : columns -> column list
   val to_string : columns -> string
   val union : columns -> columns -> columns
-end
+
 type row = | RRow of int
-module Row : sig
+module Row =
   val comparer : row -> row -> int
   val make : int -> row
   val to_string : row -> string
-end
 type rows = | CRows of row list
-module Rows : sig
+module Rows =
   val count : rows -> int
   val drop : int -> rows -> rows
   val make : row list -> rows
@@ -32,17 +32,15 @@ module Rows : sig
   val to_list : rows -> row list
   val to_string : rows -> string
   val union : rows -> rows -> rows
-end
 type cell =
   {col: column;
    row: row;}
-module Cell : sig
+module Cell =
   val comparer : cell -> cell -> int
   val make : column -> row -> cell
   val to_string : cell -> string
-end
 type cells = | CCells of cell list
-module Cells : sig
+module Cells =
   val choose : (cell -> 'b option) -> cells -> 'b list
   val contains : cell -> cells -> bool
   val count : cells -> int
@@ -59,38 +57,31 @@ module Cells : sig
   val to_string : cells -> string
   val union : cells -> cells -> cells
   val union_many : cells list -> cells
-end
 type stack = | SStack of int
-module Stack : sig
+module Stack =
   val comparer : stack -> stack -> int
   val make : int -> stack
   val to_string : stack -> string
-end
-module Stacks : sig
+module Stacks =
   val to_string : stack list -> string
-end
 type boxWidth = int
 type band = | BBand of int
-module Band : sig
+module Band =
   val comparer : band -> band -> int
   val make : int -> band
   val to_string : band -> string
-end
-module Bands : sig
+module Bands =
   val to_string : band list -> string
-end
 type boxHeight = int
 type box =
   {stack: stack;
    band: band;}
-module Box : sig
+module Box =
   val comparer : box -> box -> int
   val make : stack -> band -> box
   val to_string : box -> string
-end
-module Boxes : sig
+module Boxes =
   val to_string : box list -> string
-end
 type line =
   | LColumn of column
   | LRow of row
@@ -98,15 +89,14 @@ type house =
   | HColumn of column
   | HRow of row
   | HBox of box
-module House : sig
+module House =
   val comparer : house -> house -> int
   val make_column : column -> house
   val make_row : row -> house
   val make_box : box -> house
   val to_string : house -> string
-end
 type houses = | CHouses of house list
-module Houses : sig
+module Houses =
   val choose : (house -> 'b option) -> houses -> 'b list
   val drop : int -> houses -> houses
   val empty : houses
@@ -115,15 +105,13 @@ module Houses : sig
   val mapi : (int -> house -> 'b) -> houses -> 'b list
   val singleton : house -> houses
   val to_string : houses -> string
-end
 type digit = | Digit of char
-module Digit : sig
+module Digit =
   val comparer : digit -> digit -> int
   val make : int -> digit
   val to_string : digit -> string
-end
 type digits = | CDigits of digit list
-module Digits : sig
+module Digits =
   val contains : digit -> digits -> bool
   val count : digits -> int
   val difference : digits -> digits -> digits
@@ -143,72 +131,60 @@ module Digits : sig
   val union : digits -> digits -> digits
   val union_many : digits list -> digits
   val to_string : digits -> string
-end
 type puzzleShape =
   {size: size;
    boxWidth: boxWidth;
    boxHeight: boxHeight;
    alphabet: digits;}
-module PuzzleShape : sig
+module PuzzleShape =
   val default' : puzzleShape
-end
 type cellContents =
   | BigNumber of digit
   | PencilMarks of digits
-module CellContents : sig
+module CellContents =
   val make_big_number : digit -> cellContents
   val make_pencil_marks : digits -> cellContents
-end
 type value =
   {cell: cell;
    digit: digit;}
-module Value : sig
+module Value =
   val make : cell -> digit -> value
   val to_string : value -> string
-end
 type candidate =
   {cell: cell;
    digit: digit;}
-module Candidate : sig
+module Candidate =
   val make : cell -> digit -> candidate
   val to_string : candidate -> string
-end
 type candidateReduction =
   {cell: cell;
    candidates: digits;}
-module CandidateReduction : sig
+module CandidateReduction =
   val make : cell -> digits -> candidateReduction
   val to_string : candidateReduction -> string
-end
-module CandidateReductions : sig
+module CandidateReductions =
   val to_string : candidateReduction list -> string
-end
 type action =
   | Load of string
   | LoadEliminate
   | Placement of value
   | Eliminate of candidate
-module Action : sig
+module Action =
   val to_string : action -> string
-end
 type given = Given of (cell * digit option) list
-module Given : sig
+module Given =
     val get : cell -> given -> digit option
-end
 type current = Current of (cell * cellContents) list
-module Current : sig
+module Current =
   val get : cell -> current -> cellContents
   val make : (cell * cellContents) list -> current
-end
 type cellCandidates = CellCandidates of (cell * digits) list
-module CellCandidates : sig
+module CellCandidates =
     val get : cell -> cellCandidates -> digits
-end
 type solution =
   {given: given;
    current: current;
    steps: action list;}
-module Solution : sig
+module Solution =
   val givenToCurrent : cells -> given -> digits -> current
   val currentCellCandidates : cells -> current -> cellCandidates
-end

@@ -1,4 +1,3 @@
-open Sudoku
 open Format
 
 val drawDigitCellString : digit option -> cellContents -> consoleString

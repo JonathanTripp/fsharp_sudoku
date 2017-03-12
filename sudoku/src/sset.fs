@@ -1,3 +1,5 @@
+module Sset
+
 (*
 Sset is intended to be an ordered list, without duplicates.
 
@@ -5,7 +7,6 @@ Bits borrowed from:
 https://www.cl.cam.ac.uk/~jrh13/atp/OCaml/lib.ml
 https://hackage.haskell.org/package/base-4.8.2.0/docs/src/GHC.List.html
 *)
-(*F# open FSharp.Compatibility.OCaml F#*)
 
 let rec funpow n f x =
   if n < 1 then x else funpow (n-1) f (f x)
@@ -236,17 +237,19 @@ let explode (s : string) =
   exp (String.length s - 1) []
 
 (* https://www.rosettacode.org/wiki/Tokenize_a_string#OCaml *)
+let succ i = i + 1
+
 let split_char sep str =
   let string_index_from i =
-    try Some (String.index_from str i sep)
+    try Some (Sstring.index_from str i sep)
     with _ -> None
   in
   let rec aux i acc = match string_index_from i with
     | Some i' ->
-        let w = String.sub str i (i' - i) in
+        let w = Sstring.sub str i (i' - i) in
         aux (succ i') (w::acc)
     | None ->
-        let w = String.sub str i (String.length str - i) in
+        let w = Sstring.sub str i (String.length str - i) in
         List.rev (w::acc)
   in
   aux 0 []

@@ -1,6 +1,7 @@
-open Sudoku
-open Puzzlemap
+module hints.Intersection
 
-val pointingPairs : puzzleMap -> cellCandidates -> Hint.description list
+open core.Sudoku
 
-val boxLineReductions : puzzleMap -> cellCandidates -> Hint.description list
+val pointingPairs : core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list
+
+val boxLineReductions : core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list

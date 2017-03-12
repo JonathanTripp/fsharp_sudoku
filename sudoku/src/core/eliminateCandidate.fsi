@@ -1,6 +1,7 @@
+module core.EliminateCandidate
+
 open Sudoku
-open Puzzlemap
 
-val description : puzzleMap -> candidate -> Hint.description
+val description : Puzzlemap.puzzleMap -> candidate -> Hint.description
 
-val step : puzzleMap -> candidate -> solution -> solution
+val step : Puzzlemap.puzzleMap -> candidate -> solution -> solution

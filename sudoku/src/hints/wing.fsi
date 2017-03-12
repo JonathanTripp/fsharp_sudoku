@@ -1,6 +1,7 @@
-open Sudoku
-open Puzzlemap
+module hints.Wing
 
-val xWings : puzzleMap -> cellCandidates -> Hint.description list
+open core.Sudoku
 
-val yWings : puzzleMap -> cellCandidates -> Hint.description list
+val xWings : core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list
+
+val yWings : core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list

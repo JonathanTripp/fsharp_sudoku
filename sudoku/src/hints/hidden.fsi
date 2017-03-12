@@ -1,4 +1,5 @@
-open Sudoku
-open Puzzlemap
+module hints.Hidden
 
-val find : int -> puzzleMap -> cellCandidates -> Hint.description list
+open core.Sudoku
+
+val find : int -> core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list

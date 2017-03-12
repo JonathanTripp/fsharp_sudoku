@@ -1,3 +1,5 @@
+module Smap
+
 let ofLookup (fn : 'a -> 'b) (as' : 'a list) : ('a * 'b) list =
     List.map (fun a -> (a, fn a)) as'
 

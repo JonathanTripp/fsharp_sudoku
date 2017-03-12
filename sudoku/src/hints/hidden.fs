@@ -1,9 +1,8 @@
-open Sudoku
-open Puzzlemap
-open Hint
-(*F# open FSharp.Compatibility.OCaml F#*)
+module hints.Hidden
 
-let findHidden (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (candidateSubset : digits) (primaryHouse : house) : Hint.description option = 
+open core.Sudoku
+
+let findHidden (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (candidateSubset : digits) (primaryHouse : house) : core.Hint.description option = 
 
     let pointers = 
         p.houseCells
@@ -36,7 +35,7 @@ let findHidden (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (
 
         let setCellValue = 
             if count = 1 then 
-                let h = List.hd pointers in
+                let h = List.head pointers in
                 let cell = h.cell in
                 let candidate = Digits.first candidateSubset in
 
@@ -54,7 +53,7 @@ let findHidden (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (
                focus = Digits.empty }
     else None
 
-let hiddenNPerHouse (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (house : house) : Hint.description list = 
+let hiddenNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (house : house) : core.Hint.description list = 
 
     let houseCandidates =
         p.houseCells
@@ -68,7 +67,7 @@ let hiddenNPerHouse (count : int) (p : puzzleMap) (cellCandidates : cellCandidat
         (fun candidateSubset -> 
             findHidden count p cellCandidates (Digits.make candidateSubset) house)
 
-let find (i : int) (p : puzzleMap) (cellCandidates : cellCandidates) : Hint.description list =
+let find (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     p.houses
     |> Houses.map (hiddenNPerHouse i p cellCandidates)
     |> List.concat

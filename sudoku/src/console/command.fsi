@@ -1,5 +1,6 @@
-open Sudoku
-open Puzzlemap
+module console.Command
+
+open core.Sudoku
 
 type parse_column_or_row_results =
     | CROk of int
@@ -30,14 +31,14 @@ type focus_command_result =
 
 val focusCommandParse : puzzleShape -> string -> focus_command_result
 
-val focusCommandHintDescription : puzzleMap -> digit -> Hint.description
+val focusCommandHintDescription : core.Puzzlemap.puzzleMap -> digit -> core.Hint.description
 
 type set_cell_command_parse_result =
     | SCCOk of value
     | SCCBadParams of parse_cell_results * parse_value_result
     | SCCWrongTermCount of int
 
-val setCellCommandParse : puzzleShape -> string -> puzzleMap -> set_cell_command_parse_result
+val setCellCommandParse : puzzleShape -> string -> core.Puzzlemap.puzzleMap -> set_cell_command_parse_result
 
 type set_cell_command_check_result =
     | SSCROk of value
@@ -53,7 +54,7 @@ type clear_candidate_command_parse_result =
     | CCCPRParseError of parse_cell_results * parse_value_result
     | CCCPRWrongItemCount of int
 
-val candidateClearCommandParse : puzzleShape -> string -> puzzleMap -> clear_candidate_command_parse_result
+val candidateClearCommandParse : puzzleShape -> string -> core.Puzzlemap.puzzleMap -> clear_candidate_command_parse_result
 
 type clear_candidate_command_check_result =
     | CCCCROk of candidate
@@ -64,4 +65,4 @@ val clear_candidate_command_check_result_to_string : clear_candidate_command_che
 
 val candidateClearCommandCheck : given -> cellCandidates -> candidate -> clear_candidate_command_check_result
 
-val supportedHints : (string * (puzzleMap -> cellCandidates -> Hint.description list)) list
+val supportedHints : (string * (core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list)) list

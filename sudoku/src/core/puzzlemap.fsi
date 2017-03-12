@@ -1,3 +1,5 @@
+module core.Puzzlemap
+
 open Sudoku
 
 type puzzleMap =

@@ -1,4 +1,5 @@
-open Sudoku
-open Puzzlemap
+module core.Force
 
-val solve : puzzleMap -> solution -> solution list
+open Sudoku
+
+val solve : Puzzlemap.puzzleMap -> solution -> solution list

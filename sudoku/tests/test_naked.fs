@@ -1,5 +1,6 @@
-open Sudoku
-open Puzzlemap
+module tests.Test_naked
+
+open core.Sudoku
 
 open NUnit.Framework
 
@@ -7,18 +8,18 @@ open NUnit.Framework
 let ``Can find naked singles``() =
     let sudoku = "000105000140000670080002400063070010900000003010090520007200080026000035000409000" in
 
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let solution = Load.load PuzzleShape.default' sudoku in
+    let solution = input.Load.load PuzzleShape.default' sudoku in
 
-    let candidateReductions = LoadEliminate.find p solution.current in
-    let newSolution = LoadEliminate.step p solution candidateReductions in
+    let candidateReductions = core.LoadEliminate.find p solution.current in
+    let newSolution = core.LoadEliminate.step p solution candidateReductions in
 
     let cellCandidates = Solution.currentCellCandidates p.cells newSolution.current in
 
-    let hints = Naked.find 1 p cellCandidates in
+    let hints = hints.Naked.find 1 p cellCandidates in
 
-    let expectedHints : Hint.description list =
+    let expectedHints : core.Hint.description list =
         [   { primaryHouses = Houses.empty;
               secondaryHouses = Houses.empty;
               candidateReductions = [];

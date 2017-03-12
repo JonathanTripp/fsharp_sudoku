@@ -1,5 +1,6 @@
+module core.Hint
+
 open Sudoku
-open Puzzlemap
 
 exception CellStateInvalid
 
@@ -11,7 +12,7 @@ type description =
       pointers : candidateReduction list;
       focus : digits }
 
-module Description = struct
+module Description =
     let to_string (h : description) : string =
 
         let line1 = Printf.sprintf "Primary Houses %s\r\n" (Houses.to_string h.primaryHouses) in
@@ -27,7 +28,6 @@ module Description = struct
 
         [ line1; line2; line3; String.concat "," crlines]
         |> String.concat ","
-end
 
 (* To draw a cell we may want to display extra information... *)
 type annotation = 
@@ -44,7 +44,7 @@ type annotation =
 type description2 = 
     { annotations : (cell * annotation) list }
 
-let mhas (solution : solution) (p : puzzleMap) (hd : description) : description2 = 
+let mhas (solution : solution) (p : Puzzlemap.puzzleMap) (hd : description) : description2 = 
 
     let annotationLookup (cell : cell) : annotation = 
 
@@ -113,7 +113,7 @@ let mhas (solution : solution) (p : puzzleMap) (hd : description) : description2
 
     { annotations = annotations }
 
-let mhas2 (solution : solution) (p : puzzleMap) : description2 = 
+let mhas2 (solution : solution) (p : Puzzlemap.puzzleMap) : description2 = 
 
     let annotationLookup (cell : cell) : annotation = 
         { given = Given.get cell solution.given;

@@ -1,3 +1,5 @@
+module core.Puzzlemap
+
 open Sudoku
 
 let columns (length : size) : column list =

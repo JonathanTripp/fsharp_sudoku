@@ -1,4 +1,4 @@
-(*F# open FSharp.Compatibility.OCaml F#*)
+module core.Sudoku
 
 (* A sudoku is a square grid of size... *)
 type size = int
@@ -7,7 +7,7 @@ type size = int
 type column = 
     | CColumn of int
 
-module Column = struct
+module Column =
     let comparer (CColumn c1 : column) (CColumn c2 : column) : int =
         if c1 < c2 then -1
         else if c1 = c2 then 0
@@ -18,12 +18,11 @@ module Column = struct
 
     let to_string (CColumn c : column) : string =
         Printf.sprintf "c%d" c
-end
 
 type columns =
     | CColumns of column list
 
-module Columns = struct
+module Columns =
     let make' (l : column list) : columns =
         CColumns l
 
@@ -60,13 +59,12 @@ module Columns = struct
     let union (CColumns cs : columns) (CColumns cs' : columns) : columns =
         Sset.union Column.comparer cs cs'
         |> make'
-end
 
 (* ... by rows *)
 type row = 
     | RRow of int
 
-module Row = struct
+module Row =
     let comparer (RRow r1 : row) (RRow r2 : row) : int =
         if r1 < r2 then -1
         else if r1 = r2 then 0
@@ -76,12 +74,11 @@ module Row = struct
 
     let to_string (RRow r : row) : string =
         Printf.sprintf "r%d" r
-end
 
 type rows = 
     | CRows of row list
 
-module Rows = struct
+module Rows =
     let make' (l : row list) : rows =
         CRows l
 
@@ -118,14 +115,13 @@ module Rows = struct
     let union (CRows rs : rows) (CRows rs' : rows) : rows =
         Sset.union Row.comparer rs rs'
         |> make'
-end
 
 (* Each cell is identified by (col, row) *)
 type cell = 
     { col : column;
       row : row }
 
-module Cell = struct
+module Cell =
     let comparer ({ col = CColumn c1; row = RRow r1} : cell) ({ col = CColumn c2; row = RRow r2} : cell) : int =
         if r1 < r2 then -1
         else if r1 = r2 then
@@ -140,12 +136,11 @@ module Cell = struct
 
     let to_string ({col = CColumn c; row = RRow r} : cell) : string =
         Printf.sprintf "r%dc%d" r c
-end
 
 type cells =
     | CCells of cell list
 
-module Cells = struct
+module Cells =
     let make' (l : cell list) : cells =
         CCells l
 
@@ -216,7 +211,6 @@ module Cells = struct
         |> List.map to_list
         |> Sset.unions Cell.comparer
         |> make'
-end
 
 (* The grid is divided into boxes,
  these do not have to be square, but they are
@@ -225,7 +219,7 @@ end
 type stack = 
     | SStack of int
 
-module Stack = struct
+module Stack =
     let comparer (SStack s1 : stack) (SStack s2 : stack) : int =
         if s1 < s2 then -1
         else if s1 = s2 then 0
@@ -236,14 +230,12 @@ module Stack = struct
 
     let to_string (SStack s : stack) : string =
         Printf.sprintf "stk%d" s
-end
 
-module Stacks = struct
+module Stacks =
     let to_string (ss : stack list) : string =
         ss
         |> List.map Stack.to_string
         |> String.concat ","
-end
 
 type boxWidth = int
 
@@ -251,7 +243,7 @@ type boxWidth = int
 type band = 
     | BBand of int
 
-module Band = struct
+module Band =
     let comparer (BBand b1 : band) (BBand b2 : band) : int =
         if b1 < b2 then -1
         else if b1 = b2 then 0
@@ -262,14 +254,12 @@ module Band = struct
 
     let to_string (BBand b : band) : string =
         Printf.sprintf "bnd%d" b
-end
 
-module Bands = struct
+module Bands =
     let to_string (bs : band list) : string =
         bs
         |> List.map Band.to_string
         |> String.concat ","
-end
 
 type boxHeight = int
 
@@ -278,7 +268,7 @@ type box =
     { stack : stack;
       band : band }
 
-module Box = struct
+module Box =
     let comparer ({ stack = SStack s1; band = BBand b1} : box) ({ stack = SStack s2; band = BBand b2} : box) : int =
         if b1 < b2 then -1
         else if b1 = b2 then
@@ -293,14 +283,12 @@ module Box = struct
 
     let to_string ({stack = SStack s; band = BBand b} : box) : string =
         Printf.sprintf "bnd%dstk%d" b s
-end
 
-module Boxes = struct
+module Boxes =
     let to_string (bs : box list) : string =
         bs
         |> List.map Box.to_string
         |> String.concat ","
-end
 
 (* The columns and rows are collectively called lines *)
 type line = 
@@ -313,7 +301,7 @@ type house =
     | HRow of row
     | HBox of box
 
-module House = struct
+module House =
     let comparer (h1 : house) (h2 : house) : int =
         match h1, h2 with
         | HColumn c1, HColumn c2 -> Column.comparer c1 c2
@@ -340,12 +328,11 @@ module House = struct
         | HColumn column -> Column.to_string column
         | HRow row -> Row.to_string row
         | HBox box -> Box.to_string box
-end
 
 type houses =
     | CHouses of house list
 
-module Houses = struct
+module Houses =
     let make' (l : house list) : houses =
         CHouses l
 
@@ -383,29 +370,27 @@ module Houses = struct
         hs
         |> List.map House.to_string
         |> String.concat ","
-end
 
 (* Each cell in the grid contains a Digit, usually numbers 1..9 *)
 type digit = 
     | Digit of char
 
-module Digit = struct
+module Digit =
     let comparer (Digit d1 : digit) (Digit d2 : digit) : int =
         if d1 < d2 then -1
         else if d1 = d2 then 0
         else 1
 
     let make (i : int) : digit =
-        Digit (Char.chr (i + (Char.code '0')))
+        Digit (Schar.chr (i + (Schar.code '0')))
 
     let to_string (Digit s : digit) : string =
-        String.make 1 s
-end
+        Sstring.make 1 s
 
 type digits =
     | CDigits of digit list
 
-module Digits = struct
+module Digits =
     let make' (l : digit list) : digits =
         CDigits l
 
@@ -490,7 +475,6 @@ module Digits = struct
         ds
         |> List.map Digit.to_string
         |> String.concat ","
-end
 
 (* A sudoku is defined by the overall grid size (it is always square)
  which is the same as the Digits in the alphabet
@@ -501,7 +485,7 @@ type puzzleShape =
       boxHeight : boxHeight;
       alphabet : digits }
 
-module PuzzleShape = struct
+module PuzzleShape =
     let default' : puzzleShape = 
         { size = 9;
           boxWidth = 3;
@@ -511,7 +495,6 @@ module PuzzleShape = struct
             |> List.map Digit.make
             |> Digits.make
             }
-end
 
 (* Whilst working to a solution each cell in the grid
  that doesn't have a Digit is filled with candidates
@@ -520,13 +503,12 @@ type cellContents =
     | BigNumber of digit
     | PencilMarks of digits
 
-module CellContents = struct
+module CellContents =
     let make_big_number (digit : digit) : cellContents =
         BigNumber digit
 
     let make_pencil_marks (digits : digits) : cellContents =
         PencilMarks digits
-end
 
 (* Working towards a solution we take one of the following actions:
  Sset the cell to have a Digit *)
@@ -534,48 +516,44 @@ type value =
     { cell : cell;
       digit : digit }
 
-module Value = struct
+module Value =
     let make (cell : cell) (digit : digit) : value = 
         { cell = cell;
           digit = digit }
 
     let to_string ({ cell = cell; digit = digit} : value) : string =
         Printf.sprintf "%s=%s" (Cell.to_string cell) (Digit.to_string digit)
-end
 
 (* A candidate is a digit in a cell, which is still a pencilmark *)
 type candidate = 
     { cell : cell;
       digit : digit }
 
-module Candidate = struct
+module Candidate =
     let make (cell : cell) (digit : digit) : candidate =
         { cell = cell;
           digit = digit }
 
     let to_string ({ cell = cell; digit = digit} : candidate) : string =
         Printf.sprintf "(%s)%s" (Cell.to_string cell) (Digit.to_string digit)
-end
 
 type candidateReduction = 
     { cell : cell;
       candidates : digits }
 
-module CandidateReduction = struct
+module CandidateReduction =
     let make (cell : cell) (digits : digits) : candidateReduction =
         { cell = cell;
           candidates = digits }
 
     let to_string ({ cell = cell; candidates = digits} : candidateReduction) : string =
         Printf.sprintf "Cell %s, Candidates %s" (Cell.to_string cell) (Digits.to_string digits)
-end
 
-module CandidateReductions = struct
+module CandidateReductions =
     let to_string (s : candidateReduction list) : string =
         s
         |> List.map CandidateReduction.to_string
         |> String.concat ","
-end
 
 (* Working towards a solution we take one of the following actions:
  Sset the cell to have a Digit
@@ -586,52 +564,48 @@ type action =
     | Placement of value
     | Eliminate of candidate
 
-module Action = struct
+module Action =
     let to_string (action : action) : string =
         match action with
         | Load sudoku -> Printf.sprintf "Load:%s" sudoku
         | LoadEliminate  -> "Load"
         | Placement a -> Printf.sprintf "%s=%s" (Cell.to_string a.cell) (Digit.to_string a.digit)
         | Eliminate candidate -> Printf.sprintf "%s<>%s" (Cell.to_string candidate.cell) (Digit.to_string candidate.digit)
-end
 
 type given =
     | Given of (cell * digit option) list
 
-module Given = struct
+module Given =
     let get (k : cell) (Given l : given) : digit option =
         Smap.get Cell.comparer k l
-end
 
 type current =
     | Current of (cell * cellContents) list
 
-module Current = struct
+module Current =
     let get (k : cell) (Current l : current) : cellContents =
         Smap.get Cell.comparer k l
 
     let make (l : (cell * cellContents) list) : current =
         Current l
-end
 
 (* for a cell, return a set of candidates *)
 type cellCandidates =
     | CellCandidates of (cell * digits) list
 
-module CellCandidates = struct
+module CellCandidates =
     let get (k : cell) (CellCandidates l : cellCandidates) : digits =
         Smap.get Cell.comparer k l
 
     let make (l : (cell * digits) list) : cellCandidates =
         CellCandidates l
-end
 
 type solution = 
     { given : given;
       current : current;
       steps : action list }
 
-module Solution = struct
+module Solution =
     let givenToCurrent (cells : cells) (given : given) (alphabet : digits) : current =
         let makeCellContents (cell : cell) : cellContents =
             let dop = Given.get cell given in
@@ -655,4 +629,3 @@ module Solution = struct
         cells
         |> Cells.map (fun a -> (a, getCandidateEntries a))
         |> CellCandidates.make
-end

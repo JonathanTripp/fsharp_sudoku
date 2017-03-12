@@ -1,6 +1,6 @@
-open Sudoku
-open Puzzlemap
-(*F# open FSharp.Compatibility.OCaml F#*)
+module console.Format
+
+open core.Sudoku
 
 type basic_color =
     | DefaultColour
@@ -87,7 +87,7 @@ let printColumn (printCell : cell -> consoleString) (row : row) (column : column
     printCell cell
 
 (* Print a stack *)
-let printStack (p : puzzleMap) (columnPrinter : row -> column -> consoleString) (columnSeparator : consoleString) (row : row) (stack : stack) : consoleString = 
+let printStack (p : core.Puzzlemap.puzzleMap) (columnPrinter : row -> column -> consoleString) (columnSeparator : consoleString) (row : row) (stack : stack) : consoleString = 
     simpleInterleave (columnPrinter row) columnSeparator (Smap.get Stack.comparer stack p.stackColumns)
 
 (* Print a row *)
@@ -95,11 +95,11 @@ let printRow (stackPrinter : stack -> consoleString) (gridCharsRow : gridCharsRo
     List.concat [gridCharsRow.l; simpleInterleave stackPrinter gridCharsRow.m stacks; gridCharsRow.r; eol ]
 
 (* Print a band *)
-let printBand (p : puzzleMap) (rowToSeq : row -> consoleString) (rowSeparator : consoleString) (band : band) : consoleString = 
+let printBand (p : core.Puzzlemap.puzzleMap) (rowToSeq : row -> consoleString) (rowSeparator : consoleString) (band : band) : consoleString = 
     simpleInterleave rowToSeq rowSeparator (Smap.get Band.comparer band p.bandRows)
 
 (* Print a puzzle grid, supply callback to draw each cell *)
-let printGrid (p : puzzleMap) (gridChars : gridChars) (digitTo : cell -> consoleString) : consoleString = 
+let printGrid (p : core.Puzzlemap.puzzleMap) (gridChars : gridChars) (digitTo : cell -> consoleString) : consoleString = 
 
     let doPrintColumn : row -> column -> consoleString = printColumn (printCell digitTo) in
 
@@ -110,7 +110,7 @@ let printGrid (p : puzzleMap) (gridChars : gridChars) (digitTo : cell -> console
     let doPrintBand : band -> consoleString = printBand p doPrintRow [] in
 
     let r : consoleString =
-        (Smap.get Stack.comparer (List.hd p.stacks) p.stackColumns)
+        (Smap.get Stack.comparer (List.head p.stacks) p.stackColumns)
         |> List.map (konst gridChars.h)
         |> List.concat
         in
@@ -123,27 +123,27 @@ let printGrid (p : puzzleMap) (gridChars : gridChars) (digitTo : cell -> console
 
     sinterleave doPrintBand t m b [] p.bands
 
-let printCandidateGrid (p : puzzleMap) (candidateGridChars : candidateGridChars) (alphabet : digits) (draw_cell : cell -> digit -> consoleString) : consoleString = 
+let printCandidateGrid (p : core.Puzzlemap.puzzleMap) (candidateGridChars : candidateGridChars) (alphabet : digits) (draw_cell : cell -> digit -> consoleString) : consoleString = 
 
     let d : consoleString =
-        Smap.get Stack.comparer (List.hd p.stacks) p.stackColumns
+        Smap.get Stack.comparer (List.head p.stacks) p.stackColumns
         |> List.map (konst candidateGridChars.h)
         |> List.concat
         in
 
     let i : consoleString =
-        Smap.get Stack.comparer (List.hd p.stacks) p.stackColumns
+        Smap.get Stack.comparer (List.head p.stacks) p.stackColumns
         |> List.map (konst candidateGridChars.hi)
         |> List.concat
         in
 
     let printFullHorizontal (x : candidateGridCharsRow) (i : consoleString) : consoleString = 
-        let s = simpleInterleave (konst i) x.mi (Smap.get Stack.comparer (List.hd p.stacks) p.stackColumns) in
+        let s = simpleInterleave (konst i) x.mi (Smap.get Stack.comparer (List.head p.stacks) p.stackColumns) in
 
         sinterleave (konst s) x.x.l x.x.m x.x.r candidateGridChars.n p.stacks
         in
 
-    let c : int = List.length (Smap.get Stack.comparer (List.hd p.stacks) p.stackColumns) in
+    let c : int = List.length (Smap.get Stack.comparer (List.head p.stacks) p.stackColumns) in
     
     let ss : digits list = 
         Sset.range 0 (List.length p.stacks - 1)

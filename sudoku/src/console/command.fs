@@ -1,9 +1,6 @@
-open Sudoku
-open Puzzlemap
-open Hint
-open Console
-open Format
-(*F# open FSharp.Compatibility.OCaml F#*)
+module console.Command
+
+open core.Sudoku
 
 type parse_column_or_row_results =
     | CROk of int
@@ -17,7 +14,8 @@ let parse_column_or_row_results_to_string (r : parse_column_or_row_results) : st
 (* find a column or row *)
 let parseColumnRow what gridSize term : parse_column_or_row_results =
     try
-        let i = int_of_string term in
+        let i =
+            term |> int in
         if i >= 1 && i <= gridSize then CROk i
         else CRError (what, gridSize)
     with
@@ -72,7 +70,7 @@ let parse_value_result_to_string (r : parse_value_result) : string =
 (* find an element of the alphabet *)
 let parseValue (digits : digits) (term : string) : parse_value_result = 
     if String.length term = 1 then
-        match charToCandidate digits (String.get term 0) with
+        match charToCandidate digits (Sstring.get term 0) with
         | Some d -> VOk d
         | None -> VErrorInvalid (term, (Digits.to_string digits))
     else VErrorTooMany term
@@ -88,7 +86,7 @@ let focusCommandParse (s: puzzleShape) (item : string) : focus_command_result =
     else
         FCWrongTermCount (List.length terms)
 
-let focusCommandHintDescription (p : puzzleMap) (digit : digit) : Hint.description =
+let focusCommandHintDescription (p : core.Puzzlemap.puzzleMap) (digit : digit) : core.Hint.description =
     { primaryHouses = Houses.empty;
       secondaryHouses = Houses.empty;
       candidateReductions = [];
@@ -101,7 +99,7 @@ type set_cell_command_parse_result =
     | SCCBadParams of parse_cell_results * parse_value_result
     | SCCWrongTermCount of int
 
-let setCellCommandParse (s: puzzleShape) (item : string) (p : puzzleMap) : set_cell_command_parse_result = 
+let setCellCommandParse (s: puzzleShape) (item : string) (p : core.Puzzlemap.puzzleMap) : set_cell_command_parse_result = 
     let terms = Sset.split_char ' ' item in
     if List.length terms = 4 then 
         let parsedCell = parseCell (Digits.count s.alphabet) p.cells (List.nth terms 1) (List.nth terms 2) in
@@ -137,7 +135,7 @@ type clear_candidate_command_parse_result =
     | CCCPRParseError of parse_cell_results * parse_value_result
     | CCCPRWrongItemCount of int
 
-let candidateClearCommandParse (s: puzzleShape) (item : string) (p : puzzleMap) : clear_candidate_command_parse_result = 
+let candidateClearCommandParse (s: puzzleShape) (item : string) (p : core.Puzzlemap.puzzleMap) : clear_candidate_command_parse_result = 
     let terms = Sset.split_char ' ' item in
     if List.length terms = 4 then 
         let parsedCell = parseCell (Digits.count s.alphabet) p.cells (List.nth terms 1) (List.nth terms 2) in
@@ -168,7 +166,7 @@ let candidateClearCommandCheck (given : given) (cellCandidates : cellCandidates)
         if Digits.contains candidate.digit digits then CCCCROk candidate
         else CCCCRNotACandidate candidate
 
-let supportedHints : (string * (puzzleMap -> cellCandidates -> Hint.description list)) list =
+let supportedHints : (string * (core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list)) list =
     let keys =
         [
             "fh";
@@ -189,19 +187,19 @@ let supportedHints : (string * (puzzleMap -> cellCandidates -> Hint.description 
 
     let command key =
         match key with
-        | "fh" -> FullHouse.find
-        | "hs" -> Hidden.find 1
-        | "hp" -> Hidden.find 2
-        | "ht" -> Hidden.find 3
-        | "hq" -> Hidden.find 4
-        | "ns" -> Naked.find 1
-        | "np" -> Naked.find 2
-        | "nt" -> Naked.find 3
-        | "nq" -> Naked.find 4
-        | "pp" -> Intersection.pointingPairs
-        | "bl" -> Intersection.boxLineReductions
-        | "x" -> Wing.xWings
-        | "y" -> Wing.yWings
+        | "fh" -> hints.FullHouse.find
+        | "hs" -> hints.Hidden.find 1
+        | "hp" -> hints.Hidden.find 2
+        | "ht" -> hints.Hidden.find 3
+        | "hq" -> hints.Hidden.find 4
+        | "ns" -> hints.Naked.find 1
+        | "np" -> hints.Naked.find 2
+        | "nt" -> hints.Naked.find 3
+        | "nq" -> hints.Naked.find 4
+        | "pp" -> hints.Intersection.pointingPairs
+        | "bl" -> hints.Intersection.boxLineReductions
+        | "x" -> hints.Wing.xWings
+        | "y" -> hints.Wing.yWings
         in
 
     Smap.ofLookup command keys

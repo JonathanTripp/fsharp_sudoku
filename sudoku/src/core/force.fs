@@ -1,7 +1,6 @@
-open Sudoku
-open Puzzlemap
+module core.Force
 
-(*F# open FSharp.Compatibility.OCaml F#*)
+open Sudoku
 
 let isPencilMarksCellContents (cellContents : cellContents) : bool =
     match cellContents with
@@ -16,9 +15,9 @@ let isValidCellContents (cellContents : cellContents) : bool =
 let isValid (solution : solution) (cells : cells) : bool =
     cells
     |> Cells.map (fun cell -> Current.get cell solution.current)
-    |> List.for_all isValidCellContents
+    |> List.forall isValidCellContents
 
-let rec searchr (p : puzzleMap) (solution : solution) (existing : solution list) : solution list =
+let rec searchr (p : Puzzlemap.puzzleMap) (solution : solution) (existing : solution list) : solution list =
     let emptyCell : cell option =
         let is_cell_empty (cell : cell) : bool =
             Current.get cell solution.current
@@ -74,5 +73,5 @@ let rec searchr (p : puzzleMap) (solution : solution) (existing : solution list)
             |> List.concat
     | None -> solution :: existing
 
-let solve (p : puzzleMap) (solution : solution) : solution list =
+let solve (p : Puzzlemap.puzzleMap) (solution : solution) : solution list =
     searchr p solution []

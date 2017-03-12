@@ -1,8 +1,8 @@
-open Sudoku
-open Puzzlemap
-open Hint
+module core.SetCell
 
-let apply (p : puzzleMap) (value : value) (current : current) : current = 
+open Sudoku
+
+let apply (p : Puzzlemap.puzzleMap) (value : value) (current : current) : current = 
 
     let update (cell : cell) : cellContents =
         let cellContents = Current.get cell current in
@@ -32,7 +32,7 @@ let try' (cell : cell) (candidate : digit) (cellCandidates : cellCandidates) : v
         Some (Value.make cell candidate)
     else None
 
-let description (p : puzzleMap) (setCellValue : value) : Hint.description =
+let description (p : Puzzlemap.puzzleMap) (setCellValue : value) : Hint.description =
     { primaryHouses = Houses.empty;
       secondaryHouses = Houses.empty;
       candidateReductions = [];
@@ -40,6 +40,6 @@ let description (p : puzzleMap) (setCellValue : value) : Hint.description =
       pointers = [];
       focus = Digits.empty }
 
-let step (p : puzzleMap) (setCellValue : value) (solution : solution) : solution =
+let step (p : Puzzlemap.puzzleMap) (setCellValue : value) (solution : solution) : solution =
     { solution with current = apply p setCellValue solution.current;
                     steps = (Placement setCellValue) :: solution.steps }

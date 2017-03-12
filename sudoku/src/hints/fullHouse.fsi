@@ -1,4 +1,5 @@
-open Sudoku
-open Puzzlemap
+module hints.FullHouse
 
-val find : puzzleMap -> cellCandidates -> Hint.description list
+open core.Sudoku
+
+val find : core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list

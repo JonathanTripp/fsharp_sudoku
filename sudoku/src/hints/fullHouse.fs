@@ -1,12 +1,11 @@
+module hints.FullHouse
+
 (* Full House means:
  For a house there is only one cell that is neither given nor set i.e. has candidates *)
 
-open Sudoku
-open Puzzlemap
-open Hint
-(*F# open FSharp.Compatibility.OCaml F#*)
+open core.Sudoku
 
-let fullHousePerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : Hint.description option =
+let fullHousePerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : core.Hint.description option =
 
     let hhs =
         p.houseCellCandidateReductions primaryHouse cellCandidates
@@ -14,7 +13,7 @@ let fullHousePerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (primary
         in
 
     if List.length hhs = 1 then 
-        let h = List.hd hhs in
+        let h = List.head hhs in
         let cell = h.cell in
         let candidate = Digits.first h.candidates in
 
@@ -28,6 +27,6 @@ let fullHousePerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (primary
                focus = Digits.empty }
     else None
 
-let find (p : puzzleMap) (cellCandidates : cellCandidates) : Hint.description list =
+let find (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     p.houses
     |> Houses.choose (fullHousePerHouse p cellCandidates)

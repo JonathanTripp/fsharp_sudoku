@@ -1,10 +1,10 @@
-open Sudoku
-open Puzzlemap
-open Hint
+module hints.Intersection
+
+open core.Sudoku
 
 type cellHouses = (cell * house list) list
 
-let intersectionsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (secondaryHouseLookups : cellHouses) : Hint.description list = 
+let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (secondaryHouseLookups : cellHouses) : core.Hint.description list = 
 
     let primaryHouseCandidates = 
         p.houseCells
@@ -13,7 +13,7 @@ let intersectionsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (pri
         |> Digits.union_many
         in
 
-    let uniqueSecondaryForCandidate (candidate : digit) : Hint.description list = 
+    let uniqueSecondaryForCandidate (candidate : digit) : core.Hint.description list = 
         let pointerCells = 
             p.houseCells
             |> Smap.get House.comparer primaryHouse
@@ -27,7 +27,7 @@ let intersectionsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (pri
             |> Cells.map (fun cell -> CandidateReduction.make cell (Digits.singleton candidate))
             in
 
-        let hintsPerSecondaryHouse (secondaryHouses : house list) : Hint.description option = 
+        let hintsPerSecondaryHouse (secondaryHouses : house list) : core.Hint.description option = 
             if Cells.count pointerCells > 1 && List.length secondaryHouses = 1 then 
                 let primaryHouseCells =
                     p.houseCells
@@ -68,7 +68,7 @@ let intersectionsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (pri
     |> Digits.map uniqueSecondaryForCandidate
     |> List.concat
 
-let pointingPairsPerBox (p : puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : Hint.description list =
+let pointingPairsPerBox (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : core.Hint.description list =
     let cellLines (cell : cell) =
         [ HRow cell.row; HColumn cell.col ]
         in
@@ -79,7 +79,7 @@ let pointingPairsPerBox (p : puzzleMap) (cellCandidates : cellCandidates) (prima
 
     intersectionsPerHouse p cellCandidates primaryHouse secondaryHouseLookups
 
-let boxLineReductionsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : Hint.description list = 
+let boxLineReductionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : core.Hint.description list = 
     let cellBox (cell : cell) =
         [ Smap.get Cell.comparer cell p.cellBox |> House.make_box ]
         in
@@ -90,13 +90,13 @@ let boxLineReductionsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) 
 
     intersectionsPerHouse p cellCandidates primaryHouse secondaryHouseLookups
 
-let pointingPairs (p : puzzleMap) (cellCandidates : cellCandidates) : Hint.description list =
+let pointingPairs (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     p.boxes
     |> List.map House.make_box
     |> List.map (pointingPairsPerBox p cellCandidates) 
     |> List.concat
 
-let boxLineReductions (p : puzzleMap) (cellCandidates : cellCandidates) : Hint.description list =
+let boxLineReductions (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     let rowHints =
         p.rows
         |> Rows.map House.make_row

@@ -1,10 +1,11 @@
-open Sudoku
-open Puzzlemap
+module core.SetCell
 
-val apply : puzzleMap -> value -> current -> current
+open Sudoku
+
+val apply : Puzzlemap.puzzleMap -> value -> current -> current
 
 val try' : cell -> digit -> cellCandidates -> value option
 
-val description : puzzleMap -> value -> Hint.description
+val description : Puzzlemap.puzzleMap -> value -> Hint.description
 
-val step : puzzleMap -> value -> solution -> solution
+val step : Puzzlemap.puzzleMap -> value -> solution -> solution

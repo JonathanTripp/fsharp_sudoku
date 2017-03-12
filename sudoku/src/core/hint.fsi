@@ -1,5 +1,6 @@
+module core.Hint
+
 open Sudoku
-open Puzzlemap
 
 type description = 
     { primaryHouses : houses;
@@ -9,9 +10,8 @@ type description =
       pointers : candidateReduction list;
       focus : digits }
 
-module Description : sig
+module Description =
     val to_string : description -> string
-end
 
 (* To draw a cell we may want to display extra information... *)
 type annotation = 
@@ -28,6 +28,6 @@ type annotation =
 type description2 = 
     { annotations : (cell * annotation) list }
 
-val mhas : solution -> puzzleMap -> description -> description2
+val mhas : solution -> Puzzlemap.puzzleMap -> description -> description2
 
-val mhas2 : solution -> puzzleMap -> description2
+val mhas2 : solution -> Puzzlemap.puzzleMap -> description2

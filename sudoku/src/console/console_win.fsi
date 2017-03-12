@@ -1,11 +1,11 @@
-open Format
+module console.Console_win
 
-val defaultGridChars : gridChars
+val defaultGridChars : Format.gridChars
 
-val defaultCandidateGridChars : candidateGridChars
+val defaultCandidateGridChars : Format.candidateGridChars
 
-val drawConsoleChar : consoleChar -> unit
+val drawConsoleChar : Format.consoleChar -> unit
 
-val drawConsoleString : consoleString -> unit
+val drawConsoleString : Format.consoleString -> unit
 
 val maximise_console : unit -> unit

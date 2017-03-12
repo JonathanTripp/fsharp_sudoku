@@ -1,8 +1,8 @@
-open Sudoku
-open Puzzlemap
-open Hint
+module core.LoadEliminate
 
-let find  (p : puzzleMap) (current : current) : candidateReduction list = 
+open Sudoku
+
+let find  (p : Puzzlemap.puzzleMap) (current : current) : candidateReduction list = 
 
     let reductions (cell : cell) : digits option =
         let cellContents = Current.get cell current in
@@ -31,7 +31,7 @@ let find  (p : puzzleMap) (current : current) : candidateReduction list =
             | Some digits -> Some (CandidateReduction.make cell digits)
             | None -> None)
 
-let apply (p : puzzleMap) (candidateReductions : candidateReduction list) (current : current) : current = 
+let apply (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReduction list) (current : current) : current = 
 
     let candidateReductionsLookup =
         candidateReductions
@@ -54,7 +54,7 @@ let apply (p : puzzleMap) (candidateReductions : candidateReduction list) (curre
     Cells.ofLookup update p.cells
     |> Current.make
 
-let description (p : puzzleMap) (candidateReductions : candidateReduction list) : Hint.description =
+let description (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReduction list) : Hint.description =
     { primaryHouses = Houses.empty;
       secondaryHouses = Houses.empty;
       candidateReductions = candidateReductions;
@@ -62,10 +62,10 @@ let description (p : puzzleMap) (candidateReductions : candidateReduction list) 
       pointers = [];
       focus = Digits.empty }
 
-let step (p : puzzleMap) (solution : solution) (candidateReductions : candidateReduction list) : solution =
+let step (p : Puzzlemap.puzzleMap) (solution : solution) (candidateReductions : candidateReduction list) : solution =
     { solution with current = apply p candidateReductions solution.current;
                     steps = LoadEliminate :: solution.steps }
 
-let findAndApply (p : puzzleMap) (solution : solution) : solution =
+let findAndApply (p : Puzzlemap.puzzleMap) (solution : solution) : solution =
     let candidateReductions = find p solution.current in
     step p solution candidateReductions

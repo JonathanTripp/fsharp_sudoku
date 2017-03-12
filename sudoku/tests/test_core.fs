@@ -1,5 +1,6 @@
-open Sudoku
-open Puzzlemap
+module tests.Test_core
+
+open core.Sudoku
 
 open NUnit.Framework
 
@@ -40,7 +41,7 @@ let pick_more<'a> (as' : 'a list) : 'a list * 'a list =
 
 [<Test>]
 let ``Can make column sets``() =
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let (picked, expected) = pick_some (Columns.to_list p.columns) in
 
@@ -58,7 +59,7 @@ let ``Can make column sets``() =
 
 [<Test>]
 let ``Can make row sets``() =
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let (picked, expected) = pick_some (Rows.to_list p.rows) in
 
@@ -76,7 +77,7 @@ let ``Can make row sets``() =
 
 [<Test>]
 let ``Can make cell sets``() =
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let (picked, expected) = pick_more (Cells.to_list p.cells) in
 
@@ -94,7 +95,7 @@ let ``Can make cell sets``() =
 
 [<Test>]
 let ``Can make digit sets``() =
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let (picked, expected) = pick_some (Digits.to_list PuzzleShape.default'.alphabet) in
 
@@ -112,7 +113,7 @@ let ``Can make digit sets``() =
 
 [<Test>]
 let ``Can make columns``() =
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.columns in
 
     let expected =
@@ -125,7 +126,7 @@ let ``Can make columns``() =
 
 [<Test>]
 let ``Can make rows``() = 
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.rows in
 
     let expected =
@@ -138,7 +139,7 @@ let ``Can make rows``() =
 
 [<Test>]
 let ``Can make cells``() = 
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.cells in
 
     let expected =
@@ -156,7 +157,7 @@ let ``Can make cells``() =
 
 [<Test>]
 let ``Can make stacks``() = 
-    let p = tPuzzleMap twoByFourPuzzleSpec in
+    let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
     let actual = p.stacks in
 
     let expected =
@@ -168,7 +169,7 @@ let ``Can make stacks``() =
 
 [<Test>]
 let ``Can make bands``() = 
-    let p = tPuzzleMap twoByFourPuzzleSpec in
+    let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
     let actual = p.bands in
 
     let expected =
@@ -180,7 +181,7 @@ let ``Can make bands``() =
 
 [<Test>]
 let ``Can make boxes``() = 
-    let p = tPuzzleMap twoByFourPuzzleSpec in
+    let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
     let actual = p.boxes in
 
     let expected =
@@ -197,7 +198,7 @@ let ``Can make boxes``() =
 
 [<Test>]
 let ``Can make houses``() = 
-    let p = tPuzzleMap twoByFourPuzzleSpec in
+    let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
     let actual = p.houses in
 
     let expectedColumns =
@@ -233,7 +234,7 @@ let ``Can make houses``() =
 
 [<Test>]
 let ``Get column cells``() = 
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let column = CColumn 2 in
 
@@ -251,7 +252,7 @@ let ``Get column cells``() =
 
 [<Test>]
 let ``Get row cells``() = 
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let row = RRow 7 in
 
@@ -269,7 +270,7 @@ let ``Get row cells``() =
 
 [<Test>]
 let ``Get stack for a column``() =
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let actual =
         p.columns
@@ -289,7 +290,7 @@ let ``Get stack for a column``() =
 
 [<Test>]
 let ``Get stack columns``() = 
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let actual =
         Smap.get Stack.comparer (2 |> SStack) p.stackColumns
@@ -306,7 +307,7 @@ let ``Get stack columns``() =
 
 [<Test>]
 let ``Get band for a row``() =
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let actual =
         p.rows
@@ -326,7 +327,7 @@ let ``Get band for a row``() =
 
 [<Test>]
 let ``Get band rows``() = 
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let actual =
         Smap.get Band.comparer (2 |> BBand) p.bandRows
@@ -343,7 +344,7 @@ let ``Get band rows``() =
 
 [<Test>]
 let ``Get box for a cell``() =
-    let p = tPuzzleMap PuzzleShape.default' in
+    let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let actual =
         [1..9]

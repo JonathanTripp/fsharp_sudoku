@@ -1,9 +1,8 @@
-open Sudoku
-open Puzzlemap
-open Hint
-(*F# open FSharp.Compatibility.OCaml F#*)
+module hints.Wing
 
-let makeHints (p : puzzleMap) (cellCandidates : cellCandidates) pointerCells primaryHouses secondaryHouses candidate : Hint.description option = 
+open core.Sudoku
+
+let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) pointerCells primaryHouses secondaryHouses candidate : core.Hint.description option = 
     let pointers =
         pointerCells
         |> Cells.map (fun cell -> CandidateReduction.make cell (Digits.singleton candidate))
@@ -23,7 +22,7 @@ let makeHints (p : puzzleMap) (cellCandidates : cellCandidates) pointerCells pri
         in
 
     if List.length candidatesReductions > 0 then
-        let hint : Hint.description =
+        let hint : core.Hint.description =
             { primaryHouses = primaryHouses;
               secondaryHouses = secondaryHouses;
               candidateReductions = candidatesReductions;
@@ -34,7 +33,7 @@ let makeHints (p : puzzleMap) (cellCandidates : cellCandidates) pointerCells pri
         Some hint
     else None
 
-let xWingsPerHouseCandidate (p : puzzleMap) (cellCandidates : cellCandidates) (house1 : house) (house2 : house) (candidate : digit) = 
+let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (house1 : house) (house2 : house) (candidate : digit) = 
 
     let houseCandidateCells1 =
         p.houseCells
@@ -131,8 +130,8 @@ let xWingsPerHouseCandidate (p : puzzleMap) (cellCandidates : cellCandidates) (h
         else None
     | _ -> None
 
-let xWingsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (house1 : house) 
-    (house2 : house) : Hint.description list = 
+let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (house1 : house) 
+    (house2 : house) : core.Hint.description list = 
 
     let houseCandidates1 =
         p.houseCells
@@ -152,7 +151,7 @@ let xWingsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (house1 : h
     |> Digits.map (xWingsPerHouseCandidate p cellCandidates house1 house2)
     |> Sset.choose Sset.id
 
-let xWings (p : puzzleMap) (cellCandidates : cellCandidates) : Hint.description list =
+let xWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     let rows = Rows.map House.make_row p.rows |> Houses.make in
     let cols = Columns.map House.make_column p.columns |> Houses.make in
 
@@ -189,7 +188,7 @@ let xWings (p : puzzleMap) (cellCandidates : cellCandidates) : Hint.description 
     [ rowHints; colHints ]
     |> List.concat
 
-let yWingsPerHouseCandidate (p : puzzleMap) (cellCandidates : cellCandidates)
+let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates)
     (house1 : house) (house2 : house) houseCandidateCells1 houseCandidateCells2 (candidate : digit) = 
     let hht1 =
         houseCandidateCells1
@@ -267,8 +266,8 @@ let yWingsPerHouseCandidate (p : puzzleMap) (cellCandidates : cellCandidates)
         else None
     | _ -> None
 
-let yWingsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (row1 : row) 
-    (row2 : row) (col1 : column) (col2 : column)  : Hint.description list = 
+let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (row1 : row) 
+    (row2 : row) (col1 : column) (col2 : column)  : core.Hint.description list = 
 
     let cell11 = Cell.make col1 row1 in
     let cell12 = Cell.make col2 row1 in
@@ -289,7 +288,7 @@ let yWingsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (row1 : row
 
     let allNonEmpty =
         candidateCells
-        |> List.for_all (fun cr -> Digits.count cr.candidates > 0)
+        |> List.forall (fun cr -> Digits.count cr.candidates > 0)
         in
 
     if allNonEmpty then 
@@ -307,7 +306,7 @@ let yWingsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (row1 : row
 
             let allPairs =
                 ccs
-                |> List.for_all (fun c -> Digits.count c = 2)
+                |> List.forall (fun c -> Digits.count c = 2)
                 in
 
             if allPairs then 
@@ -336,7 +335,7 @@ let yWingsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (row1 : row
                                 |> Houses.make
                                 in
 
-                            let desc : Hint.description =
+                            let desc : core.Hint.description =
                                 { primaryHouses = primaryHouses;
                                   secondaryHouses = Houses.empty;
                                   candidateReductions = [candidateReductions];
@@ -351,7 +350,7 @@ let yWingsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (row1 : row
         |> Sset.choose Sset.id
     else []
 
-let yWings (p : puzzleMap) (cellCandidates : cellCandidates) : Hint.description list =
+let yWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     let hints =
         p.rows
         |> Rows.mapi 

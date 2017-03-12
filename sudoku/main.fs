@@ -1,50 +1,47 @@
-open Sudoku
-open Puzzlemap
-open Hint
-open Command
-open Console
-open Format
-(*F# open Console_win F#*)
-(*IF-OCAML*) open Console_nix (*ENDIF-OCAML*)
-(*F# open FSharp.Compatibility.OCaml F#*)
+open core.Sudoku
 
-let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzleShape) 
-    (cellCandidates : cellCandidates) puzzleDrawFull2 print_last : solution * Hint.description list = 
+open console.Command
+open console.Console
+open console.Format
+open console.Console_win
 
-    print_endline item;
+let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (puzzle : puzzleShape) 
+    (cellCandidates : cellCandidates) puzzleDrawFull2 print_last : solution * core.Hint.description list = 
+
+    printfn "%s" item;
 
     if item = "print" then 
-        let hd3 = Hint.mhas2 solution p in
+        let hd3 = core.Hint.mhas2 solution p in
         puzzleDrawFull2 hd3.annotations;
         (solution, [])
-    else if String.length item >= 5 && String.compare (String.sub item 0 5) "focus" = 0 then
+    else if String.length item >= 5 && Sstring.compare (Sstring.sub item 0 5) "focus" = 0 then
         let focusDigitResult = focusCommandParse puzzle item in
         match focusDigitResult with
         | FCOk (VOk focusDigit) ->
             let hd2 = focusCommandHintDescription p focusDigit in
-            let hd3 = Hint.mhas solution p hd2 in
+            let hd3 = core.Hint.mhas solution p hd2 in
             puzzleDrawFull2 hd3.annotations;
             (solution, [])
 
         | FCOk r ->
-            print_endline (parse_value_result_to_string r);
+            printfn "%s" (parse_value_result_to_string r);
             (solution, [])
 
         | FCWrongTermCount _ ->
-            print_endline "Expect 'focus <digit>'";
+            printfn "Expect 'focus <digit>'";
             (solution, [])
 
     else if item = "load" then
-        let candidateReductions = LoadEliminate.find p solution.current in
+        let candidateReductions = core.LoadEliminate.find p solution.current in
 
-        let hd2 = LoadEliminate.description p candidateReductions in
-        let hd3 = Hint.mhas solution p hd2 in
+        let hd2 = core.LoadEliminate.description p candidateReductions in
+        let hd3 = core.Hint.mhas solution p hd2 in
         puzzleDrawFull2 hd3.annotations;
 
-        let newSolution = LoadEliminate.step p solution candidateReductions in
+        let newSolution = core.LoadEliminate.step p solution candidateReductions in
         (*print_last newSolution*)
         (newSolution, [])
-    else if String.get item 0 = 's' then
+    else if Sstring.get item 0 = 's' then
         let valueOpt = setCellCommandParse puzzle item p in
         
         let newSolution = 
@@ -53,15 +50,15 @@ let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzle
                 let setCellValueOpt = setCellCommandCheck solution.given cellCandidates value in
                 (match setCellValueOpt with
                  | SSCROk setCellValue ->
-                    let hd2 = SetCell.description p setCellValue in
-                    let hd3 = Hint.mhas solution p hd2 in
+                    let hd2 = core.SetCell.description p setCellValue in
+                    let hd3 = core.Hint.mhas solution p hd2 in
                     puzzleDrawFull2 hd3.annotations;
 
-                    SetCell.step p setCellValue solution
+                    core.SetCell.step p setCellValue solution
 
                  | SCCRGiven _
                  | SCCRNotACandidate _ ->
-                    print_endline (set_cell_command_check_result_to_string setCellValueOpt);
+                    printfn "%s" (set_cell_command_check_result_to_string setCellValueOpt);
                     solution
                 )
 
@@ -70,14 +67,14 @@ let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzle
                 solution
 
             | SCCWrongTermCount _ ->
-                print_endline "Expect set <col> <row> <val>";
+                printfn "Expect set <col> <row> <val>";
                 solution
             in
 
         print_last newSolution;
         (newSolution, [])
 
-    else if String.get item 0 = 'c' then
+    else if Sstring.get item 0 = 'c' then
         let candidateOpt = candidateClearCommandParse puzzle item p in
 
         let newSolution = 
@@ -86,15 +83,15 @@ let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzle
                 let clearCommandOpt = candidateClearCommandCheck solution.given cellCandidates candidate in
                 (match clearCommandOpt with
                  | CCCCROk clearCommand ->
-                    let hd2 = EliminateCandidate.description p candidate in
-                    let hd3 = Hint.mhas solution p hd2 in
+                    let hd2 = core.EliminateCandidate.description p candidate in
+                    let hd3 = core.Hint.mhas solution p hd2 in
                     puzzleDrawFull2 hd3.annotations;
 
-                    EliminateCandidate.step p candidate solution
+                    core.EliminateCandidate.step p candidate solution
 
                  | CCCCRGiven _
                  | CCCCRNotACandidate _ -> 
-                    print_endline (clear_candidate_command_check_result_to_string clearCommandOpt);
+                    printfn "%s" (clear_candidate_command_check_result_to_string clearCommandOpt);
                     solution
                 )
 
@@ -103,7 +100,7 @@ let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzle
                 solution
 
             | CCCPRWrongItemCount _ ->
-                print_endline "Expect clr <col> <row> <val>";
+                printfn "Expect clr <col> <row> <val>";
                 solution
             in
 
@@ -111,27 +108,28 @@ let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzle
         (newSolution, [])
 
     else
-        let supportedHintOpt = Smap.tryGet String.compare item supportedHints in
+        let supportedHintOpt = Smap.tryGet Sstring.compare item supportedHints in
         match supportedHintOpt with
         | Some supportedHint ->
             let hints = supportedHint p cellCandidates in
             (solution, hints)
         | None -> (solution, [])
 
-let printHint (p : puzzleMap) drawHint (solution : solution) (index : int) (hint : Hint.description) : unit = 
+let printHint (p : core.Puzzlemap.puzzleMap) drawHint (solution : solution) (index : int) (hint : core.Hint.description) : unit = 
 
-    Printf.printf "%d: %s\n" index (Hint.Description.to_string hint);
+    Printf.printf "%d: %s\n" index (core.Hint.Description.to_string hint);
 
-    let hd3 = Hint.mhas solution p hint in
+    let hd3 = core.Hint.mhas solution p hint in
     drawHint hd3.annotations;
 
-    read_line() |> ignore
+    System.Console.ReadLine()
+    |> ignore
 
 let run (solution : solution ref) (puzzle : puzzleShape) 
     puzzleDrawCandidateGridAnnotations print_last puzzlePrintHint item : string option = 
     if item = "quit" then Some "quit"
     else
-        let p = tPuzzleMap puzzle in
+        let p = core.Puzzlemap.tPuzzleMap puzzle in
 
         let cellCandidates = Solution.currentCellCandidates p.cells (!solution).current in
 
@@ -145,11 +143,11 @@ let run (solution : solution ref) (puzzle : puzzleShape)
 
 let repl (sudoku : string) (puzzleShape : puzzleShape) : unit = 
 
-    print_endline sudoku;
+    printfn "%s" sudoku;
 
-    let p = tPuzzleMap puzzleShape in
+    let p = core.Puzzlemap.tPuzzleMap puzzleShape in
 
-    let solution = ref (Load.load puzzleShape sudoku) in
+    let solution = ref (input.Load.load puzzleShape sudoku) in
 
     let centreDigit : digit = Digits.nth puzzleShape.alphabet ((Digits.count puzzleShape.alphabet) / 2) in
 
@@ -217,8 +215,8 @@ let repl (sudoku : string) (puzzleShape : puzzleShape) : unit =
     let puzzlePrintHint = printHint p puzzleDrawCandidateGridAnnotations in
 
     let rec loop (l : string list) : string list =
-        print_string ">";
-        let item : string = read_line() in
+        printf ">";
+        let item : string = System.Console.ReadLine() in
         let r : string option = run solution puzzleShape puzzleDrawCandidateGridAnnotations print_last puzzlePrintHint item in
         match r with
         | Some s -> l
@@ -236,8 +234,8 @@ all_core_tests
 *)
 
 (* Input puzzle *)
-print_endline "1........2........3........4........5........6........7........8........9........";
-print_endline "123456789123456789123456789123456789123456789123456789123456789123456789123456789";
+printfn "1........2........3........4........5........6........7........8........9........";
+printfn "123456789123456789123456789123456789123456789123456789123456789123456789123456789";
 
 (*let example = "410230000700580040000000020190000700380000016000008400000806005031050000000090800" *)
 (*let example = "000105000140000670080002400063070010900000003010090520007200080026000035000409000" *)
@@ -268,4 +266,4 @@ Printf.printf "\027[31mred\027[39;49;0m\n";
 
 repl example PuzzleShape.default';
 
-print_endline "bye"
+printfn "bye"

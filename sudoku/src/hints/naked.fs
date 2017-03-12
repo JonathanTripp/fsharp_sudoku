@@ -1,8 +1,8 @@
-open Sudoku
-open Puzzlemap
-open Hint
+module hints.Naked
 
-let nakedSingleCell (p : puzzleMap) (cellCandidates : cellCandidates) (cell : cell) : Hint.description option =
+open core.Sudoku
+
+let nakedSingleCell (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (cell : cell) : core.Hint.description option =
     let candidates = CellCandidates.get cell cellCandidates in
 
     if Digits.count candidates = 1 then 
@@ -18,12 +18,12 @@ let nakedSingleCell (p : puzzleMap) (cellCandidates : cellCandidates) (cell : ce
                 focus = Digits.empty }
     else None
 
-let nakedSingle (p : puzzleMap) (cellCandidates : cellCandidates) : Hint.description list =
+let nakedSingle (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     p.cells
     |> Cells.map (nakedSingleCell p cellCandidates)
     |> Sset.choose Sset.id
 
-let findNaked (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (cellSubset : cells) : Hint.description option = 
+let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (cellSubset : cells) : core.Hint.description option = 
 
     let subsetDigits =
         cellSubset
@@ -58,7 +58,7 @@ let findNaked (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (p
         else None
     else None
 
-let nakedNPerHouse (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : Hint.description list =
+let nakedNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : core.Hint.description list =
     
     let hht = 
         p.houseCells
@@ -72,11 +72,11 @@ let nakedNPerHouse (count : int) (p : puzzleMap) (cellCandidates : cellCandidate
     |> List.map (fun ss -> findNaked count p cellCandidates primaryHouse (Cells.make ss))
     |> Sset.choose Sset.id
 
-let nakedN (i : int) (p : puzzleMap) (cellCandidates : cellCandidates) : Hint.description list =
+let nakedN (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     p.houses
     |> Houses.map (nakedNPerHouse i p cellCandidates )
     |> List.concat
 
-let find (i : int) (p : puzzleMap) (cellCandidates : cellCandidates) : Hint.description list =
+let find (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     if i = 1 then nakedSingle p cellCandidates
     else nakedN i p cellCandidates

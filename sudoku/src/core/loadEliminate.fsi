@@ -1,8 +1,9 @@
-open Sudoku
-open Puzzlemap
+module core.LoadEliminate
 
-val find : puzzleMap -> current -> candidateReduction list
-val apply : puzzleMap -> candidateReduction list -> current -> current
-val description : puzzleMap -> candidateReduction list -> Hint.description
-val step : puzzleMap -> solution -> candidateReduction list -> solution
-val findAndApply : puzzleMap -> solution -> solution
+open Sudoku
+
+val find : Puzzlemap.puzzleMap -> current -> candidateReduction list
+val apply : Puzzlemap.puzzleMap -> candidateReduction list -> current -> current
+val description : Puzzlemap.puzzleMap -> candidateReduction list -> Hint.description
+val step : Puzzlemap.puzzleMap -> solution -> candidateReduction list -> solution
+val findAndApply : Puzzlemap.puzzleMap -> solution -> solution

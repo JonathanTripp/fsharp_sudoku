@@ -1,5 +1,7 @@
-open Sudoku
-open Format
+module console.Console_win
+
+open core.Sudoku
+
 open System
 open System.Diagnostics
 open System.Runtime.InteropServices
@@ -7,10 +9,10 @@ open System.Runtime.InteropServices
 [<DllImport("user32.dll")>]
 extern bool ShowWindow(System.IntPtr hWnd, int cmdShow)
 
-let cs (c : char) : consoleString = [CChar c]
+let cs (c : char) : Format.consoleString = [Format.CChar c]
 
 (* Some predefined characters - for smaller grid *)
-let defaultGridChars : gridChars = 
+let defaultGridChars : Format.gridChars = 
     { h = cs '─';
       v = 
           { l = cs '│';
@@ -28,10 +30,10 @@ let defaultGridChars : gridChars =
           { l = cs '└';
             m = cs '┴';
             r = cs '┘' };
-      n = [NL] }
+      n = [Format.NL] }
 
 (* Some predefined characters - for smaller grid *)
-let defaultCandidateGridChars : candidateGridChars = 
+let defaultCandidateGridChars : Format.candidateGridChars = 
     { h = cs '═';
       hi = cs '─';
       v = 
@@ -63,31 +65,31 @@ let defaultCandidateGridChars : candidateGridChars =
                 { l = cs '╚';
                   m = cs '╩';
                   r = cs '╝' } };
-      n = [NL] }
+      n = [Format.NL] }
 
-let basic_to_system (color : basic_color) : ConsoleColor =
+let basic_to_system (color : Format.basic_color) : ConsoleColor =
     match color with
-    | DefaultColour -> ConsoleColor.White
-    | Black -> ConsoleColor.Black
-    | Red -> ConsoleColor.Red
-    | Green -> ConsoleColor.Green
-    | Yellow -> ConsoleColor.Yellow
-    | Blue -> ConsoleColor.Blue
-    | Magenta -> ConsoleColor.Magenta
-    | Cyan -> ConsoleColor.Cyan
-    | White -> ConsoleColor.White
+    | Format.DefaultColour -> ConsoleColor.White
+    | Format.Black -> ConsoleColor.Black
+    | Format.Red -> ConsoleColor.Red
+    | Format.Green -> ConsoleColor.Green
+    | Format.Yellow -> ConsoleColor.Yellow
+    | Format.Blue -> ConsoleColor.Blue
+    | Format.Magenta -> ConsoleColor.Magenta
+    | Format.Cyan -> ConsoleColor.Cyan
+    | Format.White -> ConsoleColor.White
 
 (* Change the console colour to write a string *)
-let consoleWriteColor (foreground_colour : basic_color) (background_colour : basic_color) (value : 'a) = 
+let consoleWriteColor (foreground_colour : Format.basic_color) (background_colour : Format.basic_color) (value : 'a) = 
     match foreground_colour, background_colour with
-    | DefaultColour, DefaultColour ->
+    | Format.DefaultColour, Format.DefaultColour ->
         System.Console.Write value
-    | _, DefaultColour ->
+    | _, Format.DefaultColour ->
         let foregroundColour = System.Console.ForegroundColor in
         System.Console.ForegroundColor <- basic_to_system foreground_colour;
         System.Console.Write value;
         System.Console.ForegroundColor <- foregroundColour
-    | DefaultColour, _ ->
+    | Format.DefaultColour, _ ->
         let backgroundColour = System.Console.BackgroundColor in
         System.Console.BackgroundColor <- basic_to_system background_colour;
         System.Console.Write value;
@@ -101,17 +103,17 @@ let consoleWriteColor (foreground_colour : basic_color) (background_colour : bas
         System.Console.ForegroundColor <- foregroundColour;
         System.Console.BackgroundColor <- backgroundColour
 
-let drawConsoleChar (consoleChar : consoleChar) = 
+let drawConsoleChar (consoleChar : Format.consoleChar) = 
     match consoleChar with
-    | CNil -> ()
-    | CChar c -> Console.Write c
-    | CStr c -> Console.Write c
-    | CDigit (Digit d) -> Console.Write d
-    | ColouredString(c, foreground_colour, background_colour) -> consoleWriteColor foreground_colour background_colour c
-    | ColouredDigit ((Digit d), foreground_colour, background_colour) -> consoleWriteColor foreground_colour background_colour d
-    | NL -> Console.WriteLine ""
+    | Format.CNil -> ()
+    | Format.CChar c -> Console.Write c
+    | Format.CStr c -> Console.Write c
+    | Format.CDigit (Digit d) -> Console.Write d
+    | Format.ColouredString(c, foreground_colour, background_colour) -> consoleWriteColor foreground_colour background_colour c
+    | Format.ColouredDigit ((Digit d), foreground_colour, background_colour) -> consoleWriteColor foreground_colour background_colour d
+    | Format.NL -> Console.WriteLine ""
 
-let drawConsoleString (consoleString : consoleString) : unit =
+let drawConsoleString (consoleString : Format.consoleString) : unit =
     List.iter drawConsoleChar consoleString
 
 let maximise_console() : unit =
