@@ -1,7 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Web
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "fsharp_sudoku_repl", "fsharp_sudoku_repl.fsproj", "{28210934-817C-4569-B97F-4147CD2F4491}"
+# Visual Studio 15
+VisualStudioVersion = 15.0.26228.4
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "fsharp_sudoku_repl", "sudoku\fsharp_sudoku_repl.fsproj", "{28210934-817C-4569-B97F-4147CD2F4491}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
