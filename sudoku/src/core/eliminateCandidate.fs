@@ -19,8 +19,8 @@ let apply (p : Puzzlemap.puzzleMap) (candidate : candidate) (current : current) 
 let description (p: Puzzlemap.puzzleMap) (candidate : candidate) : Hint.description =
     let cr = CandidateReduction.make (candidate.cell) (Digits.singleton candidate.digit) in
 
-    { primaryHouses = Houses.empty;
-      secondaryHouses = Houses.empty;
+    { primaryHouses = OSet.empty;
+      secondaryHouses = OSet.empty;
       candidateReductions = OSet.singleton cr;
       setCellValueAction = None;
       pointers = OSet.empty;

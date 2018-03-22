@@ -21,13 +21,13 @@ let ``Can find full house``() =
     let hints = hints.FullHouse.find p cellCandidates in
 
     let expectedHints : core.Hint.description list =
-        [   { primaryHouses = Houses.singleton (HBox (Box.make (Stack.make 2) (Band.make 3)));
-              secondaryHouses = Houses.empty;
+        [   { primaryHouses = OSet.singleton (HBox (Box.make (Stack.make 2) (Band.make 3)));
+              secondaryHouses = OSet.empty;
               candidateReductions = OSet.empty;
               setCellValueAction = Some (Value.make (Cell.make (Column.make 6) (Row.make 9)) (Digits.nth PuzzleShape.default'.alphabet 5));
               pointers = OSet.empty;
               focus = Digits.empty } ]
         in
 
-    let _ = Assert.AreEqual(1, List.length hints) in
+    let _ = Assert.AreEqual(1, OSet.count hints) in
     Assert.AreEqual(expectedHints, hints)

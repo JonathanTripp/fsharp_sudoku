@@ -11,8 +11,8 @@ let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) p
 
     let colCells =
         secondaryHouses
-        |> Houses.map (fun house -> Smap.get House.comparer house p.houseCells)
-        |> OSet.unionMany
+        |> OSet.map (fun house -> Smap.get House.comparer house p.houseCells)
+        |> OSet.concat
         in
 
     let candidatesReductions = 
@@ -85,13 +85,11 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
                 |> OSet.unionMany
                 in
 
-            let primaryHouses = Houses.make [ house1; house2 ] in
+            let primaryHouses = OSet.ofList [ house1; house2 ] in
 
             let secondaryHouses =
                 cols
                 |> OSet.map House.make_column
-                |> OSet.toList
-                |> Houses.make
                 in
 
             makeHints p cellCandidates pointerCells primaryHouses secondaryHouses candidate
@@ -124,12 +122,10 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
                 |> OSet.unionMany
                 in
 
-            let primaryHouses = Houses.make [ house1; house2 ] in
+            let primaryHouses = OSet.ofList [ house1; house2 ] in
             let secondaryHouses =
                 rows
                 |> OSet.map House.make_row
-                |> OSet.toList
-                |> Houses.make
                 in
 
             makeHints p cellCandidates pointerCells primaryHouses secondaryHouses candidate
@@ -138,7 +134,7 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
     | _ -> None
 
 let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (house1 : house) 
-    (house2 : house) : core.Hint.description list = 
+    (house2 : house) : OSet<core.Hint.description> = 
 
     let houseCandidates1 =
         p.houseCells
@@ -158,44 +154,45 @@ let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
 
     Digits.intersect houseCandidates1 houseCandidates2
     |> Digits.map (xWingsPerHouseCandidate p cellCandidates house1 house2)
-    |> Sset.choose Sset.id
+    |> OSet.ofList
+    |> OSet.choose Sset.id
 
-let xWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
-    let rows = OSet.map House.make_row p.rows |> OSet.toList |> Houses.make in
-    let cols = OSet.map House.make_column p.columns |> OSet.toList|> Houses.make in
+let xWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
+    let rows = OSet.map House.make_row p.rows in
+    let cols = OSet.map House.make_column p.columns in
 
     let rowHints1 = 
         rows
-        |> Houses.mapi 
+        |> OSet.mapi 
             (fun i row1 -> 
-                Houses.drop (i + 1) rows
-                |> Houses.mapi
+                OSet.skip (i + 1) rows
+                |> OSet.mapi
                     (fun j row2 -> xWingsPerHouse p cellCandidates row1 row2)) 
         in
 
     let rowHints = 
         rowHints1
-        |> List.concat
-        |> List.concat
+        |> OSet.concat
+        |> OSet.concat
         in
 
     let colHints1 = 
         cols
-        |> Houses.mapi
+        |> OSet.mapi
             (fun i col1 -> 
-                Houses.drop (i + 1) cols
-                |> Houses.mapi
+                OSet.skip (i + 1) cols
+                |> OSet.mapi
                     (fun j col2 -> xWingsPerHouse p cellCandidates col1 col2)) 
         in
 
     let colHints = 
         colHints1
-        |> List.concat
-        |> List.concat
+        |> OSet.concat
+        |> OSet.concat
         in
 
     [ rowHints; colHints ]
-    |> List.concat
+    |> OSet.unionMany
 
 let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates)
     (house1 : house) (house2 : house) houseCandidateCells1 houseCandidateCells2 (candidate : digit) = 
@@ -233,12 +230,10 @@ let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
 
             let pointerCells = OSet.union row1Cells row2Cells in
 
-            let primaryHouses = Houses.make [ house1; house2 ] in
+            let primaryHouses = OSet.ofList [ house1; house2 ] in
             let secondaryHouses =
                 cols
                 |> OSet.map House.make_column
-                |> OSet.toList
-                |> Houses.make
                 in
 
             makeHints p cellCandidates pointerCells primaryHouses secondaryHouses candidate
@@ -268,12 +263,10 @@ let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
 
             let pointerCells = OSet.union col1Cells col2Cells in
 
-            let primaryHouses = Houses.make [ house1; house2 ] in
+            let primaryHouses = OSet.ofList [ house1; house2 ] in
             let secondaryHouses =
                 rows
                 |> OSet.map House.make_row
-                |> OSet.toList
-                |> Houses.make
                 in
 
             makeHints p cellCandidates pointerCells primaryHouses secondaryHouses candidate
@@ -282,7 +275,7 @@ let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
     | _ -> None
 
 let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (row1 : row) 
-    (row2 : row) (col1 : column) (col2 : column)  : core.Hint.description list = 
+    (row2 : row) (col1 : column) (col2 : column)  : OSet<core.Hint.description> = 
 
     let cell11 = Cell.make col1 row1 in
     let cell12 = Cell.make col2 row1 in
@@ -347,12 +340,12 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
                                   HRow row2;
                                   HColumn col1;
                                   HColumn col2; ]
-                                |> Houses.make
+                                |> OSet.ofList
                                 in
 
                             let desc : core.Hint.description =
                                 { primaryHouses = primaryHouses;
-                                  secondaryHouses = Houses.empty;
+                                  secondaryHouses = OSet.empty;
                                   candidateReductions = OSet.singleton candidateReductions;
                                   setCellValueAction = None;
                                   pointers = pointers;
@@ -362,10 +355,11 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
                     | _ -> None
                 else None
             else None)
-        |> Sset.choose Sset.id
-    else []
+        |> OSet.ofList
+        |> OSet.choose Sset.id
+    else OSet.empty
 
-let yWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
+let yWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
     let hints =
         p.rows
         |> OSet.mapi 
@@ -382,11 +376,7 @@ let yWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : co
         in
 
     hints
-    |> OSet.toList
-    |> List.map (OSet.toList)
-    |> List.concat
-    |> List.map (OSet.toList)
-    |> List.concat
-    |> List.map (OSet.toList)
-    |> List.concat
-    |> List.concat
+    |> OSet.concat
+    |> OSet.concat
+    |> OSet.concat
+    |> OSet.concat

@@ -228,10 +228,10 @@ let ``Can make houses``() =
     let expected =
         [ expectedColumns; expectedRows; expectedBoxes]
         |> List.concat
-        |> Houses.make
+        |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Houses.to_string expected, Houses.to_string actual)
+    Assert.AreEqual(expected, actual, "{0}!={1}", Houses2.toString expected, Houses2.toString actual)
 
 [<Test>]
 let ``Get column cells``() = 

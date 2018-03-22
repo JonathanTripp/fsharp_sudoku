@@ -11,19 +11,18 @@ let nakedSingleCell (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandida
 
         let setCellValue = Value.make cell candidate in
 
-        Some { primaryHouses = Houses.empty;
-                secondaryHouses = Houses.empty;
+        Some { primaryHouses = OSet.empty;
+                secondaryHouses = OSet.empty;
                 candidateReductions = OSet.empty;
                 setCellValueAction = Some setCellValue;
                 pointers = OSet.empty;
                 focus = Digits.empty }
     else None
 
-let nakedSingle (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
+let nakedSingle (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
     p.cells
     |> OSet.map (nakedSingleCell p cellCandidates)
     |> OSet.choose Sset.id
-    |> OSet.toList
 
 let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (cellSubset : cells) : core.Hint.description option = 
 
@@ -51,8 +50,8 @@ let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
             in
 
         if OSet.count candidateReductions > 0 then 
-            Some { primaryHouses = Houses.singleton primaryHouse;
-                   secondaryHouses = Houses.empty;
+            Some { primaryHouses = OSet.singleton primaryHouse;
+                   secondaryHouses = OSet.empty;
                    candidateReductions = candidateReductions;
                    setCellValueAction = None;
                    pointers = pointers;
@@ -61,7 +60,7 @@ let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
         else None
     else None
 
-let nakedNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : core.Hint.description list =
+let nakedNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : OSet<core.Hint.description> =
     
     let hht = 
         p.houseCells
@@ -72,14 +71,15 @@ let nakedNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates 
         in
 
     Sset.setSubsets (OSet.toList hht) count
-    |> List.map (fun ss -> findNaked count p cellCandidates primaryHouse (OSet.ofList ss))
-    |> Sset.choose Sset.id
+    |> OSet.ofList
+    |> OSet.map (fun ss -> findNaked count p cellCandidates primaryHouse (OSet.ofList ss))
+    |> OSet.choose Sset.id
 
-let nakedN (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
+let nakedN (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
     p.houses
-    |> Houses.map (nakedNPerHouse i p cellCandidates )
-    |> List.concat
+    |> OSet.map (nakedNPerHouse i p cellCandidates )
+    |> OSet.concat
 
-let find (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
+let find (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
     if i = 1 then nakedSingle p cellCandidates
     else nakedN i p cellCandidates

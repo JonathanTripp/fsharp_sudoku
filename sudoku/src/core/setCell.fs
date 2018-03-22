@@ -34,8 +34,8 @@ let try' (cell : cell) (candidate : digit) (cellCandidates : cellCandidates) : v
     else None
 
 let description (p : Puzzlemap.puzzleMap) (setCellValue : value) : Hint.description =
-    { primaryHouses = Houses.empty;
-      secondaryHouses = Houses.empty;
+    { primaryHouses = OSet.empty;
+      secondaryHouses = OSet.empty;
       candidateReductions = OSet.empty;
       setCellValueAction = Some setCellValue;
       pointers = OSet.empty;

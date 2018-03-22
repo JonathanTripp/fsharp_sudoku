@@ -21,19 +21,19 @@ let ``Can find naked singles``() =
     let hints = hints.Naked.find 1 p cellCandidates in
 
     let expectedHints : core.Hint.description list =
-        [   { primaryHouses = Houses.empty;
-              secondaryHouses = Houses.empty;
+        [   { primaryHouses = OSet.empty;
+              secondaryHouses = OSet.empty;
               candidateReductions = OSet.empty;
               setCellValueAction = Some (Value.make (Cell.make (Column.make 8) (Row.make 1)) (Digits.nth PuzzleShape.default'.alphabet 8));
               pointers = OSet.empty;
               focus = Digits.empty };
-            { primaryHouses = Houses.empty;
-              secondaryHouses = Houses.empty;
+            { primaryHouses = OSet.empty;
+              secondaryHouses = OSet.empty;
               candidateReductions = OSet.empty;
               setCellValueAction = Some (Value.make (Cell.make (Column.make 8) (Row.make 9)) (Digits.nth PuzzleShape.default'.alphabet 5));
               pointers = OSet.empty;
               focus = Digits.empty } ]
         in
 
-    let _ = Assert.AreEqual(2, List.length hints) in
+    let _ = Assert.AreEqual(2, OSet.count hints) in
     Assert.AreEqual(expectedHints, hints)

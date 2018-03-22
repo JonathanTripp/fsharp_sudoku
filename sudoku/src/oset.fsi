@@ -11,6 +11,7 @@ module OSet =
     val toList : OSet<'T> -> List<'T>
 
     val choose : ('T -> 'U option) -> OSet<'T> -> OSet<'U>
+    val concat : OSet<OSet<'T>> -> OSet<'T>
     val contains : 'T -> OSet<'T> -> bool
     val count : OSet<'T> -> int
     val difference : OSet<'T> -> OSet<'T> -> OSet<'T>

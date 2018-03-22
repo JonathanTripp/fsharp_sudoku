@@ -190,8 +190,8 @@ let tPuzzleMap (puzzleShape : puzzleShape) : puzzleMap =
 
     let _housesCells (houses : houses) : cells =
         houses
-        |> Houses.map (fun house -> Smap.get House.comparer house _houseCellsLookup)
-        |> OSet.unionMany in
+        |> OSet.map (fun house -> Smap.get House.comparer house _houseCellsLookup)
+        |> OSet.concat in
 
     let _houseCellCandidateReductions (house : house) (cellCandidates : cellCandidates) : candidateReduction list =
         Smap.get House.comparer house _houseCellsLookup
@@ -205,7 +205,7 @@ let tPuzzleMap (puzzleShape : puzzleShape) : puzzleMap =
         stacks = _stacks;
         bands = _bands;
         boxes = _boxes;
-        houses = _houses |> Houses.make;
+        houses = _houses |> OSet.ofList;
         columnCells = _columnCellsLookup;
         rowCells = _rowCellsLookup;
         columnStack = _columnStackLookup;

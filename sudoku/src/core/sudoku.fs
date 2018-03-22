@@ -195,47 +195,11 @@ module House =
         | HRow row -> Row.to_string row
         | HBox box -> Box.to_string box
 
-type houses =
-    | CHouses of house list
+type houses = OSet<house>
 
-module Houses =
-    let make' (l : house list) : houses =
-        CHouses l
-
-    let choose (map : house -> 'b option) (CHouses hs : houses) : 'b list =
-        hs
-        |> Sset.choose map
-
-    let drop (n : int) (CHouses hs : houses) : houses =
-        hs
-        |> Sset.drop n
-        |> make'
-
-    let empty : houses =
-        []
-        |> make'
-
-    let map (map : house -> 'b) (CHouses hs : houses) : 'b list =
-        hs
-        |> List.map map
-
-    let mapi (map : int -> house -> 'b) (CHouses hs : houses) : 'b list =
-        hs
-        |> List.mapi map
-
-    let make (hs : house list) : houses =
-        hs
-        |> Sset.setify House.comparer
-        |> make'
-
-    let singleton (h : house) : houses =
-        [ h ]
-        |> make'
-
-    let to_string (CHouses hs : houses) : string =
-        hs
-        |> List.map House.to_string
-        |> String.concat ","
+module Houses2 =
+    let toString (hs : houses) : string =
+        "H" + (OSet.toString hs)
 
 (* Each cell in the grid contains a Digit, usually numbers 1..9 *)
 type digit = 

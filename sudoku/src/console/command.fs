@@ -88,8 +88,8 @@ let focusCommandParse (s: puzzleShape) (item : string) : focus_command_result =
         FCWrongTermCount (List.length terms)
 
 let focusCommandHintDescription (p : core.Puzzlemap.puzzleMap) (digit : digit) : core.Hint.description =
-    { primaryHouses = Houses.empty;
-      secondaryHouses = Houses.empty;
+    { primaryHouses = OSet.empty;
+      secondaryHouses = OSet.empty;
       candidateReductions = OSet.empty;
       setCellValueAction = None;
       pointers = OSet.empty;
@@ -167,7 +167,7 @@ let candidateClearCommandCheck (given : given) (cellCandidates : cellCandidates)
         if Digits.contains candidate.digit digits then CCCCROk candidate
         else CCCCRNotACandidate candidate
 
-let supportedHints : (string * (core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list)) list =
+let supportedHints : (string * (core.Puzzlemap.puzzleMap -> cellCandidates -> OSet<core.Hint.description>)) list =
     let keys =
         [
             "fh";

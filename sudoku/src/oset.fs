@@ -20,6 +20,9 @@ module OSet =
     let choose (chooser : 'T -> 'U option) (o : OSet<'T>) : OSet<'U> =
         o |> toList |> List.choose chooser |> ofList
 
+    let concat (ds : OSet<OSet<'T>>) : OSet<'T> =
+        ds |> toList |> List.map toSet |> Set.unionMany |> ofSet
+
     let contains (element : 'T) (o : OSet<'T>) : bool =
         o |> toSet |> Set.contains element
 

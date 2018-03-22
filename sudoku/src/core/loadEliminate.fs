@@ -58,8 +58,8 @@ let apply (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReducti
     |> Current.make
 
 let description (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReduction>) : Hint.description =
-    { primaryHouses = Houses.empty;
-      secondaryHouses = Houses.empty;
+    { primaryHouses = OSet.empty;
+      secondaryHouses = OSet.empty;
       candidateReductions = candidateReductions;
       setCellValueAction = None;
       pointers = OSet.empty;

@@ -68,16 +68,9 @@ module House =
   val make_row : row -> house
   val make_box : box -> house
   val to_string : house -> string
-type houses = | CHouses of house list
-module Houses =
-  val choose : (house -> 'b option) -> houses -> 'b list
-  val drop : int -> houses -> houses
-  val empty : houses
-  val make : house list -> houses
-  val map : (house -> 'b) -> houses -> 'b list
-  val mapi : (int -> house -> 'b) -> houses -> 'b list
-  val singleton : house -> houses
-  val to_string : houses -> string
+type houses = OSet<house>
+module Houses2 =
+  val toString : houses -> string
 type digit = | Digit of char
 module Digit =
   val comparer : digit -> digit -> int

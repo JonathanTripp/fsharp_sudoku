@@ -4,16 +4,17 @@ open console.Command
 open console.Console
 open console.Format
 open console.Console_win
+open oset
 
 let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (puzzle : puzzleShape) 
-    (cellCandidates : cellCandidates) puzzleDrawFull2 print_last : solution * core.Hint.description list = 
+    (cellCandidates : cellCandidates) puzzleDrawFull2 print_last : solution * OSet<core.Hint.description> = 
 
     printfn "%s" item;
 
     if item = "print" then 
         let hd3 = core.Hint.mhas2 solution p in
         puzzleDrawFull2 hd3.annotations;
-        (solution, [])
+        (solution, OSet.empty)
     else if String.length item >= 5 && Sstring.compare (Sstring.sub item 0 5) "focus" = 0 then
         let focusDigitResult = focusCommandParse puzzle item in
         match focusDigitResult with
@@ -21,15 +22,15 @@ let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (
             let hd2 = focusCommandHintDescription p focusDigit in
             let hd3 = core.Hint.mhas solution p hd2 in
             puzzleDrawFull2 hd3.annotations;
-            (solution, [])
+            (solution, OSet.empty)
 
         | FCOk r ->
             printfn "%s" (parse_value_result_to_string r);
-            (solution, [])
+            (solution, OSet.empty)
 
         | FCWrongTermCount _ ->
             printfn "Expect 'focus <digit>'";
-            (solution, [])
+            (solution, OSet.empty)
 
     else if item = "load" then
         let candidateReductions = core.LoadEliminate.find p solution.current in
@@ -40,7 +41,7 @@ let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (
 
         let newSolution = core.LoadEliminate.step p solution candidateReductions in
         (*print_last newSolution*)
-        (newSolution, [])
+        (newSolution, OSet.empty)
     else if Sstring.get item 0 = 's' then
         let valueOpt = setCellCommandParse puzzle item p in
         
@@ -72,7 +73,7 @@ let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (
             in
 
         print_last newSolution;
-        (newSolution, [])
+        (newSolution, OSet.empty)
 
     else if Sstring.get item 0 = 'c' then
         let candidateOpt = candidateClearCommandParse puzzle item p in
@@ -105,7 +106,7 @@ let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (
             in
 
         print_last newSolution;
-        (newSolution, [])
+        (newSolution, OSet.empty)
 
     else
         let supportedHintOpt = Smap.tryGet Sstring.compare item supportedHints in
@@ -113,7 +114,7 @@ let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (
         | Some supportedHint ->
             let hints = supportedHint p cellCandidates in
             (solution, hints)
-        | None -> (solution, [])
+        | None -> (solution, OSet.empty)
 
 let printHint (p : core.Puzzlemap.puzzleMap) drawHint (solution : solution) (index : int) (hint : core.Hint.description) : unit = 
 
@@ -137,7 +138,7 @@ let run (solution : solution ref) (puzzle : puzzleShape)
             parse p item !solution puzzle cellCandidates puzzleDrawCandidateGridAnnotations print_last in
         solution := soln;
 
-        List.iteri (puzzlePrintHint soln) hints;
+        List.iteri (puzzlePrintHint soln) (hints |> OSet.toList);
 
         None
 

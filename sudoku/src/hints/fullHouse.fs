@@ -20,14 +20,14 @@ let fullHousePerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandi
 
         let setCellValue = Value.make cell candidate in
 
-        Some { primaryHouses = Houses.singleton primaryHouse;
-               secondaryHouses = Houses.empty;
+        Some { primaryHouses = OSet.singleton primaryHouse;
+               secondaryHouses = OSet.empty;
                candidateReductions = OSet.empty;
                setCellValueAction = Some setCellValue;
                pointers = OSet.empty;
                focus = Digits.empty }
     else None
 
-let find (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
+let find (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
     p.houses
-    |> Houses.choose (fullHousePerHouse p cellCandidates)
+    |> OSet.choose (fullHousePerHouse p cellCandidates)

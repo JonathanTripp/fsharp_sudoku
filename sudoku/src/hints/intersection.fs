@@ -5,7 +5,7 @@ open oset
 
 type cellHouses = (cell * house list) list
 
-let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (secondaryHouseLookups : cellHouses) : core.Hint.description list = 
+let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (secondaryHouseLookups : cellHouses) : OSet<core.Hint.description> = 
 
     let primaryHouseCandidates = 
         p.houseCells
@@ -50,8 +50,8 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
                     in
 
                 if OSet.count candidateReductions > 0 then 
-                    Some { primaryHouses = Houses.singleton primaryHouse;
-                           secondaryHouses = Houses.singleton secondaryHouse;
+                    Some { primaryHouses = OSet.singleton primaryHouse;
+                           secondaryHouses = OSet.singleton secondaryHouse;
                            candidateReductions = candidateReductions;
                            setCellValueAction = None;
                            pointers = pointers;
@@ -68,10 +68,9 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
 
     primaryHouseCandidates
     |> Digits.map uniqueSecondaryForCandidate
-    |> List.map (OSet.toList)
-    |> List.concat
+    |> OSet.unionMany
 
-let pointingPairsPerBox (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : core.Hint.description list =
+let pointingPairsPerBox (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : OSet<core.Hint.description> =
     let cellLines (cell : cell) =
         [ HRow cell.row; HColumn cell.col ]
         in
@@ -82,7 +81,7 @@ let pointingPairsPerBox (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCan
 
     intersectionsPerHouse p cellCandidates primaryHouse secondaryHouseLookups
 
-let boxLineReductionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : core.Hint.description list = 
+let boxLineReductionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : OSet<core.Hint.description> = 
     let cellBox (cell : cell) =
         [ Smap.get Cell.comparer cell p.cellBox |> House.make_box ]
         in
@@ -93,30 +92,26 @@ let boxLineReductionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : c
 
     intersectionsPerHouse p cellCandidates primaryHouse secondaryHouseLookups
 
-let pointingPairs (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
+let pointingPairs (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
     p.boxes
     |> List.map House.make_box
     |> List.map (pointingPairsPerBox p cellCandidates) 
-    |> List.concat
+    |> OSet.unionMany
 
-let boxLineReductions (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
+let boxLineReductions (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
     let rowHints =
         p.rows
         |> OSet.map House.make_row
-        |> OSet.toList
-        |> Houses.make
-        |> Houses.map (boxLineReductionsPerHouse p cellCandidates)
-        |> List.concat
+        |> OSet.map (boxLineReductionsPerHouse p cellCandidates)
+        |> OSet.concat
         in
 
     let colHints =
         p.columns
         |> OSet.map House.make_column
-        |> OSet.toList
-        |> Houses.make
-        |> Houses.map (boxLineReductionsPerHouse p cellCandidates)
-        |> List.concat
+        |> OSet.map (boxLineReductionsPerHouse p cellCandidates)
+        |> OSet.concat
         in
 
     [ rowHints; colHints ]
-    |> List.concat
+    |> OSet.unionMany
