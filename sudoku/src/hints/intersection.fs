@@ -100,7 +100,8 @@ let pointingPairs (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidate
 let boxLineReductions (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     let rowHints =
         p.rows
-        |> Rows.map House.make_row
+        |> OSet.map House.make_row
+        |> OSet.toList
         |> Houses.make
         |> Houses.map (boxLineReductionsPerHouse p cellCandidates)
         |> List.concat

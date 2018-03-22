@@ -11,22 +11,14 @@ module Column =
 type columns = OSet<column>
 module Columns =
   val toString : columns -> string
-
 type row = | RRow of int
 module Row =
   val comparer : row -> row -> int
   val make : int -> row
   val to_string : row -> string
-type rows = | CRows of row list
+type rows = OSet<row>
 module Rows =
-  val count : rows -> int
-  val drop : int -> rows -> rows
-  val make : row list -> rows
-  val map : (row -> 'b) -> rows -> 'b list
-  val mapi : (int -> row -> 'b) -> rows -> 'b list
-  val to_list : rows -> row list
-  val to_string : rows -> string
-  val union : rows -> rows -> rows
+  val toString : rows -> string
 type cell =
   {col: column;
    row: row;}

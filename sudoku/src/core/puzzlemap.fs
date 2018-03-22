@@ -199,7 +199,7 @@ let tPuzzleMap (puzzleShape : puzzleShape) : puzzleMap =
 
     {
         columns = _columns |> OSet.ofList;
-        rows = _rows |> Rows.make ;
+        rows = _rows |> OSet.ofList ;
         cells = _cells |> Cells.make;
         stacks = _stacks;
         bands = _bands;

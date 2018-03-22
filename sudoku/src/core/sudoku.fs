@@ -42,46 +42,11 @@ module Row =
     let to_string (RRow r : row) : string =
         Printf.sprintf "r%d" r
 
-type rows = 
-    | CRows of row list
+type rows = OSet<row>
 
 module Rows =
-    let make' (l : row list) : rows =
-        CRows l
-
-    let count (CRows rs : rows) : int =
-        rs
-        |> List.length
-
-    let drop (n : int) (CRows rs : rows) : rows =
-        rs
-        |> Sset.drop n
-        |> make'
-
-    let make (rs : row list) : rows =
-        rs
-        |> Sset.setify Row.comparer
-        |> make'
-
-    let map (map : row -> 'b) (CRows rs : rows) : 'b list =
-        rs
-        |> List.map map
-
-    let mapi (map : int -> row -> 'b) (CRows rs : rows) : 'b list =
-        rs
-        |> List.mapi map
-
-    let to_list (CRows rs : rows) : row list =
-        rs
-
-    let to_string (CRows rs : rows) : string =
-        rs
-        |> List.map Row.to_string
-        |> String.concat ","
-
-    let union (CRows rs : rows) (CRows rs' : rows) : rows =
-        Sset.union Row.comparer rs rs'
-        |> make'
+    let toString (r : rows) : string =
+        "R" + (OSet.toString r)
 
 (* Each cell is identified by (col, row) *)
 type cell = 

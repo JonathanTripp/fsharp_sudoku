@@ -62,19 +62,19 @@ let ``Can make column sets``() =
 let ``Can make row sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let (picked, expected) = pick_some (Rows.to_list p.rows) in
+    let (picked, expected) = pick_some (OSet.toList p.rows) in
 
     let picked' =
         picked
-        |> Rows.make
+        |> OSet.ofList
         in
 
     let expected' =
         expected
-        |> Rows.make
+        |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, picked', "{0}!={1}", Rows.to_string expected', Rows.to_string picked')
+    Assert.AreEqual(expected, picked', "{0}!={1}", Rows.toString expected', Rows.toString picked')
 
 [<Test>]
 let ``Can make cell sets``() =
@@ -133,10 +133,10 @@ let ``Can make rows``() =
     let expected =
         [1..9]
         |> List.map RRow
-        |> Rows.make
+        |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Rows.to_string expected, Rows.to_string actual)
+    Assert.AreEqual(expected, actual, "{0}!={1}", Rows.toString expected, Rows.toString actual)
 
 [<Test>]
 let ``Can make cells``() = 
@@ -312,7 +312,7 @@ let ``Get band for a row``() =
 
     let actual =
         p.rows
-        |> Rows.map (fun row -> Smap.get Row.comparer row p.rowBand)
+        |> OSet.map (fun row -> Smap.get Row.comparer row p.rowBand)
         in
 
     let expected =
@@ -324,7 +324,7 @@ let ``Get band for a row``() =
         |> List.concat
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Bands.to_string expected, Bands.to_string actual)
+    Assert.AreEqual(expected, actual, "{0}!={1}", Bands.to_string expected, Bands.to_string (actual |> OSet.toList))
 
 [<Test>]
 let ``Get band rows``() = 
@@ -332,16 +332,16 @@ let ``Get band rows``() =
 
     let actual =
         Smap.get Band.comparer (2 |> BBand) p.bandRows
-        |> Rows.make
+        |> OSet.ofList
         in
 
     let expected =
         [4..6]
         |> List.map RRow
-        |> Rows.make
+        |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Rows.to_string expected, Rows.to_string actual)
+    Assert.AreEqual(expected, actual, "{0}!={1}", Rows.toString expected, Rows.toString actual)
 
 [<Test>]
 let ``Get box for a cell``() =
