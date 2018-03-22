@@ -100,28 +100,28 @@ let boxCells (boxWidth : boxWidth) (boxHeight : boxHeight) (box : box) : cell li
 
 let houseCells (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight) (house : house) : cells =
     match house with
-    | HColumn c -> columnCells length c |> Cells.make
-    | HRow r -> rowCells length r |> Cells.make
-    | HBox b -> boxCells boxWidth boxHeight b |> Cells.make
+    | HColumn c -> columnCells length c |> OSet.ofList
+    | HRow r -> rowCells length r |> OSet.ofList
+    | HBox b -> boxCells boxWidth boxHeight b |> OSet.ofList
 
 let cellHouseCells (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight) (cell : cell) : cells =
     let rowCells' =
         rowCells length cell.row
-        |> Cells.make
-        |> Cells.remove cell in
+        |> OSet.ofList
+        |> OSet.remove cell in
 
     let columnCells' =
         columnCells length cell.col
-        |> Cells.make
-        |> Cells.remove cell in
+        |> OSet.ofList
+        |> OSet.remove cell in
 
     let boxCells' =
         boxCells boxWidth boxHeight (cellBox boxWidth boxHeight cell)
-        |> Cells.make
-        |> Cells.remove cell in
+        |> OSet.ofList
+        |> OSet.remove cell in
 
-    [ Cells.singleton cell; rowCells'; columnCells'; boxCells' ]
-    |> Cells.union_many
+    [ OSet.singleton cell; rowCells'; columnCells'; boxCells' ]
+    |> OSet.unionMany
 
 type puzzleMap =
     {
@@ -166,14 +166,14 @@ let tPuzzleMap (puzzleShape : puzzleShape) : puzzleMap =
     let _bands = bands puzzleShape.size puzzleShape.boxHeight in
     let _boxes = boxes puzzleShape.size puzzleShape.boxWidth puzzleShape.boxHeight in
     let _houses = houses puzzleShape.size puzzleShape.boxWidth puzzleShape.boxHeight in
-    let _columnCells = fun column -> columnCells puzzleShape.size column |> Cells.make in
-    let _rowCells = fun row -> rowCells puzzleShape.size row |> Cells.make in
+    let _columnCells = fun column -> columnCells puzzleShape.size column |> OSet.ofList in
+    let _rowCells = fun row -> rowCells puzzleShape.size row |> OSet.ofList in
     let _columnStack = columnStack puzzleShape.boxWidth in
     let _stackColumns = stackColumns puzzleShape.boxWidth in
     let _rowBand = rowBand puzzleShape.boxHeight in
     let _bandRows = bandRows puzzleShape.boxHeight in
     let _cellBox = cellBox puzzleShape.boxWidth puzzleShape.boxHeight in
-    let _boxCells = fun box -> boxCells puzzleShape.boxWidth puzzleShape.boxHeight box |> Cells.make in
+    let _boxCells = fun box -> boxCells puzzleShape.boxWidth puzzleShape.boxHeight box |> OSet.ofList in
     let _houseCells = houseCells puzzleShape.size puzzleShape.boxWidth puzzleShape.boxHeight in
     let _cellHouseCells = cellHouseCells puzzleShape.size puzzleShape.boxWidth puzzleShape.boxHeight in
 
@@ -191,16 +191,17 @@ let tPuzzleMap (puzzleShape : puzzleShape) : puzzleMap =
     let _housesCells (houses : houses) : cells =
         houses
         |> Houses.map (fun house -> Smap.get House.comparer house _houseCellsLookup)
-        |> Cells.union_many in
+        |> OSet.unionMany in
 
     let _houseCellCandidateReductions (house : house) (cellCandidates : cellCandidates) : candidateReduction list =
         Smap.get House.comparer house _houseCellsLookup
-        |> Cells.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates)) in
+        |> OSet.toList
+        |> List.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates)) in
 
     {
         columns = _columns |> OSet.ofList;
         rows = _rows |> OSet.ofList ;
-        cells = _cells |> Cells.make;
+        cells = _cells |> OSet.ofList;
         stacks = _stacks;
         bands = _bands;
         boxes = _boxes;

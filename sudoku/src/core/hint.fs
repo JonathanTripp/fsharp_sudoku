@@ -1,15 +1,16 @@
 module core.Hint
 
 open Sudoku
+open oset
 
 exception CellStateInvalid
 
 type description = 
     { primaryHouses : houses;
       secondaryHouses : houses;
-      candidateReductions : candidateReduction list;
+      candidateReductions : OSet<candidateReduction>;
       setCellValueAction : value option;
-      pointers : candidateReduction list;
+      pointers : OSet<candidateReduction>;
       focus : digits }
 
 module Description =
@@ -17,13 +18,14 @@ module Description =
 
         let line1 = Printf.sprintf "Primary Houses %s\r\n" (Houses.to_string h.primaryHouses) in
         let line2 = Printf.sprintf "Secondary Houses %s\r\n" (Houses.to_string h.secondaryHouses) in
-        let line3 = Printf.sprintf "Pointers %s\r\n" (CandidateReductions.to_string h.pointers) in
+        let line3 = Printf.sprintf "Pointers %s\r\n" (CandidateReductions.to_string (h.pointers |> OSet.toList)) in
 
         let crlines =
             h.candidateReductions
-            |> List.map
+            |> OSet.map
                 (fun candidateReduction ->
                     Printf.sprintf "  %s\r\n" (CandidateReduction.to_string candidateReduction))
+            |> OSet.toList
             in
 
         [ line1; line2; line3; String.concat "," crlines]
@@ -60,7 +62,7 @@ let mhas (solution : solution) (p : Puzzlemap.puzzleMap) (hd : description) : de
                 let r3 = 
                     let cells = Smap.get Cell.comparer setCellValueAction.cell p.cellHouseCells in
 
-                    if Cells.contains cell cells then Some setCellValueAction.digit
+                    if OSet.contains cell cells then Some setCellValueAction.digit
                     else None
                     in
 
@@ -70,22 +72,22 @@ let mhas (solution : solution) (p : Puzzlemap.puzzleMap) (hd : description) : de
 
         let cellCandidateReductions =
             hd.candidateReductions
-            |> List.filter (fun pointer -> cell = pointer.cell) 
+            |> OSet.filter (fun pointer -> cell = pointer.cell) 
             in
 
         let reductions = 
-            match cellCandidateReductions with
+            match (cellCandidateReductions |> OSet.toList) with
             | cr :: _ -> cr.candidates
             | [] -> Digits.empty
             in
 
         let cellPointers =
             hd.pointers
-            |> List.filter (fun pointer -> cell = pointer.cell)
+            |> OSet.filter (fun pointer -> cell = pointer.cell)
             in
 
         let pointers = 
-            match cellPointers with
+            match (cellPointers |> OSet.toList) with
             | cr :: _ -> cr.candidates
             | [] -> Digits.empty
             in
@@ -101,8 +103,8 @@ let mhas (solution : solution) (p : Puzzlemap.puzzleMap) (hd : description) : de
         { given = Given.get cell solution.given;
           current = Current.get cell solution.current;
           setValue = setValue;
-          primaryHintHouse = Cells.contains cell primaryHouseCells;
-          secondaryHintHouse = Cells.contains cell secondaryHouseCells;
+          primaryHintHouse = OSet.contains cell primaryHouseCells;
+          secondaryHintHouse = OSet.contains cell secondaryHouseCells;
           setValueReduction = setValueReduction;
           reductions = reductions;
           pointers = pointers;

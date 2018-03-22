@@ -6,23 +6,23 @@ open oset
 let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) pointerCells primaryHouses secondaryHouses candidate : core.Hint.description option = 
     let pointers =
         pointerCells
-        |> Cells.map (fun cell -> CandidateReduction.make cell (Digits.singleton candidate))
+        |> OSet.map (fun cell -> CandidateReduction.make cell (Digits.singleton candidate))
         in
 
     let colCells =
         secondaryHouses
         |> Houses.map (fun house -> Smap.get House.comparer house p.houseCells)
-        |> Cells.union_many
+        |> OSet.unionMany
         in
 
     let candidatesReductions = 
-        Cells.difference colCells pointerCells
-        |> Cells.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
-        |> List.filter (fun cr -> Digits.contains candidate cr.candidates)
-        |> List.map (fun cr -> CandidateReduction.make cr.cell (Digits.singleton candidate))
+        OSet.difference colCells pointerCells
+        |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+        |> OSet.filter (fun cr -> Digits.contains candidate cr.candidates)
+        |> OSet.map (fun cr -> CandidateReduction.make cr.cell (Digits.singleton candidate))
         in
 
-    if List.length candidatesReductions > 0 then
+    if OSet.count candidatesReductions > 0 then
         let hint : core.Hint.description =
             { primaryHouses = primaryHouses;
               secondaryHouses = secondaryHouses;
@@ -39,29 +39,29 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
     let houseCandidateCells1 =
         p.houseCells
         |> Smap.get House.comparer house1
-        |> Cells.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+        |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
         in
 
     let houseCandidateCells2 =
         p.houseCells
         |> Smap.get House.comparer house2
-        |> Cells.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+        |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
         in
 
     let hht1 =
         houseCandidateCells1
-        |> List.filter (fun cr -> Digits.contains candidate cr.candidates)
+        |> OSet.filter (fun cr -> Digits.contains candidate cr.candidates)
         in
 
     let hht2 =
         houseCandidateCells2
-        |> List.filter (fun cr -> Digits.contains candidate cr.candidates)
+        |> OSet.filter (fun cr -> Digits.contains candidate cr.candidates)
         in
 
     match house1, house2 with
     | HRow row1, HRow row2 -> 
-        let cols1 = List.map (fun cr -> cr.cell.col) hht1 |> OSet.ofList in
-        let cols2 = List.map (fun cr -> cr.cell.col) hht2 |> OSet.ofList in
+        let cols1 = OSet.map (fun cr -> cr.cell.col) hht1 in
+        let cols2 = OSet.map (fun cr -> cr.cell.col) hht2 in
 
         let cols = OSet.union cols1 cols2 in
 
@@ -70,19 +70,19 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
                 cols
                 |> OSet.map (fun col -> Cell.make col row1)
                 |> OSet.toList
-                |> Cells.make
+                |> OSet.ofList
                 in
 
             let row2Cells = 
                 cols
                 |> OSet.map (fun col -> Cell.make col row2)
                 |> OSet.toList
-                |> Cells.make
+                |> OSet.ofList
                 in
 
             let pointerCells =
                 [ row1Cells; row2Cells ]
-                |> Cells.union_many
+                |> OSet.unionMany
                 in
 
             let primaryHouses = Houses.make [ house1; house2 ] in
@@ -99,8 +99,8 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
         else None
 
     | HColumn col1, HColumn col2 -> 
-        let rows1 = List.map (fun cr -> cr.cell.row) hht1 |> OSet.ofList in
-        let rows2 = List.map (fun cr -> cr.cell.row) hht2 |> OSet.ofList in
+        let rows1 = OSet.map (fun cr -> cr.cell.row) hht1 in
+        let rows2 = OSet.map (fun cr -> cr.cell.row) hht2 in
 
         let rows = OSet.union rows1 rows2 in
 
@@ -109,19 +109,19 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
                 rows
                 |> OSet.map (fun row -> Cell.make col1 row)
                 |> OSet.toList
-                |> Cells.make
+                |> OSet.ofList
                 in
 
             let col2Cells =
                 rows
                 |> OSet.map (fun row -> Cell.make col2 row)
                 |> OSet.toList
-                |> Cells.make
+                |> OSet.ofList
                 in
 
             let pointerCells =
                 [ col1Cells; col2Cells ]
-                |> Cells.union_many
+                |> OSet.unionMany
                 in
 
             let primaryHouses = Houses.make [ house1; house2 ] in
@@ -143,14 +143,16 @@ let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
     let houseCandidates1 =
         p.houseCells
         |> Smap.get House.comparer house1
-        |> Cells.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> OSet.toList
         |> Digits.union_many
         in
 
     let houseCandidates2 =
         p.houseCells
         |> Smap.get House.comparer house2
-        |> Cells.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> OSet.toList
         |> Digits.union_many
         in
 
@@ -219,17 +221,17 @@ let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
                 cols
                 |> OSet.map (fun col -> Cell.make col row1)
                 |> OSet.toList
-                |> Cells.make
+                |> OSet.ofList
                 in
 
             let row2Cells =
                 cols
                 |> OSet.map (fun col -> Cell.make col row2)
                 |> OSet.toList
-                |> Cells.make
+                |> OSet.ofList
                 in
 
-            let pointerCells = Cells.union row1Cells row2Cells in
+            let pointerCells = OSet.union row1Cells row2Cells in
 
             let primaryHouses = Houses.make [ house1; house2 ] in
             let secondaryHouses =
@@ -254,17 +256,17 @@ let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
                 rows
                 |> OSet.map (fun row -> Cell.make col1 row)
                 |> OSet.toList
-                |> Cells.make
+                |> OSet.ofList
                 in
 
             let col2Cells =
                 rows
                 |> OSet.map (fun row -> Cell.make col2 row)
                 |> OSet.toList
-                |> Cells.make
+                |> OSet.ofList
                 in
 
-            let pointerCells = Cells.union col1Cells col2Cells in
+            let pointerCells = OSet.union col1Cells col2Cells in
 
             let primaryHouses = Houses.make [ house1; house2 ] in
             let secondaryHouses =
@@ -338,7 +340,7 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
 
                             let candidateReductions = CandidateReduction.make other removee in
 
-                            let pointers = triple in
+                            let pointers = OSet.ofList triple in
 
                             let primaryHouses = 
                                 [ HRow row1;
@@ -351,7 +353,7 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
                             let desc : core.Hint.description =
                                 { primaryHouses = primaryHouses;
                                   secondaryHouses = Houses.empty;
-                                  candidateReductions = [candidateReductions];
+                                  candidateReductions = OSet.singleton candidateReductions;
                                   setCellValueAction = None;
                                   pointers = pointers;
                                   focus = Digits.empty } in

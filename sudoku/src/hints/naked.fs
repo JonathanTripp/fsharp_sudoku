@@ -1,6 +1,7 @@
 module hints.Naked
 
 open core.Sudoku
+open oset
 
 let nakedSingleCell (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (cell : cell) : core.Hint.description option =
     let candidates = CellCandidates.get cell cellCandidates in
@@ -12,22 +13,24 @@ let nakedSingleCell (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandida
 
         Some { primaryHouses = Houses.empty;
                 secondaryHouses = Houses.empty;
-                candidateReductions = [];
+                candidateReductions = OSet.empty;
                 setCellValueAction = Some setCellValue;
-                pointers = [];
+                pointers = OSet.empty;
                 focus = Digits.empty }
     else None
 
 let nakedSingle (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     p.cells
-    |> Cells.map (nakedSingleCell p cellCandidates)
-    |> Sset.choose Sset.id
+    |> OSet.map (nakedSingleCell p cellCandidates)
+    |> OSet.choose Sset.id
+    |> OSet.toList
 
 let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (cellSubset : cells) : core.Hint.description option = 
 
     let subsetDigits =
         cellSubset
-        |> Cells.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> OSet.toList
         |> Digits.union_many
         in
 
@@ -35,19 +38,19 @@ let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
         let candidateReductions =
             p.houseCells
             |> Smap.get House.comparer primaryHouse
-            |> Cells.filter (fun cell -> Cells.contains cell cellSubset = false) 
-            |> Cells.map (fun cell -> 
+            |> OSet.filter (fun cell -> OSet.contains cell cellSubset = false) 
+            |> OSet.map (fun cell -> 
                 let candidates = CellCandidates.get cell cellCandidates in
                 CandidateReduction.make cell (Digits.intersect subsetDigits candidates))
-            |> List.filter (fun cr -> Digits.count cr.candidates > 0)
+            |> OSet.filter (fun cr -> Digits.count cr.candidates > 0)
             in
 
         let pointers =
             cellSubset
-            |> Cells.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+            |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
             in
 
-        if List.length candidateReductions > 0 then 
+        if OSet.count candidateReductions > 0 then 
             Some { primaryHouses = Houses.singleton primaryHouse;
                    secondaryHouses = Houses.empty;
                    candidateReductions = candidateReductions;
@@ -63,13 +66,13 @@ let nakedNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates 
     let hht = 
         p.houseCells
         |> Smap.get House.comparer primaryHouse
-        |> Cells.filter (fun cell -> 
+        |> OSet.filter (fun cell -> 
             let candidates = CellCandidates.get cell cellCandidates in
             Digits.count candidates > 1 && Digits.count candidates <= count) 
         in
 
-    Sset.setSubsets (Cells.to_list hht) count
-    |> List.map (fun ss -> findNaked count p cellCandidates primaryHouse (Cells.make ss))
+    Sset.setSubsets (OSet.toList hht) count
+    |> List.map (fun ss -> findNaked count p cellCandidates primaryHouse (OSet.ofList ss))
     |> Sset.choose Sset.id
 
 let nakedN (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =

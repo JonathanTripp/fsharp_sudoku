@@ -1,8 +1,9 @@
 module core.LoadEliminate
 
 open Sudoku
+open oset
 
-let find  (p : Puzzlemap.puzzleMap) (current : current) : candidateReduction list = 
+let find  (p : Puzzlemap.puzzleMap) (current : current) : OSet<candidateReduction> = 
 
     let reductions (cell : cell) : digits option =
         let cellContents = Current.get cell current in
@@ -12,12 +13,13 @@ let find  (p : Puzzlemap.puzzleMap) (current : current) : candidateReduction lis
             let digits =
                 p.cellHouseCells
                 |> Smap.get Cell.comparer cell
-                |> Cells.choose
+                |> OSet.choose
                     (fun cell ->
                         let houseCellContents = Current.get cell current in
                         match houseCellContents with
                         | BigNumber digit -> Some digit
                         | PencilMarks _ -> None)
+                |> OSet.toList
                 |> Digits.make in
 
             if Digits.count digits > 0 then Some digits
@@ -25,17 +27,18 @@ let find  (p : Puzzlemap.puzzleMap) (current : current) : candidateReduction lis
         in
 
     p.cells
-    |> Cells.choose
+    |> OSet.choose
         (fun cell ->
             match reductions cell with
             | Some digits -> Some (CandidateReduction.make cell digits)
             | None -> None)
 
-let apply (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReduction list) (current : current) : current = 
+let apply (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReduction>) (current : current) : current = 
 
     let candidateReductionsLookup =
         candidateReductions
-        |> List.map (fun cr -> (cr.cell, cr.candidates))
+        |> OSet.map (fun cr -> (cr.cell, cr.candidates))
+        |> OSet.toList
         in
 
     let update (cell : cell) : cellContents =
@@ -54,15 +57,15 @@ let apply (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReduction li
     Cells.ofLookup update p.cells
     |> Current.make
 
-let description (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReduction list) : Hint.description =
+let description (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReduction>) : Hint.description =
     { primaryHouses = Houses.empty;
       secondaryHouses = Houses.empty;
       candidateReductions = candidateReductions;
       setCellValueAction = None;
-      pointers = [];
+      pointers = OSet.empty;
       focus = Digits.empty }
 
-let step (p : Puzzlemap.puzzleMap) (solution : solution) (candidateReductions : candidateReduction list) : solution =
+let step (p : Puzzlemap.puzzleMap) (solution : solution) (candidateReductions : OSet<candidateReduction>) : solution =
     { solution with current = apply p candidateReductions solution.current;
                     steps = LoadEliminate :: solution.steps }
 

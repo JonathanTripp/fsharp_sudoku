@@ -1,13 +1,14 @@
 module core.Hint
 
 open Sudoku
+open oset
 
 type description = 
     { primaryHouses : houses;
       secondaryHouses : houses;
-      candidateReductions : candidateReduction list;
+      candidateReductions : OSet<candidateReduction>;
       setCellValueAction : value option;
-      pointers : candidateReduction list;
+      pointers : OSet<candidateReduction>;
       focus : digits }
 
 module Description =

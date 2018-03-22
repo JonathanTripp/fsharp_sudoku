@@ -26,24 +26,10 @@ module Cell =
   val comparer : cell -> cell -> int
   val make : column -> row -> cell
   val to_string : cell -> string
-type cells = | CCells of cell list
+type cells = OSet<cell>
 module Cells =
-  val choose : (cell -> 'b option) -> cells -> 'b list
-  val contains : cell -> cells -> bool
-  val count : cells -> int
-  val difference : cells -> cells -> cells
-  val exists : (cell -> bool) -> cells -> bool
-  val filter : (cell -> bool) -> cells -> cells
-  val find : (cell -> bool) -> cells -> cell
   val ofLookup : (cell -> 'b) -> cells -> (cell * 'b) list
-  val make : cell list -> cells
-  val map : (cell -> 'b) -> cells -> 'b list
-  val remove : cell -> cells -> cells
-  val singleton : cell -> cells
-  val to_list : cells -> cell list
-  val to_string : cells -> string
-  val union : cells -> cells -> cells
-  val union_many : cells list -> cells
+  val toString : cells -> string
 type stack = | SStack of int
 module Stack =
   val comparer : stack -> stack -> int

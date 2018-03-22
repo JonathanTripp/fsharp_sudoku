@@ -17,6 +17,9 @@ module OSet =
     let toList (o : OSet<'T>) : List<'T> =
         o |> toSet |> Set.toList
 
+    let choose (chooser : 'T -> 'U option) (o : OSet<'T>) : OSet<'U> =
+        o |> toList |> List.choose chooser |> ofList
+
     let contains (element : 'T) (o : OSet<'T>) : bool =
         o |> toSet |> Set.contains element
 
@@ -28,10 +31,19 @@ module OSet =
 
     let empty : OSet<'T> = SSet (Set.empty)
 
+    let exists (predicate : 'T -> bool) (o : OSet<'T>) : bool =
+        o |> toSet |> Set.exists predicate 
+
     let filter (predicate : 'T -> bool) (o : OSet<'T>) : OSet<'T> =
         o |> toSet |> Set.filter predicate |> ofSet
 
-    let first (o : OSet<'T>) : 'T = 
+    let find (predicate : 'T -> bool) (o : OSet<'T>) : 'T =
+        o |> toList |> List.find predicate
+
+    let forall (predicate : 'T -> bool) (o : OSet<'T>) : bool =
+        o |> toSet |> Set.forall predicate 
+
+    let head (o : OSet<'T>) : 'T =
         o |> toList |> List.head
 
     let intersect (o : OSet<'T>) (o' : OSet<'T>) : OSet<'T> =

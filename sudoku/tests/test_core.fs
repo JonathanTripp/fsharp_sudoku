@@ -80,19 +80,19 @@ let ``Can make row sets``() =
 let ``Can make cell sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let (picked, expected) = pick_more (Cells.to_list p.cells) in
+    let (picked, expected) = pick_more (OSet.toList p.cells) in
 
     let picked' =
         picked
-        |> Cells.make
+        |> OSet.ofList
         in
 
     let expected' =
         expected
-        |> Cells.make
+        |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, picked', "{0}!={1}", Cells.to_string expected', Cells.to_string picked')
+    Assert.AreEqual(expected, picked', "{0}!={1}", Cells.toString expected', Cells.toString picked')
 
 [<Test>]
 let ``Can make digit sets``() =
@@ -151,10 +151,10 @@ let ``Can make cells``() =
                 |> List.map
                     (fun c -> Cell.make (c |> CColumn) (r |> RRow)))
         |> List.concat
-        |> Cells.make
+        |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Cells.to_string expected, Cells.to_string actual)
+    Assert.AreEqual(expected, actual, "{0}!={1}", Cells.toString expected, Cells.toString actual)
 
 [<Test>]
 let ``Can make stacks``() = 
@@ -246,10 +246,10 @@ let ``Get column cells``() =
         [1..9]
         |> List.map
             (fun r -> Cell.make column (r |> RRow))
-        |> Cells.make
+        |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Cells.to_string expected, Cells.to_string actual)
+    Assert.AreEqual(expected, actual, "{0}!={1}", Cells.toString expected, Cells.toString actual)
 
 [<Test>]
 let ``Get row cells``() = 
@@ -264,10 +264,10 @@ let ``Get row cells``() =
         [1..9]
         |> List.map
             (fun c -> Cell.make (c |> CColumn) (7 |> RRow))
-        |> Cells.make
+        |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Cells.to_string expected, Cells.to_string actual)
+    Assert.AreEqual(expected, actual, "{0}!={1}", Cells.toString expected, Cells.toString actual)
 
 [<Test>]
 let ``Get stack for a column``() =

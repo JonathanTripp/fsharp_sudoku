@@ -1,6 +1,7 @@
 module core.Force
 
 open Sudoku
+open oset
 
 let isPencilMarksCellContents (cellContents : cellContents) : bool =
     match cellContents with
@@ -14,8 +15,8 @@ let isValidCellContents (cellContents : cellContents) : bool =
 
 let isValid (solution : solution) (cells : cells) : bool =
     cells
-    |> Cells.map (fun cell -> Current.get cell solution.current)
-    |> List.forall isValidCellContents
+    |> OSet.map (fun cell -> Current.get cell solution.current)
+    |> OSet.forall isValidCellContents
 
 let rec searchr (p : Puzzlemap.puzzleMap) (solution : solution) (existing : solution list) : solution list =
     let emptyCell : cell option =
@@ -24,8 +25,8 @@ let rec searchr (p : Puzzlemap.puzzleMap) (solution : solution) (existing : solu
             |> isPencilMarksCellContents
             in
 
-        if Cells.exists is_cell_empty p.cells then
-            Some (Cells.find is_cell_empty p.cells)
+        if OSet.exists is_cell_empty p.cells then
+            Some (OSet.find is_cell_empty p.cells)
         else None
         in
 

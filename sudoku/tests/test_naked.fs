@@ -3,6 +3,7 @@ module tests.Test_naked
 open core.Sudoku
 
 open NUnit.Framework
+open oset
 
 [<Test>]
 let ``Can find naked singles``() =
@@ -22,15 +23,15 @@ let ``Can find naked singles``() =
     let expectedHints : core.Hint.description list =
         [   { primaryHouses = Houses.empty;
               secondaryHouses = Houses.empty;
-              candidateReductions = [];
+              candidateReductions = OSet.empty;
               setCellValueAction = Some (Value.make (Cell.make (Column.make 8) (Row.make 1)) (Digits.nth PuzzleShape.default'.alphabet 8));
-              pointers = [];
+              pointers = OSet.empty;
               focus = Digits.empty };
             { primaryHouses = Houses.empty;
               secondaryHouses = Houses.empty;
-              candidateReductions = [];
+              candidateReductions = OSet.empty;
               setCellValueAction = Some (Value.make (Cell.make (Column.make 8) (Row.make 9)) (Digits.nth PuzzleShape.default'.alphabet 5));
-              pointers = [];
+              pointers = OSet.empty;
               focus = Digits.empty } ]
         in
 

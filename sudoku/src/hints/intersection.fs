@@ -10,26 +10,27 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
     let primaryHouseCandidates = 
         p.houseCells
         |> Smap.get House.comparer primaryHouse
-        |> Cells.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> OSet.toList
         |> Digits.union_many
         in
 
-    let uniqueSecondaryForCandidate (candidate : digit) : core.Hint.description list = 
+    let uniqueSecondaryForCandidate (candidate : digit) : OSet<core.Hint.description> = 
         let pointerCells = 
             p.houseCells
             |> Smap.get House.comparer primaryHouse
-            |> Cells.filter (fun cell -> 
+            |> OSet.filter (fun cell -> 
                 let candidates = CellCandidates.get cell cellCandidates in
                 Digits.contains candidate candidates) 
             in
 
         let pointers  = 
             pointerCells
-            |> Cells.map (fun cell -> CandidateReduction.make cell (Digits.singleton candidate))
+            |> OSet.map (fun cell -> CandidateReduction.make cell (Digits.singleton candidate))
             in
 
         let hintsPerSecondaryHouse (secondaryHouses : house list) : core.Hint.description option = 
-            if Cells.count pointerCells > 1 && List.length secondaryHouses = 1 then 
+            if OSet.count pointerCells > 1 && List.length secondaryHouses = 1 then 
                 let primaryHouseCells =
                     p.houseCells
                     |> Smap.get House.comparer primaryHouse
@@ -38,17 +39,17 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
                 let secondaryHouse = List.nth secondaryHouses 0 in
                 let secondaryHouseCells = Smap.get House.comparer secondaryHouse p.houseCells in
 
-                let otherHouseCells = Cells.difference secondaryHouseCells primaryHouseCells in
+                let otherHouseCells = OSet.difference secondaryHouseCells primaryHouseCells in
                 
                 let candidateReductions = 
                     otherHouseCells
-                    |> Cells.filter (fun cell -> 
+                    |> OSet.filter (fun cell -> 
                         let candidates = CellCandidates.get cell cellCandidates in
                         Digits.contains candidate candidates)
-                    |> Cells.map (fun cell -> CandidateReduction.make cell (Digits.singleton candidate))
+                    |> OSet.map (fun cell -> CandidateReduction.make cell (Digits.singleton candidate))
                     in
 
-                if List.length candidateReductions > 0 then 
+                if OSet.count candidateReductions > 0 then 
                     Some { primaryHouses = Houses.singleton primaryHouse;
                            secondaryHouses = Houses.singleton secondaryHouse;
                            candidateReductions = candidateReductions;
@@ -60,13 +61,14 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
             in
 
         pointerCells
-        |> Cells.choose (fun cell -> 
+        |> OSet.choose (fun cell -> 
                             Smap.get Cell.comparer cell secondaryHouseLookups
                             |> hintsPerSecondaryHouse)
         in
 
     primaryHouseCandidates
     |> Digits.map uniqueSecondaryForCandidate
+    |> List.map (OSet.toList)
     |> List.concat
 
 let pointingPairsPerBox (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : core.Hint.description list =

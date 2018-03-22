@@ -1,6 +1,7 @@
 module console.Command
 
 open core.Sudoku
+open oset
 
 type parse_column_or_row_results =
     | CROk of int
@@ -43,7 +44,7 @@ let parseCell (gridSize : int) (cells : cells) (termColumn : string) (termRow : 
     | (CROk col, CROk row) ->
         let cell =
             cells
-            |> Cells.find (fun cell -> cell.col = (Column.make col) && cell.row = (Row.make row))
+            |> OSet.find (fun cell -> cell.col = (Column.make col) && cell.row = (Row.make row))
             in
         COk cell
     | (CRError _, CROk row) -> CColError (parsedCol, row)
@@ -89,9 +90,9 @@ let focusCommandParse (s: puzzleShape) (item : string) : focus_command_result =
 let focusCommandHintDescription (p : core.Puzzlemap.puzzleMap) (digit : digit) : core.Hint.description =
     { primaryHouses = Houses.empty;
       secondaryHouses = Houses.empty;
-      candidateReductions = [];
+      candidateReductions = OSet.empty;
       setCellValueAction = None;
-      pointers = [];
+      pointers = OSet.empty;
       focus = Digits.singleton digit }
 
 type set_cell_command_parse_result =

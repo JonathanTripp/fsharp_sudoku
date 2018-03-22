@@ -1,6 +1,7 @@
 module console.Format
 
 open core.Sudoku
+open oset
 
 type basic_color =
     | DefaultColour
@@ -60,7 +61,8 @@ let konst x _ = x
 
 let printLine (cells : cells) (digitTo : cell -> consoleString) : consoleString = 
     cells
-    |> Cells.map digitTo
+    |> OSet.map digitTo
+    |> OSet.toList
     |> List.concat
 
 (* Combine fences with posts (there's one more fence than posts: f p f p ... p f) *)

@@ -3,6 +3,7 @@ module test.Test_full_house
 open core.Sudoku
 
 open NUnit.Framework
+open oset
 
 [<Test>]
 let ``Can find full house``() =
@@ -22,9 +23,9 @@ let ``Can find full house``() =
     let expectedHints : core.Hint.description list =
         [   { primaryHouses = Houses.singleton (HBox (Box.make (Stack.make 2) (Band.make 3)));
               secondaryHouses = Houses.empty;
-              candidateReductions = [];
+              candidateReductions = OSet.empty;
               setCellValueAction = Some (Value.make (Cell.make (Column.make 6) (Row.make 9)) (Digits.nth PuzzleShape.default'.alphabet 5));
-              pointers = [];
+              pointers = OSet.empty;
               focus = Digits.empty } ]
         in
 

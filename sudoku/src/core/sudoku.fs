@@ -69,80 +69,14 @@ module Cell =
     let to_string ({col = CColumn c; row = RRow r} : cell) : string =
         Printf.sprintf "r%dc%d" r c
 
-type cells =
-    | CCells of cell list
+type cells = OSet<cell>
 
 module Cells =
-    let make' (l : cell list) : cells =
-        CCells l
+    let ofLookup (fn : cell -> 'b) (cs : cells) : (cell * 'b) list =
+        List.map (fun c -> (c, fn c)) (cs |> OSet.toList)
 
-    let choose (map : cell -> 'b option) (CCells cs : cells) : 'b list =
-        cs
-        |> Sset.choose map
-
-    let contains (c : cell) (CCells cs : cells) : bool =
-        cs
-        |> Sset.contains Cell.comparer c
-
-    let count (CCells cs : cells) : int =
-        cs
-        |> List.length
-
-    let difference (CCells cs : cells) (CCells cs' : cells) : cells =
-        Sset.subtract Cell.comparer cs cs'
-        |> make'
-
-    let exists (predicate : cell -> bool) (CCells cs : cells) : bool =
-        cs
-        |> List.exists predicate
-
-    let filter (predicate : cell -> bool) (CCells cs : cells) : cells =
-        cs
-        |> List.filter predicate
-        |> make'
-
-    let find (predicate : cell -> bool) (CCells cs : cells) : cell =
-        cs
-        |> List.find predicate
-
-    let ofLookup (fn : cell -> 'b) (CCells cs : cells) : (cell * 'b) list =
-        List.map (fun c -> (c, fn c)) cs
-
-    let map (map : cell -> 'b) (CCells cs : cells) : 'b list =
-        cs
-        |> List.map map
-
-    let make (cs : cell list) : cells =
-        cs
-        |> Sset.setify Cell.comparer
-        |> make'
-
-    let remove (c : cell) (CCells cs : cells) : cells =
-        cs
-        |> Sset.remove Cell.comparer c
-        |> make'
-
-    let singleton (c : cell) : cells =
-        [ c ]
-        |> make'
-
-    let to_list (CCells cs : cells) : cell list =
-        cs
-
-    let to_string (CCells cs : cells) : string =
-        cs
-        |> List.map Cell.to_string
-        |> String.concat ","
-
-    let union (CCells cs : cells) (CCells cs' : cells) : cells =
-        Sset.union Cell.comparer cs cs'
-        |> make'
-
-    let union_many (cs : cells list) : cells =
-        cs
-        |> List.map to_list
-        |> Sset.unions Cell.comparer
-        |> make'
+    let toString (cs : cells) : string =
+        "CS" + (OSet.toString cs)
 
 (* The grid is divided into boxes,
  these do not have to be square, but they are
@@ -547,7 +481,8 @@ module Solution =
             in
 
         cells
-        |> Cells.map (fun a -> (a, makeCellContents a))
+        |> OSet.map (fun a -> (a, makeCellContents a))
+        |> OSet.toList
         |> Current.make
 
     let currentCellCandidates (cells : cells) (current : current) : cellCandidates =
@@ -559,5 +494,6 @@ module Solution =
             in
 
         cells
-        |> Cells.map (fun a -> (a, getCandidateEntries a))
+        |> OSet.map (fun a -> (a, getCandidateEntries a))
+        |> OSet.toList
         |> CellCandidates.make

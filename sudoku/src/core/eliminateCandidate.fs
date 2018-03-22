@@ -1,6 +1,7 @@
 module core.EliminateCandidate
 
 open Sudoku
+open oset
 
 let apply (p : Puzzlemap.puzzleMap) (candidate : candidate) (current : current) : current = 
 
@@ -20,9 +21,9 @@ let description (p: Puzzlemap.puzzleMap) (candidate : candidate) : Hint.descript
 
     { primaryHouses = Houses.empty;
       secondaryHouses = Houses.empty;
-      candidateReductions = [cr];
+      candidateReductions = OSet.singleton cr;
       setCellValueAction = None;
-      pointers = [];
+      pointers = OSet.empty;
       focus = Digits.empty }
 
 let step (p : Puzzlemap.puzzleMap) (candidate : candidate) (solution : solution) : solution =

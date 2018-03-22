@@ -1,22 +1,23 @@
 module hints.Hidden
 
 open core.Sudoku
+open oset
 
 let findHidden (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (candidateSubset : digits) (primaryHouse : house) : core.Hint.description option = 
 
     let pointers = 
         p.houseCells
         |> Smap.get House.comparer primaryHouse 
-        |> Cells.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
-        |> List.map (fun cr -> CandidateReduction.make cr.cell (Digits.intersect cr.candidates candidateSubset))
-        |> List.filter (fun cr -> Digits.count cr.candidates > 0) 
+        |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+        |> OSet.map (fun cr -> CandidateReduction.make cr.cell (Digits.intersect cr.candidates candidateSubset))
+        |> OSet.filter (fun cr -> Digits.count cr.candidates > 0) 
         in
 
     let candidateReductions = 
         p.houseCells
         |> Smap.get House.comparer primaryHouse
-        |> Cells.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
-        |> List.map
+        |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+        |> OSet.map
             (fun cr -> 
                 let pointerCandidates = Digits.intersect cr.candidates candidateSubset in
             
@@ -28,14 +29,14 @@ let findHidden (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : ce
                 let candidateReduction = CandidateReduction.make cr.cell crs in
             
                 candidateReduction)
-        |> List.filter (fun cr -> Digits.count cr.candidates > 0) 
+        |> OSet.filter (fun cr -> Digits.count cr.candidates > 0) 
         in
 
-    if List.length pointers = count && List.length candidateReductions > 0 then 
+    if OSet.count pointers = count && OSet.count candidateReductions > 0 then 
 
         let setCellValue = 
             if count = 1 then 
-                let h = List.head pointers in
+                let h = OSet.head pointers in
                 let cell = h.cell in
                 let candidate = Digits.first candidateSubset in
 
@@ -58,7 +59,8 @@ let hiddenNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates
     let houseCandidates =
         p.houseCells
         |> Smap.get House.comparer house
-        |> Cells.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> OSet.toList
         |> Digits.union_many
         in
 

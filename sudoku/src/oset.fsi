@@ -10,12 +10,16 @@ module OSet =
     val ofList : List<'T> -> OSet<'T>
     val toList : OSet<'T> -> List<'T>
 
+    val choose : ('T -> 'U option) -> OSet<'T> -> OSet<'U>
     val contains : 'T -> OSet<'T> -> bool
     val count : OSet<'T> -> int
     val difference : OSet<'T> -> OSet<'T> -> OSet<'T>
     val empty : OSet<'T>
+    val exists : ('T -> bool) -> OSet<'T> -> bool
     val filter : ('T -> bool) -> OSet<'T> -> OSet<'T>
-    val first : OSet<'T> -> 'T
+    val find : ('T -> bool) -> OSet<'T> -> 'T
+    val forall : ('T -> bool) -> OSet<'T> -> bool
+    val head : OSet<'T> -> 'T
     val intersect : OSet<'T> -> OSet<'T> -> OSet<'T>
     val isSubset : OSet<'T> -> OSet<'T> -> bool
     val map : ('T -> 'U) -> OSet<'T> -> OSet<'U>
