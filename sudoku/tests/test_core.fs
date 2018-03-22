@@ -3,6 +3,7 @@ module tests.Test_core
 open core.Sudoku
 
 open NUnit.Framework
+open oset
 
 let twoByFourPuzzleSpec =
     { size = 8;
@@ -43,19 +44,19 @@ let pick_more<'a> (as' : 'a list) : 'a list * 'a list =
 let ``Can make column sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let (picked, expected) = pick_some (Columns.to_list p.columns) in
+    let (picked, expected) = pick_some (OSet.toList p.columns) in
 
     let picked' =
         picked
-        |> Columns.make
+        |> OSet.ofList
         in
 
     let expected' =
         expected
-        |> Columns.make
+        |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, picked', "{0}!={1}", Columns.to_string expected', Columns.to_string picked')
+    Assert.AreEqual(expected, picked', "{0}!={1}", Columns.toString expected', Columns.toString picked')
 
 [<Test>]
 let ``Can make row sets``() =
@@ -119,10 +120,10 @@ let ``Can make columns``() =
     let expected =
         [1..9]
         |> List.map CColumn
-        |> Columns.make
+        |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Columns.to_string expected, Columns.to_string actual)
+    Assert.AreEqual(expected, actual, "{0}!={1}", Columns.toString expected, Columns.toString actual)
 
 [<Test>]
 let ``Can make rows``() = 
@@ -274,7 +275,7 @@ let ``Get stack for a column``() =
 
     let actual =
         p.columns
-        |> Columns.map (fun column -> Smap.get Column.comparer column p.columnStack)
+        |> OSet.map (fun column -> Smap.get Column.comparer column p.columnStack)
         in
 
     let expected =
@@ -286,7 +287,7 @@ let ``Get stack for a column``() =
         |> List.concat
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Stacks.to_string expected, Stacks.to_string actual)
+    Assert.AreEqual(expected, actual, "{0}!={1}", Stacks.to_string expected, Stacks.to_string (actual |> OSet.toList))
 
 [<Test>]
 let ``Get stack columns``() = 
@@ -294,16 +295,16 @@ let ``Get stack columns``() =
 
     let actual =
         Smap.get Stack.comparer (2 |> SStack) p.stackColumns
-        |> Columns.make
+        |> OSet.ofList
         in
 
     let expected =
         [4..6]
         |> List.map CColumn
-        |> Columns.make
+        |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Columns.to_string expected, Columns.to_string actual)
+    Assert.AreEqual(expected, actual, "{0}!={1}", Columns.toString expected, Columns.toString actual)
 
 [<Test>]
 let ``Get band for a row``() =

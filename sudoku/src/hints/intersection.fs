@@ -1,6 +1,7 @@
 module hints.Intersection
 
 open core.Sudoku
+open oset
 
 type cellHouses = (cell * house list) list
 
@@ -107,7 +108,8 @@ let boxLineReductions (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandi
 
     let colHints =
         p.columns
-        |> Columns.map House.make_column
+        |> OSet.map House.make_column
+        |> OSet.toList
         |> Houses.make
         |> Houses.map (boxLineReductionsPerHouse p cellCandidates)
         |> List.concat

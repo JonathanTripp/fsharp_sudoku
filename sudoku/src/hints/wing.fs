@@ -1,6 +1,7 @@
 module hints.Wing
 
 open core.Sudoku
+open oset
 
 let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) pointerCells primaryHouses secondaryHouses candidate : core.Hint.description option = 
     let pointers =
@@ -59,21 +60,23 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
 
     match house1, house2 with
     | HRow row1, HRow row2 -> 
-        let cols1 = List.map (fun cr -> cr.cell.col) hht1 |> Columns.make in
-        let cols2 = List.map (fun cr -> cr.cell.col) hht2 |> Columns.make in
+        let cols1 = List.map (fun cr -> cr.cell.col) hht1 |> OSet.ofList in
+        let cols2 = List.map (fun cr -> cr.cell.col) hht2 |> OSet.ofList in
 
-        let cols = Columns.union cols1 cols2 in
+        let cols = OSet.union cols1 cols2 in
 
-        if Columns.count cols1 = 2 && Columns.count cols2 = 2 && Columns.count cols = 2 then 
+        if OSet.count cols1 = 2 && OSet.count cols2 = 2 && OSet.count cols = 2 then 
             let row1Cells =
                 cols
-                |> Columns.map (fun col -> Cell.make col row1)
+                |> OSet.map (fun col -> Cell.make col row1)
+                |> OSet.toList
                 |> Cells.make
                 in
 
             let row2Cells = 
                 cols
-                |> Columns.map (fun col -> Cell.make col row2)
+                |> OSet.map (fun col -> Cell.make col row2)
+                |> OSet.toList
                 |> Cells.make
                 in
 
@@ -86,7 +89,8 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
 
             let secondaryHouses =
                 cols
-                |> Columns.map House.make_column
+                |> OSet.map House.make_column
+                |> OSet.toList
                 |> Houses.make
                 in
 
@@ -153,7 +157,7 @@ let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
 
 let xWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     let rows = Rows.map House.make_row p.rows |> Houses.make in
-    let cols = Columns.map House.make_column p.columns |> Houses.make in
+    let cols = OSet.map House.make_column p.columns |> OSet.toList|> Houses.make in
 
     let rowHints1 = 
         rows
@@ -202,21 +206,23 @@ let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
 
     match house1, house2 with
     | HRow row1, HRow row2 -> 
-        let cols1 = List.map (fun cr -> cr.cell.col) hht1 |> Columns.make in
-        let cols2 = List.map (fun cr -> cr.cell.col) hht2 |> Columns.make in
+        let cols1 = List.map (fun cr -> cr.cell.col) hht1 |> OSet.ofList in
+        let cols2 = List.map (fun cr -> cr.cell.col) hht2 |> OSet.ofList in
 
-        let cols = Columns.union cols1 cols2 in
+        let cols = OSet.union cols1 cols2 in
 
-        if Columns.count cols1 = 2 && Columns.count cols2 = 2 && Columns.count cols = 2 then 
+        if OSet.count cols1 = 2 && OSet.count cols2 = 2 && OSet.count cols = 2 then 
             let row1Cells =
                 cols
-                |> Columns.map (fun col -> Cell.make col row1)
+                |> OSet.map (fun col -> Cell.make col row1)
+                |> OSet.toList
                 |> Cells.make
                 in
 
             let row2Cells =
                 cols
-                |> Columns.map (fun col -> Cell.make col row2)
+                |> OSet.map (fun col -> Cell.make col row2)
+                |> OSet.toList
                 |> Cells.make
                 in
 
@@ -225,7 +231,8 @@ let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
             let primaryHouses = Houses.make [ house1; house2 ] in
             let secondaryHouses =
                 cols
-                |> Columns.map House.make_column
+                |> OSet.map House.make_column
+                |> OSet.toList
                 |> Houses.make
                 in
 
@@ -359,15 +366,17 @@ let yWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : co
                 |> Rows.mapi 
                     (fun j row2 -> 
                         p.columns
-                        |> Columns.mapi 
+                        |> OSet.mapi 
                             (fun k col1 -> 
-                                Columns.drop (k + 1) p.columns
-                                |> Columns.mapi
+                                OSet.skip (k + 1) p.columns
+                                |> OSet.mapi
                                     (fun l col2 -> yWingsPerHouse p cellCandidates row1 row2 col1 col2)))) 
         in
 
     hints
     |> List.concat
+    |> List.map (OSet.toList)
     |> List.concat
+    |> List.map (OSet.toList)
     |> List.concat
     |> List.concat

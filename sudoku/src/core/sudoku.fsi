@@ -1,21 +1,16 @@
 module core.Sudoku
 
+open oset
+
 type size = int
 type column = | CColumn of int
 module Column =
   val comparer : column -> column -> int
   val make : int -> column
   val to_string : column -> string
-type columns = | CColumns of column list
+type columns = OSet<column>
 module Columns =
-  val count : columns -> int
-  val drop : int -> columns -> columns
-  val make : column list -> columns
-  val map : (column -> 'b) -> columns -> 'b list
-  val mapi : (int -> column -> 'b) -> columns -> 'b list
-  val to_list : columns -> column list
-  val to_string : columns -> string
-  val union : columns -> columns -> columns
+  val toString : columns -> string
 
 type row = | RRow of int
 module Row =

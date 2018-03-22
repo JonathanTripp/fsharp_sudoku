@@ -1,6 +1,7 @@
 module core.Puzzlemap
 
 open Sudoku
+open oset
 
 let columns (length : size) : column list =
     Sset.range 1 length
@@ -197,7 +198,7 @@ let tPuzzleMap (puzzleShape : puzzleShape) : puzzleMap =
         |> Cells.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates)) in
 
     {
-        columns = _columns |> Columns.make;
+        columns = _columns |> OSet.ofList;
         rows = _rows |> Rows.make ;
         cells = _cells |> Cells.make;
         stacks = _stacks;
