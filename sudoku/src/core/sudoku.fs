@@ -1,5 +1,7 @@
 module core.Sudoku
 
+open oset
+
 (* A sudoku is a square grid of size... *)
 type size = int
 
@@ -19,46 +21,11 @@ module Column =
     let to_string (CColumn c : column) : string =
         Printf.sprintf "c%d" c
 
-type columns =
-    | CColumns of column list
+type columns = OSet<column>
 
 module Columns =
-    let make' (l : column list) : columns =
-        CColumns l
-
-    let count (CColumns cs : columns) : int =
-        cs
-        |> List.length
-
-    let drop (n : int) (CColumns cs : columns) : columns =
-        cs
-        |> Sset.drop n
-        |> make'
-
-    let make (cs : column list) : columns =
-        cs
-        |> Sset.setify Column.comparer
-        |> make'
-
-    let map (map : column -> 'b) (CColumns cs : columns) : 'b list =
-        cs
-        |> List.map map
-
-    let mapi (map : int -> column -> 'b) (CColumns cs : columns) : 'b list =
-        cs
-        |> List.mapi map
-
-    let to_list (CColumns cs : columns) : column list =
-        cs
-
-    let to_string (CColumns cs : columns) : string =
-        cs
-        |> List.map Column.to_string
-        |> String.concat ","
-
-    let union (CColumns cs : columns) (CColumns cs' : columns) : columns =
-        Sset.union Column.comparer cs cs'
-        |> make'
+    let toString (s : columns) : string =
+        "C" + (OSet.toString s)
 
 (* ... by rows *)
 type row = 
