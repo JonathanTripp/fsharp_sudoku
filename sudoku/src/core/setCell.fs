@@ -14,7 +14,7 @@ let apply (p : Puzzlemap.puzzleMap) (value : value) (current : current) : curren
 
             if value.cell = cell then BigNumber value.digit
             else if OSet.contains cell cells then 
-                PencilMarks (Digits.remove value.digit candidates)
+                PencilMarks (OSet.remove value.digit candidates)
             else cellContents
         in
 
@@ -29,7 +29,7 @@ type setCellDigitError =
 let try' (cell : cell) (candidate : digit) (cellCandidates : cellCandidates) : value option = 
     let candidates = CellCandidates.get cell cellCandidates in
 
-    if Digits.contains candidate candidates then
+    if OSet.contains candidate candidates then
         Some (Value.make cell candidate)
     else None
 
@@ -39,7 +39,7 @@ let description (p : Puzzlemap.puzzleMap) (setCellValue : value) : Hint.descript
       candidateReductions = OSet.empty;
       setCellValueAction = Some setCellValue;
       pointers = OSet.empty;
-      focus = Digits.empty }
+      focus = OSet.empty }
 
 let step (p : Puzzlemap.puzzleMap) (setCellValue : value) (solution : solution) : solution =
     { solution with current = apply p setCellValue solution.current;

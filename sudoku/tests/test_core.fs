@@ -12,7 +12,7 @@ let twoByFourPuzzleSpec =
       alphabet = 
             [1..8]
             |> List.map (fun i -> (char) i + '0' |> Digit)
-            |> Digits.make }
+            |> OSet.ofList }
 
 let pick_some (as' : 'a list) : 'a list * 'a list =
     let picked =
@@ -98,19 +98,19 @@ let ``Can make cell sets``() =
 let ``Can make digit sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let (picked, expected) = pick_some (Digits.to_list PuzzleShape.default'.alphabet) in
+    let (picked, expected) = pick_some (OSet.toList PuzzleShape.default'.alphabet) in
 
     let picked' =
         picked
-        |> Digits.make
+        |> OSet.ofList
         in
 
     let expected' =
         expected
-        |> Digits.make
+        |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, picked', "{0}!={1}", Digits.to_string expected', Digits.to_string picked')
+    Assert.AreEqual(expected, picked', "{0}!={1}", Digits2.toString expected', Digits2.toString picked')
 
 [<Test>]
 let ``Can make columns``() =

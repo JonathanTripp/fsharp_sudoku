@@ -150,7 +150,7 @@ let repl (sudoku : string) (puzzleShape : puzzleShape) : unit =
 
     let solution = ref (input.Load.load puzzleShape sudoku) in
 
-    let centreDigit : digit = Digits.nth puzzleShape.alphabet ((Digits.count puzzleShape.alphabet) / 2) in
+    let centreDigit : digit = OSet.item ((OSet.count puzzleShape.alphabet) / 2) puzzleShape.alphabet in
 
     (* Print a Digit option, with colours *)
     let puzzleDrawCell (solution : solution) (cell : cell) : consoleString = 

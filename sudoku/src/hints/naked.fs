@@ -6,8 +6,8 @@ open oset
 let nakedSingleCell (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (cell : cell) : core.Hint.description option =
     let candidates = CellCandidates.get cell cellCandidates in
 
-    if Digits.count candidates = 1 then 
-        let candidate = Digits.first candidates in
+    if OSet.count candidates = 1 then 
+        let candidate = OSet.head candidates in
 
         let setCellValue = Value.make cell candidate in
 
@@ -16,7 +16,7 @@ let nakedSingleCell (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandida
                 candidateReductions = OSet.empty;
                 setCellValueAction = Some setCellValue;
                 pointers = OSet.empty;
-                focus = Digits.empty }
+                focus = OSet.empty }
     else None
 
 let nakedSingle (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
@@ -29,19 +29,18 @@ let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
     let subsetDigits =
         cellSubset
         |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
-        |> OSet.toList
-        |> Digits.union_many
+        |> OSet.concat
         in
 
-    if Digits.count subsetDigits <= count then
+    if OSet.count subsetDigits <= count then
         let candidateReductions =
             p.houseCells
             |> Smap.get House.comparer primaryHouse
             |> OSet.filter (fun cell -> OSet.contains cell cellSubset = false) 
             |> OSet.map (fun cell -> 
                 let candidates = CellCandidates.get cell cellCandidates in
-                CandidateReduction.make cell (Digits.intersect subsetDigits candidates))
-            |> OSet.filter (fun cr -> Digits.count cr.candidates > 0)
+                CandidateReduction.make cell (OSet.intersect subsetDigits candidates))
+            |> OSet.filter (fun cr -> OSet.count cr.candidates > 0)
             in
 
         let pointers =
@@ -55,7 +54,7 @@ let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
                    candidateReductions = candidateReductions;
                    setCellValueAction = None;
                    pointers = pointers;
-                   focus = Digits.empty }
+                   focus = OSet.empty }
 
         else None
     else None
@@ -67,7 +66,7 @@ let nakedNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates 
         |> Smap.get House.comparer primaryHouse
         |> OSet.filter (fun cell -> 
             let candidates = CellCandidates.get cell cellCandidates in
-            Digits.count candidates > 1 && Digits.count candidates <= count) 
+            OSet.count candidates > 1 && OSet.count candidates <= count) 
         in
 
     Sset.setSubsets (OSet.toList hht) count

@@ -11,7 +11,7 @@ let isPencilMarksCellContents (cellContents : cellContents) : bool =
 let isValidCellContents (cellContents : cellContents) : bool =
     match cellContents with
     | BigNumber _ -> true
-    | PencilMarks candidates -> Digits.count candidates > 0
+    | PencilMarks candidates -> OSet.count candidates > 0
 
 let isValid (solution : solution) (cells : cells) : bool =
     cells
@@ -35,12 +35,12 @@ let rec searchr (p : Puzzlemap.puzzleMap) (solution : solution) (existing : solu
         let candidates =
             let cellContents = Current.get cell solution.current in
             match cellContents with
-            | BigNumber _ -> Digits.empty
+            | BigNumber _ -> OSet.empty
             | PencilMarks candidates -> candidates
             in
 
         candidates
-        |> Digits.map
+        |> OSet.map
             (fun digit ->
                 let setCellValue = Value.make cell digit in
                 
@@ -65,12 +65,13 @@ let rec searchr (p : Puzzlemap.puzzleMap) (solution : solution) (existing : solu
                                 let cellContents = newSolution.current cell
                                 match cellContents with
                                 | BigNumber _ -> false
-                                | PencilMarks candidates -> Digits.count candidates = 0)
+                                | PencilMarks candidates -> OSet.count candidates = 0)
                             cells
 
                     Console.WriteLine(String.Format("< {0}", cell))
                     *)
                     [])
+            |> OSet.toList
             |> List.concat
     | None -> solution :: existing
 

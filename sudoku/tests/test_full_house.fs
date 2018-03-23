@@ -24,9 +24,9 @@ let ``Can find full house``() =
         [   { primaryHouses = OSet.singleton (HBox (Box.make (Stack.make 2) (Band.make 3)));
               secondaryHouses = OSet.empty;
               candidateReductions = OSet.empty;
-              setCellValueAction = Some (Value.make (Cell.make (Column.make 6) (Row.make 9)) (Digits.nth PuzzleShape.default'.alphabet 5));
+              setCellValueAction = Some (Value.make (Cell.make (Column.make 6) (Row.make 9)) (OSet.item 5 PuzzleShape.default'.alphabet));
               pointers = OSet.empty;
-              focus = Digits.empty } ]
+              focus = OSet.empty } ]
         in
 
     let _ = Assert.AreEqual(1, OSet.count hints) in

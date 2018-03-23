@@ -19,10 +19,9 @@ let find  (p : Puzzlemap.puzzleMap) (current : current) : OSet<candidateReductio
                         match houseCellContents with
                         | BigNumber digit -> Some digit
                         | PencilMarks _ -> None)
-                |> OSet.toList
-                |> Digits.make in
+                in
 
-            if Digits.count digits > 0 then Some digits
+            if OSet.count digits > 0 then Some digits
             else None
         in
 
@@ -49,7 +48,7 @@ let apply (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReducti
             let digitsOpt = Smap.tryGet Cell.comparer cell candidateReductionsLookup in
             match digitsOpt with
             | Some digits ->
-                Digits.difference candidates digits
+                OSet.difference candidates digits
                 |> CellContents.make_pencil_marks
             | None -> cellContents
         in
@@ -63,7 +62,7 @@ let description (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateR
       candidateReductions = candidateReductions;
       setCellValueAction = None;
       pointers = OSet.empty;
-      focus = Digits.empty }
+      focus = OSet.empty }
 
 let step (p : Puzzlemap.puzzleMap) (solution : solution) (candidateReductions : OSet<candidateReduction>) : solution =
     { solution with current = apply p candidateReductions solution.current;

@@ -53,8 +53,8 @@ let parseCell (gridSize : int) (cells : cells) (termColumn : string) (termRow : 
 
 let charToCandidate (digits : digits) (trialDigit : char) : digit option = 
     let compareAlpha (Digit charDigit) = trialDigit = charDigit in
-    if List.exists compareAlpha (Digits.to_list digits) then
-        Some (List.find compareAlpha (Digits.to_list digits))
+    if OSet.exists compareAlpha digits then
+        Some (OSet.find compareAlpha digits)
     else None
 
 type parse_value_result =
@@ -73,7 +73,7 @@ let parseValue (digits : digits) (term : string) : parse_value_result =
     if String.length term = 1 then
         match charToCandidate digits (Sstring.get term 0) with
         | Some d -> VOk d
-        | None -> VErrorInvalid (term, (Digits.to_string digits))
+        | None -> VErrorInvalid (term, (Digits2.toString digits))
     else VErrorTooMany term
 
 type focus_command_result =
@@ -93,7 +93,7 @@ let focusCommandHintDescription (p : core.Puzzlemap.puzzleMap) (digit : digit) :
       candidateReductions = OSet.empty;
       setCellValueAction = None;
       pointers = OSet.empty;
-      focus = Digits.singleton digit }
+      focus = OSet.singleton digit }
 
 type set_cell_command_parse_result =
     | SCCOk of value
@@ -103,7 +103,7 @@ type set_cell_command_parse_result =
 let setCellCommandParse (s: puzzleShape) (item : string) (p : core.Puzzlemap.puzzleMap) : set_cell_command_parse_result = 
     let terms = Sset.split_char ' ' item in
     if List.length terms = 4 then 
-        let parsedCell = parseCell (Digits.count s.alphabet) p.cells (List.nth terms 1) (List.nth terms 2) in
+        let parsedCell = parseCell (OSet.count s.alphabet) p.cells (List.nth terms 1) (List.nth terms 2) in
         let parsedValue = parseValue s.alphabet (List.nth terms 3) in
 
         match (parsedCell, parsedValue) with
@@ -128,7 +128,7 @@ let setCellCommandCheck (given : given) (cellCandidates : cellCandidates) (value
     | Some givenDigit -> SCCRGiven (value, givenDigit)
     | None ->
         let digits = CellCandidates.get value.cell cellCandidates in
-        if Digits.contains value.digit digits then SSCROk value
+        if OSet.contains value.digit digits then SSCROk value
         else SCCRNotACandidate value
 
 type clear_candidate_command_parse_result =
@@ -139,7 +139,7 @@ type clear_candidate_command_parse_result =
 let candidateClearCommandParse (s: puzzleShape) (item : string) (p : core.Puzzlemap.puzzleMap) : clear_candidate_command_parse_result = 
     let terms = Sset.split_char ' ' item in
     if List.length terms = 4 then 
-        let parsedCell = parseCell (Digits.count s.alphabet) p.cells (List.nth terms 1) (List.nth terms 2) in
+        let parsedCell = parseCell (OSet.count s.alphabet) p.cells (List.nth terms 1) (List.nth terms 2) in
         let parsedDigit = parseValue s.alphabet (List.nth terms 3) in
 
         match (parsedCell, parsedDigit) with
@@ -164,7 +164,7 @@ let candidateClearCommandCheck (given : given) (cellCandidates : cellCandidates)
     | Some givenDigit -> CCCCRGiven (candidate, givenDigit)
     | None ->
         let digits = CellCandidates.get candidate.cell cellCandidates in
-        if Digits.contains candidate.digit digits then CCCCROk candidate
+        if OSet.contains candidate.digit digits then CCCCROk candidate
         else CCCCRNotACandidate candidate
 
 let supportedHints : (string * (core.Puzzlemap.puzzleMap -> cellCandidates -> OSet<core.Hint.description>)) list =

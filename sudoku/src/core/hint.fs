@@ -78,7 +78,7 @@ let mhas (solution : solution) (p : Puzzlemap.puzzleMap) (hd : description) : de
         let reductions = 
             match (cellCandidateReductions |> OSet.toList) with
             | cr :: _ -> cr.candidates
-            | [] -> Digits.empty
+            | [] -> OSet.empty
             in
 
         let cellPointers =
@@ -89,7 +89,7 @@ let mhas (solution : solution) (p : Puzzlemap.puzzleMap) (hd : description) : de
         let pointers = 
             match (cellPointers |> OSet.toList) with
             | cr :: _ -> cr.candidates
-            | [] -> Digits.empty
+            | [] -> OSet.empty
             in
 
         let primaryHouseCells =
@@ -124,9 +124,9 @@ let mhas2 (solution : solution) (p : Puzzlemap.puzzleMap) : description2 =
           primaryHintHouse = false;
           secondaryHintHouse = false;
           setValueReduction = None;
-          reductions = Digits.empty;
-          pointers = Digits.empty;
-          focus = Digits.empty }
+          reductions = OSet.empty;
+          pointers = OSet.empty;
+          focus = OSet.empty }
         in
 
     let annotations = Cells.ofLookup annotationLookup p.cells in

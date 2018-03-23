@@ -217,97 +217,14 @@ module Digit =
     let to_string (Digit s : digit) : string =
         Sstring.make 1 s
 
-type digits =
-    | CDigits of digit list
+type digits = OSet<digit>
 
-module Digits =
-    let make' (l : digit list) : digits =
-        CDigits l
-
-    let contains (d : digit) (CDigits ds : digits) : bool =
-        ds
-        |> Sset.contains Digit.comparer d
-
-    let count (CDigits ds : digits) : int =
-        ds
-        |> List.length
-
-    let difference (CDigits ds : digits) (CDigits ds' : digits) : digits =
-        Sset.subtract Digit.comparer ds ds'
-        |> make'
-
-    let drop (n : int) (CDigits ds : digits) : digits =
-        ds
-        |> Sset.drop n
-        |> make'
-
-    let empty : digits =
-        []
-        |> make'
-
-    let filter (predicate : digit -> bool) (CDigits ds : digits) : digits =
-        ds
-        |> List.filter predicate
-        |> make'
-
-    let first (CDigits ds : digits) : digit = 
-        match ds with
-        | d :: _ -> d
-        | [] -> failwith "Not empty"
-
-    let intersect (CDigits ds : digits) (CDigits ds' : digits) : digits =
-        Sset.intersect Digit.comparer ds ds'
-        |> make'
-
-    let is_subset (CDigits ds : digits) (CDigits ds' : digits) : bool =
-        Sset.subset Digit.comparer ds ds'
-
-    let nth (CDigits ds : digits) (i : int) : digit =
-        List.nth ds i
-
-    let make (ds : digit list) : digits =
-        ds
-        |> Sset.setify Digit.comparer
-        |> make'
-
-    let map (map : digit -> 'b) (CDigits ds : digits) : 'b list =
-        ds
-        |> List.map map
-
-    let remove (d : digit) (CDigits ds : digits) : digits = 
-        ds
-        |> Sset.remove Digit.comparer d
-        |> make'
-
-    let singleton (d : digit) : digits =
-        [ d ]
-        |> make'
-
-    let take (n : int) (CDigits ds : digits) : digits =
-        ds
-        |> Sset.take n
-        |> make'
-
-    let to_list (CDigits ds : digits) : digit list =
-        ds
-
-    let union (CDigits ds : digits) (CDigits ds' : digits) : digits =
-        Sset.union Digit.comparer ds ds'
-        |> make'
-
-    let union_many (ds : digits list) : digits =
-        ds
-        |> List.map to_list
-        |> Sset.unions Digit.comparer
-        |> make'
-
-    let to_string (CDigits ds : digits) : string =
-        ds
-        |> List.map Digit.to_string
-        |> String.concat ","
+module Digits2 =
+    let toString (ds : digits) : string =
+        "D" + (OSet.toString ds)
 
 (* A sudoku is defined by the overall grid size (it is always square)
- which is the same as the Digits in the alphabet
+ which is the same as the OSet in the alphabet
  and also by the width and height of the boxes *)
 type puzzleShape = 
     { size : size;
@@ -323,12 +240,12 @@ module PuzzleShape =
           alphabet =
             Sset.range 1 9
             |> List.map Digit.make
-            |> Digits.make
+            |> OSet.ofList
             }
 
 (* Whilst working to a solution each cell in the grid
  that doesn't have a Digit is filled with candidates
- Candidates are possible Digits *)
+ Candidates are possible OSet *)
 type cellContents = 
     | BigNumber of digit
     | PencilMarks of digits
@@ -377,7 +294,7 @@ module CandidateReduction =
           candidates = digits }
 
     let to_string ({ cell = cell; candidates = digits} : candidateReduction) : string =
-        Printf.sprintf "Cell %s, Candidates %s" (Cell.to_string cell) (Digits.to_string digits)
+        Printf.sprintf "Cell %s, Candidates %s" (Cell.to_string cell) (OSet.toString digits)
 
 module CandidateReductions =
     let to_string (s : candidateReduction list) : string =
@@ -453,7 +370,7 @@ module Solution =
         let getCandidateEntries (cell : cell) : digits =
             let cellContents = Current.get cell current in
             match cellContents with
-            | BigNumber _ -> Digits.empty
+            | BigNumber _ -> OSet.empty
             | PencilMarks s -> s
             in
 

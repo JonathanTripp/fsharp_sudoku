@@ -11,9 +11,9 @@ let load (puzzleShape : puzzleShape) (sudoku : string) : solution =
 
     let charToDigit (trialDigit : char) : digit option = 
         let compareAlpha (Digit charDigit) = trialDigit = charDigit in
-        let digits = Digits.to_list puzzleShape.alphabet in
-        if List.exists compareAlpha digits then
-            Some (List.find compareAlpha digits)
+        let digits = puzzleShape.alphabet in
+        if OSet.exists compareAlpha digits then
+            Some (OSet.find compareAlpha digits)
         else None
         in
 

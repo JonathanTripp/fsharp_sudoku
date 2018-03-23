@@ -11,8 +11,7 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
         p.houseCells
         |> Smap.get House.comparer primaryHouse
         |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
-        |> OSet.toList
-        |> Digits.union_many
+        |> OSet.concat
         in
 
     let uniqueSecondaryForCandidate (candidate : digit) : OSet<core.Hint.description> = 
@@ -21,12 +20,12 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
             |> Smap.get House.comparer primaryHouse
             |> OSet.filter (fun cell -> 
                 let candidates = CellCandidates.get cell cellCandidates in
-                Digits.contains candidate candidates) 
+                OSet.contains candidate candidates) 
             in
 
         let pointers  = 
             pointerCells
-            |> OSet.map (fun cell -> CandidateReduction.make cell (Digits.singleton candidate))
+            |> OSet.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
             in
 
         let hintsPerSecondaryHouse (secondaryHouses : house list) : core.Hint.description option = 
@@ -45,8 +44,8 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
                     otherHouseCells
                     |> OSet.filter (fun cell -> 
                         let candidates = CellCandidates.get cell cellCandidates in
-                        Digits.contains candidate candidates)
-                    |> OSet.map (fun cell -> CandidateReduction.make cell (Digits.singleton candidate))
+                        OSet.contains candidate candidates)
+                    |> OSet.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
                     in
 
                 if OSet.count candidateReductions > 0 then 
@@ -55,7 +54,7 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
                            candidateReductions = candidateReductions;
                            setCellValueAction = None;
                            pointers = pointers;
-                           focus = Digits.empty }
+                           focus = OSet.empty }
                 else None
             else None
             in
@@ -67,8 +66,8 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
         in
 
     primaryHouseCandidates
-    |> Digits.map uniqueSecondaryForCandidate
-    |> OSet.unionMany
+    |> OSet.map uniqueSecondaryForCandidate
+    |> OSet.concat
 
 let pointingPairsPerBox (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : OSet<core.Hint.description> =
     let cellLines (cell : cell) =

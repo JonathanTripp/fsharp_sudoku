@@ -149,14 +149,15 @@ let printCandidateGrid (p : core.Puzzlemap.puzzleMap) (candidateGridChars : cand
     
     let ss : digits list = 
         Sset.range 0 (List.length p.stacks - 1)
-        |> List.map (fun i -> Digits.drop (i * c) alphabet |> Digits.take c)
+        |> List.map (fun i -> OSet.skip (i * c) alphabet |> OSet.take c)
         in
 
     let doPrintColumn (digits : digits) : row -> column -> consoleString = 
         let doPrintCell : cell -> consoleString =
             fun cell ->
                 digits
-                |> Digits.map (fun digit -> draw_cell cell digit)
+                |> OSet.map (fun digit -> draw_cell cell digit)
+                |> OSet.toList
                 |> List.concat
                 in
         printColumn doPrintCell

@@ -6,7 +6,7 @@ open oset
 let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) pointerCells primaryHouses secondaryHouses candidate : core.Hint.description option = 
     let pointers =
         pointerCells
-        |> OSet.map (fun cell -> CandidateReduction.make cell (Digits.singleton candidate))
+        |> OSet.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
         in
 
     let colCells =
@@ -18,8 +18,8 @@ let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) p
     let candidatesReductions = 
         OSet.difference colCells pointerCells
         |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
-        |> OSet.filter (fun cr -> Digits.contains candidate cr.candidates)
-        |> OSet.map (fun cr -> CandidateReduction.make cr.cell (Digits.singleton candidate))
+        |> OSet.filter (fun cr -> OSet.contains candidate cr.candidates)
+        |> OSet.map (fun cr -> CandidateReduction.make cr.cell (OSet.singleton candidate))
         in
 
     if OSet.count candidatesReductions > 0 then
@@ -29,7 +29,7 @@ let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) p
               candidateReductions = candidatesReductions;
               setCellValueAction = None;
               pointers = pointers;
-              focus = Digits.empty }
+              focus = OSet.empty }
             in
         Some hint
     else None
@@ -50,12 +50,12 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
 
     let hht1 =
         houseCandidateCells1
-        |> OSet.filter (fun cr -> Digits.contains candidate cr.candidates)
+        |> OSet.filter (fun cr -> OSet.contains candidate cr.candidates)
         in
 
     let hht2 =
         houseCandidateCells2
-        |> OSet.filter (fun cr -> Digits.contains candidate cr.candidates)
+        |> OSet.filter (fun cr -> OSet.contains candidate cr.candidates)
         in
 
     match house1, house2 with
@@ -140,21 +140,18 @@ let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
         p.houseCells
         |> Smap.get House.comparer house1
         |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
-        |> OSet.toList
-        |> Digits.union_many
+        |> OSet.concat
         in
 
     let houseCandidates2 =
         p.houseCells
         |> Smap.get House.comparer house2
         |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
-        |> OSet.toList
-        |> Digits.union_many
+        |> OSet.concat
         in
 
-    Digits.intersect houseCandidates1 houseCandidates2
-    |> Digits.map (xWingsPerHouseCandidate p cellCandidates house1 house2)
-    |> OSet.ofList
+    OSet.intersect houseCandidates1 houseCandidates2
+    |> OSet.map (xWingsPerHouseCandidate p cellCandidates house1 house2)
     |> OSet.choose Sset.id
 
 let xWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
@@ -198,12 +195,12 @@ let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
     (house1 : house) (house2 : house) houseCandidateCells1 houseCandidateCells2 (candidate : digit) = 
     let hht1 =
         houseCandidateCells1
-        |> List.filter (fun cr -> Digits.contains candidate cr.candidates)
+        |> List.filter (fun cr -> OSet.contains candidate cr.candidates)
         in
 
     let hht2 =
         houseCandidateCells2
-        |> List.filter (fun cr -> Digits.contains candidate cr.candidates)
+        |> List.filter (fun cr -> OSet.contains candidate cr.candidates)
         in
 
     match house1, house2 with
@@ -296,7 +293,7 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
 
     let allNonEmpty =
         candidateCells
-        |> List.forall (fun cr -> Digits.count cr.candidates > 0)
+        |> List.forall (fun cr -> OSet.count cr.candidates > 0)
         in
 
     if allNonEmpty then 
@@ -314,22 +311,22 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
 
             let allPairs =
                 ccs
-                |> List.forall (fun c -> Digits.count c = 2)
+                |> List.forall (fun c -> OSet.count c = 2)
                 in
 
             if allPairs then 
                 let allCandidates =
                     ccs
-                    |> Digits.union_many
+                    |> OSet.unionMany
                     in
 
-                if Digits.count allCandidates = 3 then 
+                if OSet.count allCandidates = 3 then 
                     match triple with
                     | [ left; pivot; right; _ ] -> 
-                        let removee = Digits.difference allCandidates pivot.candidates in
+                        let removee = OSet.difference allCandidates pivot.candidates in
 
-                        if Digits.count removee = 1 && (left.candidates <> right.candidates) && 
-                            Digits.is_subset removee (CellCandidates.get other cellCandidates) then
+                        if OSet.count removee = 1 && (left.candidates <> right.candidates) && 
+                            OSet.isSubset removee (CellCandidates.get other cellCandidates) then
 
                             let candidateReductions = CandidateReduction.make other removee in
 
@@ -349,7 +346,7 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
                                   candidateReductions = OSet.singleton candidateReductions;
                                   setCellValueAction = None;
                                   pointers = pointers;
-                                  focus = Digits.empty } in
+                                  focus = OSet.empty } in
                             Some desc
                         else None
                     | _ -> None

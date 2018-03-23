@@ -1,6 +1,7 @@
 module console.Console
 
 open core.Sudoku
+open oset
 
 let drawDigitCellContents (given : digit option) (current : cellContents) : Format.consoleChar = 
     match given, current with
@@ -29,27 +30,27 @@ let drawPencilMarks (annotation : core.Hint.annotation) (candidate : digit) (can
     match annotation.setValue with
     | Some vv when vv = candidate -> 
         Format.ColouredDigit(candidate, Format.Red, Format.DefaultColour)
-    | Some _ when Digits.contains candidate candidates -> 
+    | Some _ when OSet.contains candidate candidates -> 
         Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
     | _ ->
         (match annotation.setValueReduction with
-         | Some svr when svr = candidate && Digits.contains candidate candidates -> 
+         | Some svr when svr = candidate && OSet.contains candidate candidates -> 
             Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
          | _ ->
-            (if Digits.contains candidate annotation.reductions then
+            (if OSet.contains candidate annotation.reductions then
                 Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
-             else if Digits.contains candidate annotation.pointers then
+             else if OSet.contains candidate annotation.pointers then
                 Format.ColouredDigit(candidate, Format.Magenta, Format.DefaultColour)
-             else if Digits.contains candidate annotation.focus && Digits.contains candidate candidates then
+             else if OSet.contains candidate annotation.focus && OSet.contains candidate candidates then
                 Format.ColouredDigit(candidate, Format.Yellow, Format.DefaultColour)
              else if annotation.primaryHintHouse then
-                if Digits.contains candidate candidates then Format.ColouredDigit(candidate, Format.Cyan, Format.DefaultColour)
+                if OSet.contains candidate candidates then Format.ColouredDigit(candidate, Format.Cyan, Format.DefaultColour)
                 else Format.CChar ' '
              else if annotation.secondaryHintHouse then
-                if Digits.contains candidate candidates then Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
+                if OSet.contains candidate candidates then Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
                 else Format.CChar ' '
              else
-                if Digits.contains candidate candidates then Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
+                if OSet.contains candidate candidates then Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
                 else Format.CChar ' '))
 
 let drawDigitCellContentAnnotations centreCandidate (annotations : (cell * core.Hint.annotation) list) (cell : cell) (candidate : digit) : Format.consoleChar = 

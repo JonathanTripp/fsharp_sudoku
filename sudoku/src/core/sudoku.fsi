@@ -76,27 +76,9 @@ module Digit =
   val comparer : digit -> digit -> int
   val make : int -> digit
   val to_string : digit -> string
-type digits = | CDigits of digit list
-module Digits =
-  val contains : digit -> digits -> bool
-  val count : digits -> int
-  val difference : digits -> digits -> digits
-  val drop : int -> digits -> digits
-  val empty : digits
-  val filter : (digit -> bool) -> digits -> digits
-  val first : digits -> digit
-  val intersect : digits -> digits -> digits
-  val is_subset : digits -> digits -> bool
-  val make : digit list -> digits
-  val map : (digit -> 'b) -> digits -> 'b list
-  val nth : digits -> int -> digit
-  val remove : digit -> digits -> digits
-  val singleton : digit -> digits
-  val take : int -> digits -> digits
-  val to_list : digits -> digit list
-  val union : digits -> digits -> digits
-  val union_many : digits list -> digits
-  val to_string : digits -> string
+type digits = OSet<digit>
+module Digits2 =
+  val toString : digits -> string
 type puzzleShape =
   {size: size;
    boxWidth: boxWidth;
