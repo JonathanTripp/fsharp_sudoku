@@ -2,21 +2,22 @@ module hints.Hidden
 
 open core.Sudoku
 open oset
+open smap
 
 let findHidden (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (candidateSubset : digits) (primaryHouse : house) : core.Hint.description option = 
 
     let pointers = 
         p.houseCells
-        |> Smap.get House.comparer primaryHouse 
-        |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+        |> SMap.get primaryHouse 
+        |> OSet.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
         |> OSet.map (fun cr -> CandidateReduction.make cr.cell (OSet.intersect cr.candidates candidateSubset))
         |> OSet.filter (fun cr -> OSet.count cr.candidates > 0) 
         in
 
     let candidateReductions = 
         p.houseCells
-        |> Smap.get House.comparer primaryHouse
-        |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+        |> SMap.get primaryHouse
+        |> OSet.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
         |> OSet.map
             (fun cr -> 
                 let pointerCandidates = OSet.intersect cr.candidates candidateSubset in
@@ -58,8 +59,8 @@ let hiddenNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates
 
     let houseCandidates =
         p.houseCells
-        |> Smap.get House.comparer house
-        |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> SMap.get house
+        |> OSet.map (fun cell -> SMap.get cell cellCandidates)
         |> OSet.toList
         |> OSet.unionMany
         in

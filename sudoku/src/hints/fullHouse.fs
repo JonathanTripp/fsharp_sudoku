@@ -10,11 +10,11 @@ let fullHousePerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandi
 
     let hhs =
         p.houseCellCandidateReductions primaryHouse cellCandidates
-        |> List.filter (fun cr -> OSet.count cr.candidates > 0) 
+        |> OSet.filter (fun cr -> OSet.count cr.candidates > 0) 
         in
 
-    if List.length hhs = 1 then 
-        let h = List.head hhs in
+    if OSet.count hhs = 1 then 
+        let h = OSet.head hhs in
         let cell = h.cell in
         let candidate = OSet.head h.candidates in
 

@@ -4,6 +4,7 @@ open core.Sudoku
 
 open NUnit.Framework
 open oset
+open smap
 
 let twoByFourPuzzleSpec =
     { size = 8;
@@ -163,7 +164,8 @@ let ``Can make stacks``() =
 
     let expected =
         [1..4]
-        |> List.map SStack
+        |> OSet.ofList
+        |> OSet.map SStack
         in
 
     Assert.AreEqual(expected, actual, "{0}!={1}", Stacks.to_string expected, Stacks.to_string actual)
@@ -175,7 +177,8 @@ let ``Can make bands``() =
 
     let expected =
         [1..2]
-        |> List.map BBand
+        |> OSet.ofList
+        |> OSet.map BBand
         in
 
     Assert.AreEqual(expected, actual, "{0}!={1}", Bands.to_string expected, Bands.to_string actual)
@@ -187,12 +190,14 @@ let ``Can make boxes``() =
 
     let expected =
         [1..2]
-        |> List.map
+        |> OSet.ofList
+        |> OSet.map
             (fun b ->
                 [1..4]
-                |> List.map
+                |> OSet.ofList
+                |> OSet.map
                     (fun s -> Box.make (s |> SStack) (b |> BBand)))
-        |> List.concat
+        |> OSet.concat
         in
 
     Assert.AreEqual(expected, actual, "{0}!={1}", Boxes.to_string expected, Boxes.to_string actual)
@@ -240,7 +245,7 @@ let ``Get column cells``() =
     let column = CColumn 2 in
 
     let actual =
-        Smap.get Column.comparer column p.columnCells in
+        SMap.get column p.columnCells in
 
     let expected =
         [1..9]
@@ -258,7 +263,7 @@ let ``Get row cells``() =
     let row = RRow 7 in
 
     let actual =
-        Smap.get Row.comparer row p.rowCells in
+        SMap.get row p.rowCells in
 
     let expected =
         [1..9]
@@ -275,33 +280,34 @@ let ``Get stack for a column``() =
 
     let actual =
         p.columns
-        |> OSet.map (fun column -> Smap.get Column.comparer column p.columnStack)
+        |> OSet.map (fun column -> SMap.get column p.columnStack)
         in
 
     let expected =
         [1..3]
-        |> List.map
+        |> OSet.ofList
+        |> OSet.map
             (fun s ->
                 [1..3]
-                |> List.map (fun _ -> s |> SStack))
-        |> List.concat
+                |> OSet.ofList
+                |> OSet.map (fun _ -> s |> SStack))
+        |> OSet.concat
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Stacks.to_string expected, Stacks.to_string (actual |> OSet.toList))
+    Assert.AreEqual(expected, actual, "{0}!={1}", Stacks.to_string expected, Stacks.to_string actual)
 
 [<Test>]
 let ``Get stack columns``() = 
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let actual =
-        Smap.get Stack.comparer (2 |> SStack) p.stackColumns
-        |> OSet.ofList
+        SMap.get (2 |> SStack) p.stackColumns
         in
 
     let expected =
         [4..6]
-        |> List.map CColumn
         |> OSet.ofList
+        |> OSet.map CColumn
         in
 
     Assert.AreEqual(expected, actual, "{0}!={1}", Columns.toString expected, Columns.toString actual)
@@ -312,33 +318,34 @@ let ``Get band for a row``() =
 
     let actual =
         p.rows
-        |> OSet.map (fun row -> Smap.get Row.comparer row p.rowBand)
+        |> OSet.map (fun row -> SMap.get row p.rowBand)
         in
 
     let expected =
         [1..3]
-        |> List.map
+        |> OSet.ofList
+        |> OSet.map
             (fun b ->
                 [1..3]
-                |> List.map (fun _ -> b |> BBand))
-        |> List.concat
+                |> OSet.ofList
+                |> OSet.map (fun _ -> b |> BBand))
+        |> OSet.concat
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Bands.to_string expected, Bands.to_string (actual |> OSet.toList))
+    Assert.AreEqual(expected, actual, "{0}!={1}", Bands.to_string expected, Bands.to_string actual)
 
 [<Test>]
 let ``Get band rows``() = 
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
     let actual =
-        Smap.get Band.comparer (2 |> BBand) p.bandRows
-        |> OSet.ofList
+        SMap.get (2 |> BBand) p.bandRows
         in
 
     let expected =
         [4..6]
-        |> List.map RRow
         |> OSet.ofList
+        |> OSet.map RRow
         in
 
     Assert.AreEqual(expected, actual, "{0}!={1}", Rows.toString expected, Rows.toString actual)
@@ -349,19 +356,22 @@ let ``Get box for a cell``() =
 
     let actual =
         [1..9]
-        |> List.map
+        |> OSet.ofList
+        |> OSet.map
             (fun r -> Cell.make (5 |> CColumn) (r |> RRow))
-        |> List.map (fun cell -> Smap.get Cell.comparer cell p.cellBox)
+        |> OSet.map (fun cell -> SMap.get cell p.cellBox)
         in
 
     let expected =
         [1..3]
-        |> List.map
+        |> OSet.ofList
+        |> OSet.map
             (fun b ->
                 [1..3]
-                |> List.map
+                |> OSet.ofList
+                |> OSet.map
                     (fun _ -> Box.make (2 |> SStack) (b |> BBand)))
-        |> List.concat
+        |> OSet.concat
         in
 
     Assert.AreEqual(expected, actual, "{0}!={1}", Boxes.to_string expected, Boxes.to_string actual)

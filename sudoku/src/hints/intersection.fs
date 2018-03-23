@@ -2,24 +2,25 @@ module hints.Intersection
 
 open core.Sudoku
 open oset
+open smap
 
-type cellHouses = (cell * house list) list
+type cellHouses = SMap<cell, houses>
 
 let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (secondaryHouseLookups : cellHouses) : OSet<core.Hint.description> = 
 
     let primaryHouseCandidates = 
         p.houseCells
-        |> Smap.get House.comparer primaryHouse
-        |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> SMap.get primaryHouse
+        |> OSet.map (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
     let uniqueSecondaryForCandidate (candidate : digit) : OSet<core.Hint.description> = 
         let pointerCells = 
             p.houseCells
-            |> Smap.get House.comparer primaryHouse
+            |> SMap.get primaryHouse
             |> OSet.filter (fun cell -> 
-                let candidates = CellCandidates.get cell cellCandidates in
+                let candidates = SMap.get cell cellCandidates in
                 OSet.contains candidate candidates) 
             in
 
@@ -28,22 +29,22 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
             |> OSet.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
             in
 
-        let hintsPerSecondaryHouse (secondaryHouses : house list) : core.Hint.description option = 
-            if OSet.count pointerCells > 1 && List.length secondaryHouses = 1 then 
+        let hintsPerSecondaryHouse (secondaryHouses : houses) : core.Hint.description option = 
+            if OSet.count pointerCells > 1 && OSet.count secondaryHouses = 1 then 
                 let primaryHouseCells =
                     p.houseCells
-                    |> Smap.get House.comparer primaryHouse
+                    |> SMap.get primaryHouse
                     in
 
-                let secondaryHouse = List.nth secondaryHouses 0 in
-                let secondaryHouseCells = Smap.get House.comparer secondaryHouse p.houseCells in
+                let secondaryHouse = OSet.item 0 secondaryHouses in
+                let secondaryHouseCells = SMap.get secondaryHouse p.houseCells in
 
                 let otherHouseCells = OSet.difference secondaryHouseCells primaryHouseCells in
                 
                 let candidateReductions = 
                     otherHouseCells
                     |> OSet.filter (fun cell -> 
-                        let candidates = CellCandidates.get cell cellCandidates in
+                        let candidates = SMap.get cell cellCandidates in
                         OSet.contains candidate candidates)
                     |> OSet.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
                     in
@@ -61,7 +62,7 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
 
         pointerCells
         |> OSet.choose (fun cell -> 
-                            Smap.get Cell.comparer cell secondaryHouseLookups
+                            SMap.get cell secondaryHouseLookups
                             |> hintsPerSecondaryHouse)
         in
 
@@ -72,30 +73,32 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
 let pointingPairsPerBox (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : OSet<core.Hint.description> =
     let cellLines (cell : cell) =
         [ HRow cell.row; HColumn cell.col ]
+        |> OSet.ofList
         in
 
     let secondaryHouseLookups =
-        Cells.ofLookup cellLines p.cells
+        SMap.ofLookup cellLines p.cells
         in
 
     intersectionsPerHouse p cellCandidates primaryHouse secondaryHouseLookups
 
 let boxLineReductionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : OSet<core.Hint.description> = 
     let cellBox (cell : cell) =
-        [ Smap.get Cell.comparer cell p.cellBox |> House.make_box ]
+        [ SMap.get cell p.cellBox |> House.make_box ]
+        |> OSet.ofList
         in
 
     let secondaryHouseLookups =
-        Cells.ofLookup cellBox p.cells
+        SMap.ofLookup cellBox p.cells
         in
 
     intersectionsPerHouse p cellCandidates primaryHouse secondaryHouseLookups
 
 let pointingPairs (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
     p.boxes
-    |> List.map House.make_box
-    |> List.map (pointingPairsPerBox p cellCandidates) 
-    |> OSet.unionMany
+    |> OSet.map House.make_box
+    |> OSet.map (pointingPairsPerBox p cellCandidates) 
+    |> OSet.concat
 
 let boxLineReductions (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
     let rowHints =

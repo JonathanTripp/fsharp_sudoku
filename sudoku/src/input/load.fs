@@ -2,10 +2,11 @@ module input.Load
 
 open core.Sudoku
 open oset
+open smap
 
 (* Load a sudoku given as a single line of gridSize*gridSize characters *)
 let loadPuzzle (cells : cells) (alphabetisedLine : digit option list) : given =
-    Given (Sset.zip (OSet.toList cells) alphabetisedLine)
+    Sset.zip (OSet.toList cells) alphabetisedLine |> SMap.ofList
 
 let load (puzzleShape : puzzleShape) (sudoku : string) : solution = 
 

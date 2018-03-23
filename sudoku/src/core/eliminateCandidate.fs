@@ -2,19 +2,19 @@ module core.EliminateCandidate
 
 open Sudoku
 open oset
+open smap
 
 let apply (p : Puzzlemap.puzzleMap) (candidate : candidate) (current : current) : current = 
 
     let update (cell : cell) : cellContents = 
-        let cellContents = Current.get cell current
+        let cellContents = SMap.get cell current
         match cellContents with
         | BigNumber _ -> cellContents
         | PencilMarks candidates -> 
             if candidate.cell = cell then PencilMarks(OSet.remove candidate.digit candidates)
             else cellContents
 
-    Cells.ofLookup update p.cells
-    |> Current.make
+    SMap.ofLookup update p.cells
 
 let description (p: Puzzlemap.puzzleMap) (candidate : candidate) : Hint.description =
     let cr = CandidateReduction.make (candidate.cell) (OSet.singleton candidate.digit) in

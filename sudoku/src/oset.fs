@@ -11,10 +11,10 @@ module OSet =
     let toSet (SSet o : OSet<'T>) : Set<'T> =
         o
 
-    let ofList (l : List<'T>) : OSet<'T> =
+    let ofList (l : 'T list) : OSet<'T> =
         l |> Set.ofList |> ofSet
 
-    let toList (o : OSet<'T>) : List<'T> =
+    let toList (o : OSet<'T>) : 'T list =
         o |> toSet |> Set.toList
 
     let choose (chooser : 'T -> 'U option) (o : OSet<'T>) : OSet<'U> =
@@ -87,5 +87,5 @@ module OSet =
     let union (o : OSet<'T>) (o' : OSet<'T>) : OSet<'T> =
         Set.union (o |> toSet) (o' |> toSet) |> ofSet
 
-    let unionMany (ds : List<OSet<'T>>) : OSet<'T> =
+    let unionMany (ds : OSet<'T> list) : OSet<'T> =
         ds |> List.map toSet |> Set.unionMany |> ofSet

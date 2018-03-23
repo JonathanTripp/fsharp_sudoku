@@ -2,6 +2,7 @@ module hints.Wing
 
 open core.Sudoku
 open oset
+open smap
 
 let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) pointerCells primaryHouses secondaryHouses candidate : core.Hint.description option = 
     let pointers =
@@ -11,13 +12,13 @@ let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) p
 
     let colCells =
         secondaryHouses
-        |> OSet.map (fun house -> Smap.get House.comparer house p.houseCells)
+        |> OSet.map (fun house -> SMap.get house p.houseCells)
         |> OSet.concat
         in
 
     let candidatesReductions = 
         OSet.difference colCells pointerCells
-        |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+        |> OSet.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
         |> OSet.filter (fun cr -> OSet.contains candidate cr.candidates)
         |> OSet.map (fun cr -> CandidateReduction.make cr.cell (OSet.singleton candidate))
         in
@@ -38,14 +39,14 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
 
     let houseCandidateCells1 =
         p.houseCells
-        |> Smap.get House.comparer house1
-        |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+        |> SMap.get house1
+        |> OSet.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
         in
 
     let houseCandidateCells2 =
         p.houseCells
-        |> Smap.get House.comparer house2
-        |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+        |> SMap.get house2
+        |> OSet.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
         in
 
     let hht1 =
@@ -138,15 +139,15 @@ let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
 
     let houseCandidates1 =
         p.houseCells
-        |> Smap.get House.comparer house1
-        |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> SMap.get house1
+        |> OSet.map (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
     let houseCandidates2 =
         p.houseCells
-        |> Smap.get House.comparer house2
-        |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> SMap.get house2
+        |> OSet.map (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
@@ -283,13 +284,13 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
 
     let candidateCells =
         cells
-        |> List.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+        |> List.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
         in
 
-    let ccell11 = CandidateReduction.make cell11 (CellCandidates.get cell11 cellCandidates) in
-    let ccell12 = CandidateReduction.make cell12 (CellCandidates.get cell12 cellCandidates) in
-    let ccell21 = CandidateReduction.make cell21 (CellCandidates.get cell21 cellCandidates) in
-    let ccell22 = CandidateReduction.make cell22 (CellCandidates.get cell22 cellCandidates) in
+    let ccell11 = CandidateReduction.make cell11 (SMap.get cell11 cellCandidates) in
+    let ccell12 = CandidateReduction.make cell12 (SMap.get cell12 cellCandidates) in
+    let ccell21 = CandidateReduction.make cell21 (SMap.get cell21 cellCandidates) in
+    let ccell22 = CandidateReduction.make cell22 (SMap.get cell22 cellCandidates) in
 
     let allNonEmpty =
         candidateCells
@@ -326,7 +327,7 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
                         let removee = OSet.difference allCandidates pivot.candidates in
 
                         if OSet.count removee = 1 && (left.candidates <> right.candidates) && 
-                            OSet.isSubset removee (CellCandidates.get other cellCandidates) then
+                            OSet.isSubset removee (SMap.get other cellCandidates) then
 
                             let candidateReductions = CandidateReduction.make other removee in
 

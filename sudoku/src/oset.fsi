@@ -7,8 +7,8 @@ type OSet<[<EqualityConditionalOn>]'T when 'T : comparison> =
 module OSet =
     val ofSet : Set<'T> -> OSet<'T>
     val toSet : OSet<'T> -> Set<'T>
-    val ofList : List<'T> -> OSet<'T>
-    val toList : OSet<'T> -> List<'T>
+    val ofList : 'T list -> OSet<'T>
+    val toList : OSet<'T> -> 'T list
 
     val choose : ('T -> 'U option) -> OSet<'T> -> OSet<'U>
     val concat : OSet<OSet<'T>> -> OSet<'T>
@@ -32,4 +32,4 @@ module OSet =
     val take : int -> OSet<'T> -> OSet<'T>
     val toString : OSet<'T> -> string
     val union : OSet<'T> -> OSet<'T> -> OSet<'T>
-    val unionMany : List<OSet<'T>> -> OSet<'T>
+    val unionMany : OSet<'T> list -> OSet<'T>

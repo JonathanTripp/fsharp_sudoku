@@ -2,9 +2,10 @@ module hints.Naked
 
 open core.Sudoku
 open oset
+open smap
 
 let nakedSingleCell (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (cell : cell) : core.Hint.description option =
-    let candidates = CellCandidates.get cell cellCandidates in
+    let candidates = SMap.get cell cellCandidates in
 
     if OSet.count candidates = 1 then 
         let candidate = OSet.head candidates in
@@ -28,24 +29,24 @@ let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
 
     let subsetDigits =
         cellSubset
-        |> OSet.map (fun cell -> CellCandidates.get cell cellCandidates)
+        |> OSet.map (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
     if OSet.count subsetDigits <= count then
         let candidateReductions =
             p.houseCells
-            |> Smap.get House.comparer primaryHouse
+            |> SMap.get primaryHouse
             |> OSet.filter (fun cell -> OSet.contains cell cellSubset = false) 
             |> OSet.map (fun cell -> 
-                let candidates = CellCandidates.get cell cellCandidates in
+                let candidates = SMap.get cell cellCandidates in
                 CandidateReduction.make cell (OSet.intersect subsetDigits candidates))
             |> OSet.filter (fun cr -> OSet.count cr.candidates > 0)
             in
 
         let pointers =
             cellSubset
-            |> OSet.map (fun cell -> CandidateReduction.make cell (CellCandidates.get cell cellCandidates))
+            |> OSet.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
             in
 
         if OSet.count candidateReductions > 0 then 
@@ -63,9 +64,9 @@ let nakedNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates 
     
     let hht = 
         p.houseCells
-        |> Smap.get House.comparer primaryHouse
+        |> SMap.get primaryHouse
         |> OSet.filter (fun cell -> 
-            let candidates = CellCandidates.get cell cellCandidates in
+            let candidates = SMap.get cell cellCandidates in
             OSet.count candidates > 1 && OSet.count candidates <= count) 
         in
 

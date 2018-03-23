@@ -1,13 +1,28 @@
-module Smap
+module smap
 
-let ofLookup (fn : 'a -> 'b) (as' : 'a list) : ('a * 'b) list =
-    List.map (fun a -> (a, fn a)) as'
+open oset
 
-let get (comparer : 'a -> 'a -> int) (k : 'a) (as' : ('a * 'b) list) : 'b =
-    as'
-    |> List.find (fun a -> comparer k (fst a) = 0)
-    |> snd
+type SMap<'Key, 'Value when 'Key : comparison> =
+    | SMap of Map<'Key, 'Value>
 
-let tryGet (comparer : 'a -> 'a -> int) (k : 'a) (sm : ('a * 'b) list) : 'b option =
-    if List.exists (fun a -> comparer k (fst a) = 0) sm then Some (get comparer k sm)
-    else None
+[<RequireQualifiedAccess>]
+module SMap =
+    let ofMap (m : Map<'Key, 'Value>) : SMap<'Key, 'Value> =
+        SMap m
+
+    let toMap (SMap m : SMap<'Key, 'Value>) : Map<'Key, 'Value> =
+        m
+
+    let ofList (elements : ('Key * 'Value) list) : SMap<'Key, 'Value> =
+        elements |> Map.ofList |> ofMap
+
+    let ofLookup (fn : 'Key -> 'Value) (cs : OSet<'Key>) : SMap<'Key, 'Value> =
+        OSet.map (fun c -> (c, fn c)) cs |> OSet.toList |> ofList
+
+    let get (key : 'Key) (m : SMap<'Key, 'Value>) : 'Value =
+        let n = m |> toMap
+        n.Item key
+
+    let tryGet (key : 'Key) (m : SMap<'Key, 'Value>) : 'Value option =
+        let n = m |> toMap
+        n.TryFind key

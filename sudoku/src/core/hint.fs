@@ -2,6 +2,7 @@ module core.Hint
 
 open Sudoku
 open oset
+open smap
 
 exception CellStateInvalid
 
@@ -44,7 +45,7 @@ type annotation =
       focus : digits }
 
 type description2 = 
-    { annotations : (cell * annotation) list }
+    { annotations : SMap<cell, annotation> }
 
 let mhas (solution : solution) (p : Puzzlemap.puzzleMap) (hd : description) : description2 = 
 
@@ -60,7 +61,7 @@ let mhas (solution : solution) (p : Puzzlemap.puzzleMap) (hd : description) : de
                     in
 
                 let r3 = 
-                    let cells = Smap.get Cell.comparer setCellValueAction.cell p.cellHouseCells in
+                    let cells = SMap.get setCellValueAction.cell p.cellHouseCells in
 
                     if OSet.contains cell cells then Some setCellValueAction.digit
                     else None
@@ -100,8 +101,8 @@ let mhas (solution : solution) (p : Puzzlemap.puzzleMap) (hd : description) : de
             p.housesCells hd.secondaryHouses
             in
 
-        { given = Given.get cell solution.given;
-          current = Current.get cell solution.current;
+        { given = SMap.get cell solution.given;
+          current = SMap.get cell solution.current;
           setValue = setValue;
           primaryHintHouse = OSet.contains cell primaryHouseCells;
           secondaryHintHouse = OSet.contains cell secondaryHouseCells;
@@ -111,15 +112,15 @@ let mhas (solution : solution) (p : Puzzlemap.puzzleMap) (hd : description) : de
           focus = hd.focus }
         in
 
-    let annotations = Cells.ofLookup annotationLookup p.cells in
+    let annotations = SMap.ofLookup annotationLookup p.cells in
 
     { annotations = annotations }
 
 let mhas2 (solution : solution) (p : Puzzlemap.puzzleMap) : description2 = 
 
     let annotationLookup (cell : cell) : annotation = 
-        { given = Given.get cell solution.given;
-          current = Current.get cell solution.current;
+        { given = SMap.get cell solution.given;
+          current = SMap.get cell solution.current;
           setValue = None;
           primaryHintHouse = false;
           secondaryHintHouse = false;
@@ -129,6 +130,6 @@ let mhas2 (solution : solution) (p : Puzzlemap.puzzleMap) : description2 =
           focus = OSet.empty }
         in
 
-    let annotations = Cells.ofLookup annotationLookup p.cells in
+    let annotations = SMap.ofLookup annotationLookup p.cells in
 
     { annotations = annotations }

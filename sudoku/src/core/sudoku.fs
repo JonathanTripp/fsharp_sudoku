@@ -1,6 +1,7 @@
 module core.Sudoku
 
 open oset
+open smap
 
 (* A sudoku is a square grid of size... *)
 type size = int
@@ -10,11 +11,6 @@ type column =
     | CColumn of int
 
 module Column =
-    let comparer (CColumn c1 : column) (CColumn c2 : column) : int =
-        if c1 < c2 then -1
-        else if c1 = c2 then 0
-        else 1
-
     let make (i : int) : column =
         CColumn i
 
@@ -32,11 +28,6 @@ type row =
     | RRow of int
 
 module Row =
-    let comparer (RRow r1 : row) (RRow r2 : row) : int =
-        if r1 < r2 then -1
-        else if r1 = r2 then 0
-        else 1
-
     let make (i : int) : row = RRow i
 
     let to_string (RRow r : row) : string =
@@ -54,14 +45,6 @@ type cell =
       row : row }
 
 module Cell =
-    let comparer ({ col = CColumn c1; row = RRow r1} : cell) ({ col = CColumn c2; row = RRow r2} : cell) : int =
-        if r1 < r2 then -1
-        else if r1 = r2 then
-            if c1 < c2 then -1
-            else if c1 = c2 then 0
-            else 1
-        else 1
-
     let make (c : column) (r : row) : cell =
         { col = c;
           row = r }
@@ -72,9 +55,6 @@ module Cell =
 type cells = OSet<cell>
 
 module Cells =
-    let ofLookup (fn : cell -> 'b) (cs : cells) : (cell * 'b) list =
-        List.map (fun c -> (c, fn c)) (cs |> OSet.toList)
-
     let toString (cs : cells) : string =
         "CS" + (OSet.toString cs)
 
@@ -86,22 +66,17 @@ type stack =
     | SStack of int
 
 module Stack =
-    let comparer (SStack s1 : stack) (SStack s2 : stack) : int =
-        if s1 < s2 then -1
-        else if s1 = s2 then 0
-        else 1
-
     let make (i : int) : stack =
         SStack i
 
     let to_string (SStack s : stack) : string =
         Printf.sprintf "stk%d" s
 
+type stacks = OSet<stack>
+
 module Stacks =
-    let to_string (ss : stack list) : string =
-        ss
-        |> List.map Stack.to_string
-        |> String.concat ","
+    let to_string (ss : OSet<stack>) : string =
+        "SS" + (OSet.toString ss)
 
 type boxWidth = int
 
@@ -110,22 +85,17 @@ type band =
     | BBand of int
 
 module Band =
-    let comparer (BBand b1 : band) (BBand b2 : band) : int =
-        if b1 < b2 then -1
-        else if b1 = b2 then 0
-        else 1
-
     let make (i : int) : band =
         BBand i
 
     let to_string (BBand b : band) : string =
         Printf.sprintf "bnd%d" b
 
+type bands = OSet<band>
+
 module Bands =
-    let to_string (bs : band list) : string =
-        bs
-        |> List.map Band.to_string
-        |> String.concat ","
+    let to_string (bs : bands) : string =
+        "BD" + (OSet.toString bs)
 
 type boxHeight = int
 
@@ -135,14 +105,6 @@ type box =
       band : band }
 
 module Box =
-    let comparer ({ stack = SStack s1; band = BBand b1} : box) ({ stack = SStack s2; band = BBand b2} : box) : int =
-        if b1 < b2 then -1
-        else if b1 = b2 then
-            if s1 < s2 then -1
-            else if s1 = s2 then 0
-            else 1
-        else 1
-
     let make (s : stack) (b : band) : box =
         { stack = s;
           band = b }
@@ -150,11 +112,11 @@ module Box =
     let to_string ({stack = SStack s; band = BBand b} : box) : string =
         Printf.sprintf "bnd%dstk%d" b s
 
+type boxes = OSet<box>
+
 module Boxes =
-    let to_string (bs : box list) : string =
-        bs
-        |> List.map Box.to_string
-        |> String.concat ","
+    let to_string (bs : boxes) : string =
+        "B" + (OSet.toString bs)
 
 (* The columns and rows are collectively called lines *)
 type line = 
@@ -168,18 +130,6 @@ type house =
     | HBox of box
 
 module House =
-    let comparer (h1 : house) (h2 : house) : int =
-        match h1, h2 with
-        | HColumn c1, HColumn c2 -> Column.comparer c1 c2
-        | HColumn _, HRow _ -> -1
-        | HColumn _, HBox _ -> -1
-        | HRow _, HColumn _ -> 1
-        | HRow r1, HRow r2 -> Row.comparer r1 r2
-        | HRow _, HBox _ -> -1
-        | HBox _, HColumn _ -> 1
-        | HBox _, HRow _ -> 1
-        | HBox b1, HBox b2 -> Box.comparer b1 b2
-
     let make_column (column : column) : house =
         HColumn column
 
@@ -206,11 +156,6 @@ type digit =
     | Digit of char
 
 module Digit =
-    let comparer (Digit d1 : digit) (Digit d2 : digit) : int =
-        if d1 < d2 then -1
-        else if d1 = d2 then 0
-        else 1
-
     let make (i : int) : digit =
         Digit (Schar.chr (i + (Schar.code '0')))
 
@@ -319,33 +264,12 @@ module Action =
         | Placement a -> Printf.sprintf "%s=%s" (Cell.to_string a.cell) (Digit.to_string a.digit)
         | Eliminate candidate -> Printf.sprintf "%s<>%s" (Cell.to_string candidate.cell) (Digit.to_string candidate.digit)
 
-type given =
-    | Given of (cell * digit option) list
+type given = SMap<cell, digit option>
 
-module Given =
-    let get (k : cell) (Given l : given) : digit option =
-        Smap.get Cell.comparer k l
-
-type current =
-    | Current of (cell * cellContents) list
-
-module Current =
-    let get (k : cell) (Current l : current) : cellContents =
-        Smap.get Cell.comparer k l
-
-    let make (l : (cell * cellContents) list) : current =
-        Current l
+type current = SMap<cell, cellContents>
 
 (* for a cell, return a set of candidates *)
-type cellCandidates =
-    | CellCandidates of (cell * digits) list
-
-module CellCandidates =
-    let get (k : cell) (CellCandidates l : cellCandidates) : digits =
-        Smap.get Cell.comparer k l
-
-    let make (l : (cell * digits) list) : cellCandidates =
-        CellCandidates l
+type cellCandidates = SMap<cell, digits>
 
 type solution = 
     { given : given;
@@ -355,7 +279,7 @@ type solution =
 module Solution =
     let givenToCurrent (cells : cells) (given : given) (alphabet : digits) : current =
         let makeCellContents (cell : cell) : cellContents =
-            let dop = Given.get cell given in
+            let dop = SMap.get cell given in
             match dop with
             | Some digit -> BigNumber digit
             | None -> PencilMarks alphabet
@@ -364,11 +288,11 @@ module Solution =
         cells
         |> OSet.map (fun a -> (a, makeCellContents a))
         |> OSet.toList
-        |> Current.make
+        |> SMap.ofList
 
     let currentCellCandidates (cells : cells) (current : current) : cellCandidates =
         let getCandidateEntries (cell : cell) : digits =
-            let cellContents = Current.get cell current in
+            let cellContents = SMap.get cell current in
             match cellContents with
             | BigNumber _ -> OSet.empty
             | PencilMarks s -> s
@@ -377,4 +301,4 @@ module Solution =
         cells
         |> OSet.map (fun a -> (a, getCandidateEntries a))
         |> OSet.toList
-        |> CellCandidates.make
+        |> SMap.ofList

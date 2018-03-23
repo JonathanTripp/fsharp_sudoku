@@ -2,6 +2,7 @@ module core.Force
 
 open Sudoku
 open oset
+open smap
 
 let isPencilMarksCellContents (cellContents : cellContents) : bool =
     match cellContents with
@@ -15,13 +16,13 @@ let isValidCellContents (cellContents : cellContents) : bool =
 
 let isValid (solution : solution) (cells : cells) : bool =
     cells
-    |> OSet.map (fun cell -> Current.get cell solution.current)
+    |> OSet.map (fun cell -> SMap.get cell solution.current)
     |> OSet.forall isValidCellContents
 
 let rec searchr (p : Puzzlemap.puzzleMap) (solution : solution) (existing : solution list) : solution list =
     let emptyCell : cell option =
         let is_cell_empty (cell : cell) : bool =
-            Current.get cell solution.current
+            SMap.get cell solution.current
             |> isPencilMarksCellContents
             in
 
@@ -33,7 +34,7 @@ let rec searchr (p : Puzzlemap.puzzleMap) (solution : solution) (existing : solu
     match emptyCell with
     | Some cell ->
         let candidates =
-            let cellContents = Current.get cell solution.current in
+            let cellContents = SMap.get cell solution.current in
             match cellContents with
             | BigNumber _ -> OSet.empty
             | PencilMarks candidates -> candidates

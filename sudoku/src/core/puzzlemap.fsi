@@ -1,37 +1,39 @@
 module core.Puzzlemap
 
 open Sudoku
+open oset
+open smap
 
 type puzzleMap =
     {
         columns : columns;
         rows : rows;
         cells : cells;
-        stacks : stack list;
-        bands : band list;
-        boxes : box list;
+        stacks : stacks;
+        bands : bands;
+        boxes : boxes;
         houses : houses;
         (* for a column, return the cells in it *)
-        columnCells : (column * cells) list;
+        columnCells : SMap<column, cells>;
         (* for a row, return the cells in it *)
-        rowCells : (row * cells) list;
+        rowCells : SMap<row, cells>;
         (* for a column, which stack is it in? *)
-        columnStack : (column * stack) list;
+        columnStack : SMap<column, stack>;
         (* for a stack, return the columns in it *)
-        stackColumns : (stack * column list) list;
+        stackColumns : SMap<stack, columns>;
         (* for a row, which band is it in? *)
-        rowBand : (row * band) list;
+        rowBand : SMap<row, band>;
         (* for a band, return the rows in it *)
-        bandRows : (band * row list) list;
+        bandRows : SMap<band, rows>;
         (* for a cell, which box is it in? *)
-        cellBox : (cell * box) list;
+        cellBox : SMap<cell, box>;
         (* for a box, return the cells in it *)
-        boxCells : (box * cells) list;
+        boxCells : SMap<box, cells>;
         (* for a house, return the cells in it *)
-        houseCells : (house * cells) list;
-        cellHouseCells : (cell * cells) list;
+        houseCells : SMap<house, cells>;
+        cellHouseCells : SMap<cell, cells>;
         housesCells : houses -> cells;
-        houseCellCandidateReductions : house -> cellCandidates -> candidateReduction list;
+        houseCellCandidateReductions : house -> cellCandidates -> OSet<candidateReduction>;
 
         (*abstract member houseCellCandidates : (house, cellCandidates) list*)
     }

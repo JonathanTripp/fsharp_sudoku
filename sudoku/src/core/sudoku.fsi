@@ -1,11 +1,11 @@
 module core.Sudoku
 
 open oset
+open smap
 
 type size = int
 type column = | CColumn of int
 module Column =
-  val comparer : column -> column -> int
   val make : int -> column
   val to_string : column -> string
 type columns = OSet<column>
@@ -13,7 +13,6 @@ module Columns =
   val toString : columns -> string
 type row = | RRow of int
 module Row =
-  val comparer : row -> row -> int
   val make : int -> row
   val to_string : row -> string
 type rows = OSet<row>
@@ -23,38 +22,36 @@ type cell =
   {col: column;
    row: row;}
 module Cell =
-  val comparer : cell -> cell -> int
   val make : column -> row -> cell
   val to_string : cell -> string
 type cells = OSet<cell>
 module Cells =
-  val ofLookup : (cell -> 'b) -> cells -> (cell * 'b) list
   val toString : cells -> string
 type stack = | SStack of int
 module Stack =
-  val comparer : stack -> stack -> int
   val make : int -> stack
   val to_string : stack -> string
+type stacks = OSet<stack>
 module Stacks =
-  val to_string : stack list -> string
+  val to_string : stacks -> string
 type boxWidth = int
 type band = | BBand of int
 module Band =
-  val comparer : band -> band -> int
   val make : int -> band
   val to_string : band -> string
+type bands = OSet<band>
 module Bands =
-  val to_string : band list -> string
+  val to_string : bands -> string
 type boxHeight = int
 type box =
   {stack: stack;
    band: band;}
 module Box =
-  val comparer : box -> box -> int
   val make : stack -> band -> box
   val to_string : box -> string
+type boxes = OSet<box>
 module Boxes =
-  val to_string : box list -> string
+  val to_string : boxes -> string
 type line =
   | LColumn of column
   | LRow of row
@@ -63,7 +60,6 @@ type house =
   | HRow of row
   | HBox of box
 module House =
-  val comparer : house -> house -> int
   val make_column : column -> house
   val make_row : row -> house
   val make_box : box -> house
@@ -73,7 +69,6 @@ module Houses2 =
   val toString : houses -> string
 type digit = | Digit of char
 module Digit =
-  val comparer : digit -> digit -> int
   val make : int -> digit
   val to_string : digit -> string
 type digits = OSet<digit>
@@ -119,16 +114,9 @@ type action =
   | Eliminate of candidate
 module Action =
   val to_string : action -> string
-type given = Given of (cell * digit option) list
-module Given =
-    val get : cell -> given -> digit option
-type current = Current of (cell * cellContents) list
-module Current =
-  val get : cell -> current -> cellContents
-  val make : (cell * cellContents) list -> current
-type cellCandidates = CellCandidates of (cell * digits) list
-module CellCandidates =
-    val get : cell -> cellCandidates -> digits
+type given = SMap<cell, digit option>
+type current = SMap<cell, cellContents>
+type cellCandidates = SMap<cell, digits>
 type solution =
   {given: given;
    current: current;

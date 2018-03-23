@@ -2,6 +2,7 @@ module console.Format
 
 open core.Sudoku
 open oset
+open smap
 
 type basic_color =
     | DefaultColour
@@ -66,18 +67,18 @@ let printLine (cells : cells) (digitTo : cell -> consoleString) : consoleString 
     |> List.concat
 
 (* Combine fences with posts (there's one more fence than posts: f p f p ... p f) *)
-let simpleInterleave (fenceToSeq : 'a -> consoleString) (post : consoleString) (fences : 'a list) : consoleString = 
+let simpleInterleave (fenceToSeq : 'a -> consoleString) (post : consoleString) (fences : OSet<'a>) : consoleString = 
     let rec gen (fences' : 'a list) : consoleString = 
         match fences' with
         | [] -> []
         | [f] -> fenceToSeq f
         | f :: fs -> List.concat [(fenceToSeq f); post; (gen fs)]
         in
-     gen fences
+     gen (fences |> OSet.toList)
 
 (* Create a sequence of fences interleaved with posts (first and last posts may be different)
  l f p f p f ... p f r *)
-let sinterleave (fenceToSeq : 'a -> consoleString) (firstPost : consoleString) (midPost : consoleString) (lastPost : consoleString) (eol : consoleString) (fences : 'a list) : consoleString = 
+let sinterleave (fenceToSeq : 'a -> consoleString) (firstPost : consoleString) (midPost : consoleString) (lastPost : consoleString) (eol : consoleString) (fences : OSet<'a>) : consoleString = 
     List.concat [firstPost; simpleInterleave fenceToSeq midPost fences; lastPost; eol]
 
 (* Print a column *)
@@ -90,15 +91,15 @@ let printColumn (printCell : cell -> consoleString) (row : row) (column : column
 
 (* Print a stack *)
 let printStack (p : core.Puzzlemap.puzzleMap) (columnPrinter : row -> column -> consoleString) (columnSeparator : consoleString) (row : row) (stack : stack) : consoleString = 
-    simpleInterleave (columnPrinter row) columnSeparator (Smap.get Stack.comparer stack p.stackColumns)
+    simpleInterleave (columnPrinter row) columnSeparator (SMap.get stack p.stackColumns)
 
 (* Print a row *)
-let printRow (stackPrinter : stack -> consoleString) (gridCharsRow : gridCharsRow) (eol : consoleString) (stacks : stack list) : consoleString = 
+let printRow (stackPrinter : stack -> consoleString) (gridCharsRow : gridCharsRow) (eol : consoleString) (stacks : stacks) : consoleString = 
     List.concat [gridCharsRow.l; simpleInterleave stackPrinter gridCharsRow.m stacks; gridCharsRow.r; eol ]
 
 (* Print a band *)
 let printBand (p : core.Puzzlemap.puzzleMap) (rowToSeq : row -> consoleString) (rowSeparator : consoleString) (band : band) : consoleString = 
-    simpleInterleave rowToSeq rowSeparator (Smap.get Band.comparer band p.bandRows)
+    simpleInterleave rowToSeq rowSeparator (SMap.get band p.bandRows)
 
 (* Print a puzzle grid, supply callback to draw each cell *)
 let printGrid (p : core.Puzzlemap.puzzleMap) (gridChars : gridChars) (digitTo : cell -> consoleString) : consoleString = 
@@ -112,7 +113,8 @@ let printGrid (p : core.Puzzlemap.puzzleMap) (gridChars : gridChars) (digitTo : 
     let doPrintBand : band -> consoleString = printBand p doPrintRow [] in
 
     let r : consoleString =
-        (Smap.get Stack.comparer (List.head p.stacks) p.stackColumns)
+        (SMap.get (OSet.head p.stacks) p.stackColumns)
+        |> OSet.toList
         |> List.map (konst gridChars.h)
         |> List.concat
         in
@@ -128,27 +130,29 @@ let printGrid (p : core.Puzzlemap.puzzleMap) (gridChars : gridChars) (digitTo : 
 let printCandidateGrid (p : core.Puzzlemap.puzzleMap) (candidateGridChars : candidateGridChars) (alphabet : digits) (draw_cell : cell -> digit -> consoleString) : consoleString = 
 
     let d : consoleString =
-        Smap.get Stack.comparer (List.head p.stacks) p.stackColumns
-        |> List.map (konst candidateGridChars.h)
+        SMap.get (OSet.head p.stacks) p.stackColumns
+        |> OSet.map (konst candidateGridChars.h)
+        |> OSet.toList
         |> List.concat
         in
 
     let i : consoleString =
-        Smap.get Stack.comparer (List.head p.stacks) p.stackColumns
-        |> List.map (konst candidateGridChars.hi)
+        SMap.get (OSet.head p.stacks) p.stackColumns
+        |> OSet.map (konst candidateGridChars.hi)
+        |> OSet.toList
         |> List.concat
         in
 
     let printFullHorizontal (x : candidateGridCharsRow) (i : consoleString) : consoleString = 
-        let s = simpleInterleave (konst i) x.mi (Smap.get Stack.comparer (List.head p.stacks) p.stackColumns) in
+        let s = simpleInterleave (konst i) x.mi (SMap.get (OSet.head p.stacks) p.stackColumns) in
 
         sinterleave (konst s) x.x.l x.x.m x.x.r candidateGridChars.n p.stacks
         in
 
-    let c : int = List.length (Smap.get Stack.comparer (List.head p.stacks) p.stackColumns) in
+    let c : int = OSet.count (SMap.get (OSet.head p.stacks) p.stackColumns) in
     
     let ss : digits list = 
-        Sset.range 0 (List.length p.stacks - 1)
+        Sset.range 0 (OSet.count p.stacks - 1)
         |> List.map (fun i -> OSet.skip (i * c) alphabet |> OSet.take c)
         in
 

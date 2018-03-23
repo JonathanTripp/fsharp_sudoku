@@ -5,6 +5,7 @@ open console.Console
 open console.Format
 open console.Console_win
 open oset
+open smap
 
 let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (puzzle : puzzleShape) 
     (cellCandidates : cellCandidates) puzzleDrawFull2 print_last : solution * OSet<core.Hint.description> = 
@@ -109,7 +110,7 @@ let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (
         (newSolution, OSet.empty)
 
     else
-        let supportedHintOpt = Smap.tryGet Sstring.compare item supportedHints in
+        let supportedHintOpt = SMap.tryGet item supportedHints in
         match supportedHintOpt with
         | Some supportedHint ->
             let hints = supportedHint p cellCandidates in
@@ -154,7 +155,7 @@ let repl (sudoku : string) (puzzleShape : puzzleShape) : unit =
 
     (* Print a Digit option, with colours *)
     let puzzleDrawCell (solution : solution) (cell : cell) : consoleString = 
-        drawDigitCellString (Given.get cell solution.given) (Current.get cell solution.current)
+        drawDigitCellString (SMap.get cell solution.given) (SMap.get cell solution.current)
         in
 
     let puzzleDrawLine (solution : solution) : unit =

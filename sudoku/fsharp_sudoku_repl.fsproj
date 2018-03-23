@@ -66,6 +66,7 @@
     <Compile Include="src\oset.fsi" />
     <Compile Include="src\oset.fs" />
     <Compile Include="src\sset.fs" />
+    <Compile Include="src\smap.fsi" />
     <Compile Include="src\smap.fs" />
     <Compile Include="src\core\sudoku.fsi" />
     <Compile Include="src\core\sudoku.fs" />

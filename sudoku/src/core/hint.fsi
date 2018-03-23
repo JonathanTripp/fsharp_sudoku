@@ -2,6 +2,7 @@ module core.Hint
 
 open Sudoku
 open oset
+open smap
 
 type description = 
     { primaryHouses : houses;
@@ -27,7 +28,7 @@ type annotation =
       focus : digits }
 
 type description2 = 
-    { annotations : (cell * annotation) list }
+    { annotations : SMap<cell, annotation> }
 
 val mhas : solution -> Puzzlemap.puzzleMap -> description -> description2
 

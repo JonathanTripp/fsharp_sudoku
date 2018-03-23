@@ -2,6 +2,7 @@ module console.Command
 
 open core.Sudoku
 open oset
+open smap
 
 type parse_column_or_row_results =
     | CROk of int
@@ -66,4 +67,4 @@ val clear_candidate_command_check_result_to_string : clear_candidate_command_che
 
 val candidateClearCommandCheck : given -> cellCandidates -> candidate -> clear_candidate_command_check_result
 
-val supportedHints : (string * (core.Puzzlemap.puzzleMap -> cellCandidates -> OSet<core.Hint.description>)) list
+val supportedHints : SMap<string, (core.Puzzlemap.puzzleMap -> cellCandidates -> OSet<core.Hint.description>)>

@@ -2,20 +2,21 @@ module core.LoadEliminate
 
 open Sudoku
 open oset
+open smap
 
 let find  (p : Puzzlemap.puzzleMap) (current : current) : OSet<candidateReduction> = 
 
     let reductions (cell : cell) : digits option =
-        let cellContents = Current.get cell current in
+        let cellContents = SMap.get cell current in
         match cellContents with
         | BigNumber _ -> None
         | PencilMarks candidates -> 
             let digits =
                 p.cellHouseCells
-                |> Smap.get Cell.comparer cell
+                |> SMap.get cell
                 |> OSet.choose
                     (fun cell ->
-                        let houseCellContents = Current.get cell current in
+                        let houseCellContents = SMap.get cell current in
                         match houseCellContents with
                         | BigNumber digit -> Some digit
                         | PencilMarks _ -> None)
@@ -38,14 +39,15 @@ let apply (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReducti
         candidateReductions
         |> OSet.map (fun cr -> (cr.cell, cr.candidates))
         |> OSet.toList
+        |> SMap.ofList
         in
 
     let update (cell : cell) : cellContents =
-        let cellContents = Current.get cell current in
+        let cellContents = SMap.get cell current in
         match cellContents with
         | BigNumber _ -> cellContents
         | PencilMarks candidates ->
-            let digitsOpt = Smap.tryGet Cell.comparer cell candidateReductionsLookup in
+            let digitsOpt = SMap.tryGet cell candidateReductionsLookup in
             match digitsOpt with
             | Some digits ->
                 OSet.difference candidates digits
@@ -53,8 +55,7 @@ let apply (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReducti
             | None -> cellContents
         in
 
-    Cells.ofLookup update p.cells
-    |> Current.make
+    SMap.ofLookup update p.cells
 
 let description (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReduction>) : Hint.description =
     { primaryHouses = OSet.empty;

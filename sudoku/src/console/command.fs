@@ -2,6 +2,7 @@ module console.Command
 
 open core.Sudoku
 open oset
+open smap
 
 type parse_column_or_row_results =
     | CROk of int
@@ -123,11 +124,11 @@ let set_cell_command_check_result_to_string (r : set_cell_command_check_result) 
     | SCCRNotACandidate value -> Printf.sprintf "Warning: Cell %s does not have candidate %s" (Cell.to_string value.cell) (Digit.to_string value.digit)
 
 let setCellCommandCheck (given : given) (cellCandidates : cellCandidates) (value : value) : set_cell_command_check_result =
-    let givenDigitOpt = Given.get value.cell given in
+    let givenDigitOpt = SMap.get value.cell given in
     match givenDigitOpt with
     | Some givenDigit -> SCCRGiven (value, givenDigit)
     | None ->
-        let digits = CellCandidates.get value.cell cellCandidates in
+        let digits = SMap.get value.cell cellCandidates in
         if OSet.contains value.digit digits then SSCROk value
         else SCCRNotACandidate value
 
@@ -159,15 +160,15 @@ let clear_candidate_command_check_result_to_string (r : clear_candidate_command_
     | CCCCRNotACandidate candidate -> Printf.sprintf "Warning: Cell %s does not have candidate %s" (Cell.to_string candidate.cell) (Digit.to_string candidate.digit)
 
 let candidateClearCommandCheck (given : given) (cellCandidates : cellCandidates) (candidate : candidate) : clear_candidate_command_check_result =
-    let givenDigitOpt = Given.get candidate.cell given in
+    let givenDigitOpt = SMap.get candidate.cell given in
     match givenDigitOpt with
     | Some givenDigit -> CCCCRGiven (candidate, givenDigit)
     | None ->
-        let digits = CellCandidates.get candidate.cell cellCandidates in
+        let digits = SMap.get candidate.cell cellCandidates in
         if OSet.contains candidate.digit digits then CCCCROk candidate
         else CCCCRNotACandidate candidate
 
-let supportedHints : (string * (core.Puzzlemap.puzzleMap -> cellCandidates -> OSet<core.Hint.description>)) list =
+let supportedHints : SMap<string, (core.Puzzlemap.puzzleMap -> cellCandidates -> OSet<core.Hint.description>)> =
     let keys =
         [
             "fh";
@@ -184,6 +185,7 @@ let supportedHints : (string * (core.Puzzlemap.puzzleMap -> cellCandidates -> OS
             "x";
             "y";
         ]
+        |> OSet.ofList
         in
 
     let command key =
@@ -203,4 +205,4 @@ let supportedHints : (string * (core.Puzzlemap.puzzleMap -> cellCandidates -> OS
         | "y" -> hints.Wing.yWings
         in
 
-    Smap.ofLookup command keys
+    SMap.ofLookup command keys

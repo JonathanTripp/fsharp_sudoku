@@ -2,6 +2,7 @@ module console.Console
 
 open core.Sudoku
 open oset
+open smap
 
 let drawDigitCellContents (given : digit option) (current : cellContents) : Format.consoleChar = 
     match given, current with
@@ -53,14 +54,14 @@ let drawPencilMarks (annotation : core.Hint.annotation) (candidate : digit) (can
                 if OSet.contains candidate candidates then Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
                 else Format.CChar ' '))
 
-let drawDigitCellContentAnnotations centreCandidate (annotations : (cell * core.Hint.annotation) list) (cell : cell) (candidate : digit) : Format.consoleChar = 
+let drawDigitCellContentAnnotations centreCandidate (annotations : SMap<cell, core.Hint.annotation>) (cell : cell) (candidate : digit) : Format.consoleChar = 
 
-    let annotation = Smap.get Cell.comparer cell annotations in
+    let annotation = SMap.get cell annotations in
 
     match annotation.current with
     | BigNumber s when centreCandidate = candidate -> drawBigNumber annotation s
     | BigNumber _ -> Format.ColouredString(" ", Format.Blue, Format.White)
     | PencilMarks digits -> drawPencilMarks annotation candidate digits
 
-let drawDigitCellContentAnnotationString (centreCandidate : digit) (annotations : (cell * core.Hint.annotation) list) (cell : cell) (candidate : digit) : Format.consoleString =
+let drawDigitCellContentAnnotationString (centreCandidate : digit) (annotations : SMap<cell, core.Hint.annotation>) (cell : cell) (candidate : digit) : Format.consoleString =
     [drawDigitCellContentAnnotations centreCandidate annotations cell candidate]
