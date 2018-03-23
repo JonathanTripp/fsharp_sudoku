@@ -198,6 +198,7 @@ let tPuzzleMap (puzzleShape : puzzleShape) : puzzleMap =
         |> OSet.concat in
 
     let _houseCellCandidateReductions (house : house) (cellCandidates : cellCandidates) : OSet<candidateReduction> =
+        SMap.get house _houseCellsLookup
         |> OSet.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates)) in
 
     {
