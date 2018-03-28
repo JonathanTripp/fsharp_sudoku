@@ -183,9 +183,8 @@ module PuzzleShape =
           boxWidth = 3;
           boxHeight = 3;
           alphabet =
-            Sset.range 1 9
-            |> List.map Digit.make
-            |> OSet.ofList
+            Sset.srange 1 9
+            |> OSet.map Digit.make
             }
 
 (* Whilst working to a solution each cell in the grid
@@ -286,9 +285,7 @@ module Solution =
             in
 
         cells
-        |> OSet.map (fun a -> (a, makeCellContents a))
-        |> OSet.toList
-        |> SMap.ofList
+        |> SMap.ofLookup makeCellContents
 
     let currentCellCandidates (cells : cells) (current : current) : cellCandidates =
         let getCandidateEntries (cell : cell) : digits =
@@ -299,6 +296,4 @@ module Solution =
             in
 
         cells
-        |> OSet.map (fun a -> (a, getCandidateEntries a))
-        |> OSet.toList
-        |> SMap.ofList
+        |> SMap.ofLookup getCandidateEntries

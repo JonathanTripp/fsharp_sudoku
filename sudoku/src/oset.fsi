@@ -5,8 +5,6 @@ type OSet<[<EqualityConditionalOn>]'T when 'T : comparison> =
 
 [<RequireQualifiedAccess>]
 module OSet =
-    val ofSet : Set<'T> -> OSet<'T>
-    val toSet : OSet<'T> -> Set<'T>
     val ofList : 'T list -> OSet<'T>
     val toList : OSet<'T> -> 'T list
 

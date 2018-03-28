@@ -12,31 +12,36 @@ let twoByFourPuzzleSpec =
       boxHeight = 4;
       alphabet = 
             [1..8]
-            |> List.map (fun i -> (char) i + '0' |> Digit)
-            |> OSet.ofList }
+            |> OSet.ofList
+            |> OSet.map (fun i -> (char) i + '0' |> Digit)
+             }
 
-let pick_some (as' : 'a list) : 'a list * 'a list =
+let pick_some (as' : OSet<'a>) : OSet<'a> * OSet<'a> =
     let picked =
         [9; 5; 2; 5; 5; 5; 1; 8; 9; 3; 5; 6]
-        |> List.map (fun i -> List.nth as' (i - 1))
+        |> OSet.ofList
+        |> OSet.map (fun i -> OSet.item (i - 1) as')
         in
 
     let expected =
         [1; 2; 3; 5; 6; 8; 9]
-        |> List.map (fun i -> List.nth as' (i - 1))
+        |> OSet.ofList
+        |> OSet.map (fun i -> OSet.item (i - 1) as')
         in
 
     (picked, expected)
 
-let pick_more<'a> (as' : 'a list) : 'a list * 'a list =
+let pick_more<'a when 'a : comparison> (as' : OSet<'a>) : OSet<'a> * OSet<'a> =
     let picked =
         [9 * 8 + 1; 9 * 0 + 5; 9 * 2 + 4; 9 * 0 + 5; 9 * 0 + 5; 9 * 5 + 1; 9 * 0 + 8; 9 * 8 + 1; 9 * 3 + 3; 9 * 0 + 6]
-        |> List.map (fun i -> List.nth as' (i - 1))
+        |> OSet.ofList
+        |> OSet.map (fun i -> OSet.item (i - 1) as')
         in
 
     let expected =
         [9 * 0 + 5; 9 * 0 + 6; 9 * 0 + 8; 9 * 2 + 4; 9 * 3 + 3; 9 * 5 + 1; 9 * 8 + 1]
-        |> List.map (fun i -> List.nth as' (i - 1))
+        |> OSet.ofList
+        |> OSet.map (fun i -> OSet.item (i - 1) as')
         in
 
     (picked, expected)
@@ -45,73 +50,33 @@ let pick_more<'a> (as' : 'a list) : 'a list * 'a list =
 let ``Can make column sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let (picked, expected) = pick_some (OSet.toList p.columns) in
+    let (picked, expected) = pick_some p.columns in
 
-    let picked' =
-        picked
-        |> OSet.ofList
-        in
-
-    let expected' =
-        expected
-        |> OSet.ofList
-        in
-
-    Assert.AreEqual(expected, picked', "{0}!={1}", Columns.toString expected', Columns.toString picked')
+    Assert.AreEqual(expected, picked, "{0}!={1}", Columns.toString expected, Columns.toString picked)
 
 [<Test>]
 let ``Can make row sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let (picked, expected) = pick_some (OSet.toList p.rows) in
+    let (picked, expected) = pick_some p.rows in
 
-    let picked' =
-        picked
-        |> OSet.ofList
-        in
-
-    let expected' =
-        expected
-        |> OSet.ofList
-        in
-
-    Assert.AreEqual(expected, picked', "{0}!={1}", Rows.toString expected', Rows.toString picked')
+    Assert.AreEqual(expected, picked, "{0}!={1}", Rows.toString expected, Rows.toString picked)
 
 [<Test>]
 let ``Can make cell sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let (picked, expected) = pick_more (OSet.toList p.cells) in
+    let (picked, expected) = pick_more p.cells in
 
-    let picked' =
-        picked
-        |> OSet.ofList
-        in
-
-    let expected' =
-        expected
-        |> OSet.ofList
-        in
-
-    Assert.AreEqual(expected, picked', "{0}!={1}", Cells.toString expected', Cells.toString picked')
+    Assert.AreEqual(expected, picked, "{0}!={1}", Cells.toString expected, Cells.toString picked)
 
 [<Test>]
 let ``Can make digit sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let (picked, expected) = pick_some (OSet.toList PuzzleShape.default'.alphabet) in
+    let (picked, expected) = pick_some PuzzleShape.default'.alphabet in
 
-    let picked' =
-        picked
-        |> OSet.ofList
-        in
-
-    let expected' =
-        expected
-        |> OSet.ofList
-        in
-
-    Assert.AreEqual(expected, picked', "{0}!={1}", Digits2.toString expected', Digits2.toString picked')
+    Assert.AreEqual(expected, picked, "{0}!={1}", Digits2.toString expected, Digits2.toString picked)
 
 [<Test>]
 let ``Can make columns``() =

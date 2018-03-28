@@ -151,9 +151,9 @@ let printCandidateGrid (p : core.Puzzlemap.puzzleMap) (candidateGridChars : cand
 
     let c : int = OSet.count (SMap.get (OSet.head p.stacks) p.stackColumns) in
     
-    let ss : digits list = 
-        Sset.range 0 (OSet.count p.stacks - 1)
-        |> List.map (fun i -> OSet.skip (i * c) alphabet |> OSet.take c)
+    let ss : OSet<digits> = 
+        Sset.srange 0 (OSet.count p.stacks - 1)
+        |> OSet.map (fun i -> OSet.skip (i * c) alphabet |> OSet.take c)
         in
 
     let doPrintColumn (digits : digits) : row -> column -> consoleString = 
@@ -173,8 +173,9 @@ let printCandidateGrid (p : core.Puzzlemap.puzzleMap) (candidateGridChars : cand
 
     let doPrintRow (row : row) : consoleString = 
         ss
-        |> List.map
+        |> OSet.map
             (fun digits -> printRow (doPrintStack digits row) candidateGridChars.v candidateGridChars.n p.stacks)
+        |> OSet.toList
         |> List.concat
         in
 

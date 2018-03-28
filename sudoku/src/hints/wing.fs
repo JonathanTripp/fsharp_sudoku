@@ -70,15 +70,11 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
             let row1Cells =
                 cols
                 |> OSet.map (fun col -> Cell.make col row1)
-                |> OSet.toList
-                |> OSet.ofList
                 in
 
             let row2Cells = 
                 cols
                 |> OSet.map (fun col -> Cell.make col row2)
-                |> OSet.toList
-                |> OSet.ofList
                 in
 
             let pointerCells =
@@ -107,15 +103,11 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
             let col1Cells =
                 rows
                 |> OSet.map (fun row -> Cell.make col1 row)
-                |> OSet.toList
-                |> OSet.ofList
                 in
 
             let col2Cells =
                 rows
                 |> OSet.map (fun row -> Cell.make col2 row)
-                |> OSet.toList
-                |> OSet.ofList
                 in
 
             let pointerCells =
@@ -215,15 +207,11 @@ let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
             let row1Cells =
                 cols
                 |> OSet.map (fun col -> Cell.make col row1)
-                |> OSet.toList
-                |> OSet.ofList
                 in
 
             let row2Cells =
                 cols
                 |> OSet.map (fun col -> Cell.make col row2)
-                |> OSet.toList
-                |> OSet.ofList
                 in
 
             let pointerCells = OSet.union row1Cells row2Cells in
@@ -248,15 +236,11 @@ let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
             let col1Cells = 
                 rows
                 |> OSet.map (fun row -> Cell.make col1 row)
-                |> OSet.toList
-                |> OSet.ofList
                 in
 
             let col2Cells =
                 rows
                 |> OSet.map (fun row -> Cell.make col2 row)
-                |> OSet.toList
-                |> OSet.ofList
                 in
 
             let pointerCells = OSet.union col1Cells col2Cells in

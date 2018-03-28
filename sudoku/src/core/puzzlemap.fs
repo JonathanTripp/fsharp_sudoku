@@ -5,13 +5,11 @@ open oset
 open smap
 
 let columns (length : size) : OSet<column> =
-    Sset.range 1 length
-    |> OSet.ofList
+    Sset.srange 1 length
     |> OSet.map Column.make
 
 let rows (length : size) : OSet<row> =
-    Sset.range 1 length
-    |> OSet.ofList
+    Sset.srange 1 length
     |> OSet.map Row.make
 
 let cells (length : size) : OSet<cell> =
@@ -26,13 +24,11 @@ let cells (length : size) : OSet<cell> =
     |> OSet.concat
 
 let stacks (length : size) (boxWidth : boxWidth) : OSet<stack> =
-    Sset.range 1 (length / boxWidth)
-    |> OSet.ofList
+    Sset.srange 1 (length / boxWidth)
     |> OSet.map Stack.make
 
 let bands (length : size) (boxHeight : boxHeight) : OSet<band> =
-    Sset.range 1 (length / boxHeight)
-    |> OSet.ofList
+    Sset.srange 1 (length / boxHeight)
     |> OSet.map Band.make
 
 let boxes (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight) : OSet<box> =
@@ -72,8 +68,7 @@ let stackColumns (boxWidth : boxWidth) (stack : stack) : OSet<column> =
     match stack with
     | SStack s ->
         let t = (s - 1) * boxWidth in
-        Sset.range (t + 1) (t + boxWidth)
-        |> OSet.ofList
+        Sset.srange (t + 1) (t + boxWidth)
         |> OSet.map Column.make
 
 let rowBand (boxHeight : boxHeight) (row : row) : band =
@@ -85,8 +80,7 @@ let rowBand (boxHeight : boxHeight) (row : row) : band =
 let bandRows (boxHeight : boxHeight) (band : band) : OSet<row> =
     let c = match band with BBand b -> (b - 1) * boxHeight in
 
-    Sset.range (c + 1) (c + boxHeight)
-    |> OSet.ofList
+    Sset.srange (c + 1) (c + boxHeight)
     |> OSet.map Row.make
 
 let cellBox (boxWidth : boxWidth) (boxHeight : boxHeight) (cell : cell) : box =
