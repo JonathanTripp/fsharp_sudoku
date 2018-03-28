@@ -21,10 +21,10 @@ let ``Can find full house``() =
     let hints = hints.FullHouse.find p cellCandidates in
 
     let expectedHints : core.Hint.description list =
-        [   { primaryHouses = OSet.singleton (HBox (Box.make (Stack.make 2) (Band.make 3)));
+        [   { primaryHouses = OSet.singleton (HBox (Box.make (Stack.ofNat 2) (Band.ofNat 3)));
               secondaryHouses = OSet.empty;
               candidateReductions = OSet.empty;
-              setCellValueAction = Some (Value.make (Cell.make (Column.make 6) (Row.make 9)) (OSet.item 5 PuzzleShape.default'.alphabet));
+              setCellValueAction = Some (Value.make (Cell.make (Column.ofNat 6) (Row.ofNat 9)) (OSet.item 5 PuzzleShape.default'.alphabet));
               pointers = OSet.empty;
               focus = OSet.empty } ]
         in

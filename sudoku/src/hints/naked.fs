@@ -70,7 +70,7 @@ let nakedNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates 
             OSet.count candidates > 1 && OSet.count candidates <= count) 
         in
 
-    Sset.ssetSubsets hht count
+    OSet.subsets count hht
     |> OSet.map (fun ss -> findNaked count p cellCandidates primaryHouse ss)
     |> OSet.choose Sset.id
 

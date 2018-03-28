@@ -6,14 +6,14 @@ open smap
 type size = int
 type column = | CColumn of int
 module Column =
-  val make : int -> column
+  val ofNat : int -> column
   val to_string : column -> string
 type columns = OSet<column>
 module Columns =
   val toString : columns -> string
 type row = | RRow of int
 module Row =
-  val make : int -> row
+  val ofNat : int -> row
   val to_string : row -> string
 type rows = OSet<row>
 module Rows =
@@ -29,7 +29,7 @@ module Cells =
   val toString : cells -> string
 type stack = | SStack of int
 module Stack =
-  val make : int -> stack
+  val ofNat : int -> stack
   val to_string : stack -> string
 type stacks = OSet<stack>
 module Stacks =
@@ -37,7 +37,7 @@ module Stacks =
 type boxWidth = int
 type band = | BBand of int
 module Band =
-  val make : int -> band
+  val ofNat : int -> band
   val to_string : band -> string
 type bands = OSet<band>
 module Bands =
@@ -65,14 +65,14 @@ module House =
   val make_box : box -> house
   val to_string : house -> string
 type houses = OSet<house>
-module Houses2 =
+module Houses =
   val toString : houses -> string
 type digit = | Digit of char
 module Digit =
-  val make : int -> digit
+  val ofNat : int -> digit
   val to_string : digit -> string
 type digits = OSet<digit>
-module Digits2 =
+module Digits =
   val toString : digits -> string
 type puzzleShape =
   {size: size;

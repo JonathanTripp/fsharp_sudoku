@@ -17,8 +17,8 @@ type description =
 module Description =
     let to_string (h : description) : string =
 
-        let line1 = Printf.sprintf "Primary OSet %s\r\n" (Houses2.toString h.primaryHouses) in
-        let line2 = Printf.sprintf "Secondary OSet %s\r\n" (Houses2.toString h.secondaryHouses) in
+        let line1 = Printf.sprintf "Primary OSet %s\r\n" (Houses.toString h.primaryHouses) in
+        let line2 = Printf.sprintf "Secondary OSet %s\r\n" (Houses.toString h.secondaryHouses) in
         let line3 = Printf.sprintf "Pointers %s\r\n" (CandidateReductions.to_string (h.pointers |> OSet.toList)) in
 
         let crlines =

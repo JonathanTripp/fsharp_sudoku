@@ -1,7 +1,5 @@
 module Sset
 
-open oset
-
 (*
 Sset is intended to be an ordered list, without duplicates.
 
@@ -195,11 +193,6 @@ let rec doSetSubsets (list : 'a list) (size : int) (prefix : 'a list) : 'a list 
 let rec setSubsets (as' : 'a list) (size : int) : 'a list list =
     doSetSubsets as' size []
 
-let ssetSubsets  (as' : OSet<'a>) (size : int) : OSet<OSet<'a>> =
-    setSubsets (as' |> OSet.toList) size
-    |> OSet.ofList
-    |> OSet.map OSet.ofList
-
 (*
     let s0 = []
     let p00 = setSubsets s0 0
@@ -229,8 +222,6 @@ let ssetSubsets  (as' : OSet<'a>) (size : int) : OSet<OSet<'a>> =
 *)
 
 let rec range i j = if i > j then [] else i :: (range (i+1) j)
-
-let srange i j = range i j |> OSet.ofList
 
 let id (x : 'a) : 'a = x
 

@@ -24,13 +24,13 @@ let ``Can find naked singles``() =
         [   { primaryHouses = OSet.empty;
               secondaryHouses = OSet.empty;
               candidateReductions = OSet.empty;
-              setCellValueAction = Some (Value.make (Cell.make (Column.make 8) (Row.make 1)) (OSet.item 8 PuzzleShape.default'.alphabet));
+              setCellValueAction = Some (Value.make (Cell.make (Column.ofNat 8) (Row.ofNat 1)) (OSet.item 8 PuzzleShape.default'.alphabet));
               pointers = OSet.empty;
               focus = OSet.empty };
             { primaryHouses = OSet.empty;
               secondaryHouses = OSet.empty;
               candidateReductions = OSet.empty;
-              setCellValueAction = Some (Value.make (Cell.make (Column.make 8) (Row.make 9)) (OSet.item 5 PuzzleShape.default'.alphabet));
+              setCellValueAction = Some (Value.make (Cell.make (Column.ofNat 8) (Row.ofNat 9)) (OSet.item 5 PuzzleShape.default'.alphabet));
               pointers = OSet.empty;
               focus = OSet.empty } ]
         in

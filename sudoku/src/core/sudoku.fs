@@ -11,7 +11,7 @@ type column =
     | CColumn of int
 
 module Column =
-    let make (i : int) : column =
+    let ofNat (i : int) : column =
         CColumn i
 
     let to_string (CColumn c : column) : string =
@@ -28,7 +28,7 @@ type row =
     | RRow of int
 
 module Row =
-    let make (i : int) : row = RRow i
+    let ofNat (i : int) : row = RRow i
 
     let to_string (RRow r : row) : string =
         Printf.sprintf "r%d" r
@@ -66,7 +66,7 @@ type stack =
     | SStack of int
 
 module Stack =
-    let make (i : int) : stack =
+    let ofNat (i : int) : stack =
         SStack i
 
     let to_string (SStack s : stack) : string =
@@ -85,7 +85,7 @@ type band =
     | BBand of int
 
 module Band =
-    let make (i : int) : band =
+    let ofNat (i : int) : band =
         BBand i
 
     let to_string (BBand b : band) : string =
@@ -147,7 +147,7 @@ module House =
 
 type houses = OSet<house>
 
-module Houses2 =
+module Houses =
     let toString (hs : houses) : string =
         "H" + (OSet.toString hs)
 
@@ -156,7 +156,7 @@ type digit =
     | Digit of char
 
 module Digit =
-    let make (i : int) : digit =
+    let ofNat (i : int) : digit =
         Digit (Schar.chr (i + (Schar.code '0')))
 
     let to_string (Digit s : digit) : string =
@@ -164,7 +164,7 @@ module Digit =
 
 type digits = OSet<digit>
 
-module Digits2 =
+module Digits =
     let toString (ds : digits) : string =
         "D" + (OSet.toString ds)
 
@@ -182,10 +182,7 @@ module PuzzleShape =
         { size = 9;
           boxWidth = 3;
           boxHeight = 3;
-          alphabet =
-            Sset.srange 1 9
-            |> OSet.map Digit.make
-            }
+          alphabet = OSet.range 1 9 Digit.ofNat }
 
 (* Whilst working to a solution each cell in the grid
  that doesn't have a Digit is filled with candidates
@@ -202,7 +199,7 @@ module CellContents =
         PencilMarks digits
 
 (* Working towards a solution we take one of the following actions:
- Sset the cell to have a Digit *)
+ Set the cell to have a Digit *)
 type value = 
     { cell : cell;
       digit : digit }
@@ -247,7 +244,7 @@ module CandidateReductions =
         |> String.concat ","
 
 (* Working towards a solution we take one of the following actions:
- Sset the cell to have a Digit
+ Set the cell to have a Digit
  or remove a candidate *)
 type action =
     | Load of string

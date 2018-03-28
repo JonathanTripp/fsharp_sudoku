@@ -64,7 +64,7 @@ let hiddenNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates
         |> OSet.concat
         in
 
-    Sset.ssetSubsets houseCandidates count
+    OSet.subsets count houseCandidates
     |> OSet.choose
         (fun candidateSubset -> 
             findHidden count p cellCandidates candidateSubset house)

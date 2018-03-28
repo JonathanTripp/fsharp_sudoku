@@ -1,5 +1,7 @@
 ﻿module oset
 
+open Sset
+
 type OSet<[<EqualityConditionalOn>]'T when 'T : comparison> =
     | SSet of Set<'T>
 
@@ -64,6 +66,9 @@ module OSet =
     let mapi (mapping : int -> 'T -> 'U) (o : OSet<'T>) : OSet<'U> =
         o |> toList |> List.mapi mapping |> ofList
 
+    let range (first : int) (last : int) (fn : int -> 'T) : OSet<'T> =
+        Sset.range first last |> List.map fn |> ofList
+
     let remove (value : 'T) (o : OSet<'T>) : OSet<'T> = 
         o |> toSet |> Set.remove value |> ofSet
 
@@ -72,6 +77,11 @@ module OSet =
 
     let skip (count : int) (o : OSet<'T>) : OSet<'T> =
         o |> toList |> List.skip count |> ofList
+
+    let subsets (size : int) (o : OSet<'T>) : OSet<OSet<'T>> =
+        Sset.setSubsets (o |> toList) size
+        |> List.map ofList
+        |> ofList
 
     let take (count : int) (o : OSet<'T>) : OSet<'T> =
         o |> toList |> List.take count |> ofList

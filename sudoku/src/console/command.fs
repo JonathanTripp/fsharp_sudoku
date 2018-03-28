@@ -45,7 +45,7 @@ let parseCell (gridSize : int) (cells : cells) (termColumn : string) (termRow : 
     | (CROk col, CROk row) ->
         let cell =
             cells
-            |> OSet.find (fun cell -> cell.col = (Column.make col) && cell.row = (Row.make row))
+            |> OSet.find (fun cell -> cell.col = (Column.ofNat col) && cell.row = (Row.ofNat row))
             in
         COk cell
     | (CRError _, CROk row) -> CColError (parsedCol, row)
@@ -74,7 +74,7 @@ let parseValue (digits : digits) (term : string) : parse_value_result =
     if String.length term = 1 then
         match charToCandidate digits (Sstring.get term 0) with
         | Some d -> VOk d
-        | None -> VErrorInvalid (term, (Digits2.toString digits))
+        | None -> VErrorInvalid (term, (Digits.toString digits))
     else VErrorTooMany term
 
 type focus_command_result =

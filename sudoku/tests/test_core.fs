@@ -76,7 +76,7 @@ let ``Can make digit sets``() =
 
     let (picked, expected) = pick_some PuzzleShape.default'.alphabet in
 
-    Assert.AreEqual(expected, picked, "{0}!={1}", Digits2.toString expected, Digits2.toString picked)
+    Assert.AreEqual(expected, picked, "{0}!={1}", Digits.toString expected, Digits.toString picked)
 
 [<Test>]
 let ``Can make columns``() =
@@ -201,7 +201,7 @@ let ``Can make houses``() =
         |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Houses2.toString expected, Houses2.toString actual)
+    Assert.AreEqual(expected, actual, "{0}!={1}", Houses.toString expected, Houses.toString actual)
 
 [<Test>]
 let ``Get column cells``() = 
