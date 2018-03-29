@@ -4,6 +4,7 @@ open Sudoku
 open oset
 open smap
 
+[<NoComparison; NoEquality>]
 type puzzleMap =
     {
         columns : columns;

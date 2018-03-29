@@ -144,8 +144,7 @@ let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
         in
 
     OSet.intersect houseCandidates1 houseCandidates2
-    |> OSet.map (xWingsPerHouseCandidate p cellCandidates house1 house2)
-    |> OSet.choose Sset.id
+    |> OSet.choose (xWingsPerHouseCandidate p cellCandidates house1 house2)
 
 let xWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
     let rows = OSet.map House.make_row p.rows in

@@ -244,7 +244,8 @@ let split_char sep str =
     try Some (Sstring.index_from str i sep)
     with _ -> None
   in
-  let rec aux i acc = match string_index_from i with
+  let rec aux i acc =
+    match string_index_from i with
     | Some i' ->
         let w = Sstring.sub str i (i' - i) in
         aux (succ i') (w::acc)

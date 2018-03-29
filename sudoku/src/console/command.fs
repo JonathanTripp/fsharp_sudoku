@@ -84,7 +84,7 @@ type focus_command_result =
 let focusCommandParse (s: puzzleShape) (item : string) : focus_command_result =
     let terms = Sset.split_char ' ' item in
     if List.length terms = 2 then 
-        FCOk (parseValue s.alphabet (List.nth terms 1))
+        FCOk (parseValue s.alphabet (List.item 1 terms))
     else
         FCWrongTermCount (List.length terms)
 
@@ -104,8 +104,8 @@ type set_cell_command_parse_result =
 let setCellCommandParse (s: puzzleShape) (item : string) (p : core.Puzzlemap.puzzleMap) : set_cell_command_parse_result = 
     let terms = Sset.split_char ' ' item in
     if List.length terms = 4 then 
-        let parsedCell = parseCell (OSet.count s.alphabet) p.cells (List.nth terms 1) (List.nth terms 2) in
-        let parsedValue = parseValue s.alphabet (List.nth terms 3) in
+        let parsedCell = parseCell (OSet.count s.alphabet) p.cells (List.item 1 terms) (List.item 2 terms) in
+        let parsedValue = parseValue s.alphabet (List.item 3 terms) in
 
         match (parsedCell, parsedValue) with
         | (COk cell, VOk value) -> SCCOk (Value.make cell value)
@@ -140,8 +140,8 @@ type clear_candidate_command_parse_result =
 let candidateClearCommandParse (s: puzzleShape) (item : string) (p : core.Puzzlemap.puzzleMap) : clear_candidate_command_parse_result = 
     let terms = Sset.split_char ' ' item in
     if List.length terms = 4 then 
-        let parsedCell = parseCell (OSet.count s.alphabet) p.cells (List.nth terms 1) (List.nth terms 2) in
-        let parsedDigit = parseValue s.alphabet (List.nth terms 3) in
+        let parsedCell = parseCell (OSet.count s.alphabet) p.cells (List.item 1 terms) (List.item 2 terms) in
+        let parsedDigit = parseValue s.alphabet (List.item 3 terms) in
 
         match (parsedCell, parsedDigit) with
         | (COk cell, VOk digit) -> CCCPROk (Candidate.make cell digit)

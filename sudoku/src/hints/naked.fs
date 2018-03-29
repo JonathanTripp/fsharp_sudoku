@@ -22,8 +22,7 @@ let nakedSingleCell (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandida
 
 let nakedSingle (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
     p.cells
-    |> OSet.map (nakedSingleCell p cellCandidates)
-    |> OSet.choose Sset.id
+    |> OSet.choose (nakedSingleCell p cellCandidates)
 
 let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (cellSubset : cells) : core.Hint.description option = 
 
@@ -71,8 +70,7 @@ let nakedNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates 
         in
 
     OSet.subsets count hht
-    |> OSet.map (fun ss -> findNaked count p cellCandidates primaryHouse ss)
-    |> OSet.choose Sset.id
+    |> OSet.choose (fun ss -> findNaked count p cellCandidates primaryHouse ss)
 
 let nakedN (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
     p.houses

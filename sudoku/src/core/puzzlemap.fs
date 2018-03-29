@@ -115,6 +115,7 @@ let cellHouseCells (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight)
     [ OSet.singleton cell; rowCells'; columnCells'; boxCells' ]
     |> OSet.unionMany
 
+[<NoComparison; NoEquality>]
 type puzzleMap =
     {
         columns : columns;

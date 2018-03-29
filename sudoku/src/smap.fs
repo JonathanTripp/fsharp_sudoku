@@ -17,7 +17,7 @@ module SMap =
         elements |> Map.ofList |> ofMap
 
     let ofLookup (fn : 'Key -> 'Value) (cs : OSet<'Key>) : SMap<'Key, 'Value> =
-        OSet.map (fun c -> (c, fn c)) cs |> OSet.toList |> ofList
+        cs |> OSet.toList |> List.map (fun c -> (c, fn c)) |> ofList
 
     let get (key : 'Key) (m : SMap<'Key, 'Value>) : 'Value =
         let n = m |> toMap
