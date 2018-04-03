@@ -62,8 +62,8 @@ let konst x _ = x
 
 let printLine (cells : cells) (digitTo : cell -> consoleString) : consoleString = 
     cells
-    |> OSet.map digitTo
     |> OSet.toList
+    |> List.map digitTo
     |> List.concat
 
 (* Combine fences with posts (there's one more fence than posts: f p f p ... p f) *)
@@ -131,15 +131,15 @@ let printCandidateGrid (p : core.Puzzlemap.puzzleMap) (candidateGridChars : cand
 
     let d : consoleString =
         SMap.get (OSet.head p.stacks) p.stackColumns
-        |> OSet.map (konst candidateGridChars.h)
         |> OSet.toList
+        |> List.map (konst candidateGridChars.h)
         |> List.concat
         in
 
     let i : consoleString =
         SMap.get (OSet.head p.stacks) p.stackColumns
-        |> OSet.map (konst candidateGridChars.hi)
         |> OSet.toList
+        |> List.map (konst candidateGridChars.hi)
         |> List.concat
         in
 
@@ -159,8 +159,8 @@ let printCandidateGrid (p : core.Puzzlemap.puzzleMap) (candidateGridChars : cand
         let doPrintCell : cell -> consoleString =
             fun cell ->
                 digits
-                |> OSet.map (fun digit -> draw_cell cell digit)
                 |> OSet.toList
+                |> List.map (fun digit -> draw_cell cell digit)
                 |> List.concat
                 in
         printColumn doPrintCell
@@ -172,9 +172,9 @@ let printCandidateGrid (p : core.Puzzlemap.puzzleMap) (candidateGridChars : cand
 
     let doPrintRow (row : row) : consoleString = 
         ss
-        |> OSet.map
-            (fun digits -> printRow (doPrintStack digits row) candidateGridChars.v candidateGridChars.n p.stacks)
         |> OSet.toList
+        |> List.map
+            (fun digits -> printRow (doPrintStack digits row) candidateGridChars.v candidateGridChars.n p.stacks)
         |> List.concat
         in
 

@@ -2,8 +2,30 @@
 
 open Sset
 
-type OSet<[<EqualityConditionalOn>]'T when 'T : comparison> =
+type OSetMember<'T when 'T : comparison> =
+    abstract member Compare : 'T -> int
+
+    abstract member Print : unit -> string
+
+type OSet<[<EqualityConditionalOn>]'T when 'T :> OSetMember<'T> and 'T : comparison> =
     | SSet of Set<'T>
+    interface OSetMember<OSet<'T>> with
+        member this.Compare rhs =
+            if this < rhs then -1
+            else if this = rhs then 0
+            else 1
+
+        member this.Print () =
+            this.ToString()
+
+    override this.ToString() =
+        let toString a = a.ToString()
+        let (SSet o) = this in
+        let sb = new System.Text.StringBuilder()
+        sb.Append("{")
+          .Append(String.concat "," (o |> Set.toList |> List.map toString))
+          .Append("}")
+          .ToString()
 
 [<RequireQualifiedAccess>]
 module OSet =

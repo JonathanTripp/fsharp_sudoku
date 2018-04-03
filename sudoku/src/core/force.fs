@@ -41,7 +41,8 @@ let rec searchr (p : Puzzlemap.puzzleMap) (solution : solution) (existing : solu
             in
 
         candidates
-        |> OSet.map
+        |> OSet.toList
+        |> List.map
             (fun digit ->
                 let setCellValue = Value.make cell digit in
                 
@@ -72,7 +73,6 @@ let rec searchr (p : Puzzlemap.puzzleMap) (solution : solution) (existing : solu
                     Console.WriteLine(String.Format("< {0}", cell))
                     *)
                     [])
-            |> OSet.toList
             |> List.concat
     | None -> solution :: existing
 

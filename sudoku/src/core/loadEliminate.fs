@@ -37,8 +37,8 @@ let apply (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReducti
 
     let candidateReductionsLookup =
         candidateReductions
-        |> OSet.map (fun cr -> (cr.cell, cr.candidates))
         |> OSet.toList
+        |> List.map (fun cr -> (cr.cell, cr.candidates))
         |> SMap.ofList
         in
 

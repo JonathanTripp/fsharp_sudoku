@@ -67,4 +67,4 @@ val clear_candidate_command_check_result_to_string : clear_candidate_command_che
 
 val candidateClearCommandCheck : given -> cellCandidates -> candidate -> clear_candidate_command_check_result
 
-val supportedHints : SMap<string, (core.Puzzlemap.puzzleMap -> cellCandidates -> OSet<core.Hint.description>)>
+val supportedHints : Map<string, (core.Puzzlemap.puzzleMap -> cellCandidates -> OSet<core.Hint.description>)>

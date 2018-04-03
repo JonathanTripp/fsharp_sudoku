@@ -9,40 +9,62 @@ type size = int
 (* containing columns... *)
 type column = 
     | CColumn of int
+    interface OSetMember<column> with
+        member this.Compare rhs =
+            if this < rhs then -1
+            else if this = rhs then 0
+            else 1
+
+        member this.Print () =
+            this.ToString()
+
+    override this.ToString() =
+        let (CColumn c) = this in
+        Printf.sprintf "c%d" c
 
 module Column =
     let ofNat (i : int) : column =
         CColumn i
 
-    let to_string (CColumn c : column) : string =
-        Printf.sprintf "c%d" c
-
 type columns = OSet<column>
-
-module Columns =
-    let toString (s : columns) : string =
-        "C" + (OSet.toString s)
 
 (* ... by rows *)
 type row = 
     | RRow of int
+    interface OSetMember<row> with
+        member this.Compare rhs =
+            if this < rhs then -1
+            else if this = rhs then 0
+            else 1
+
+        member this.Print () =
+            this.ToString()
+
+    override this.ToString() =
+        let (RRow r) = this in
+        Printf.sprintf "r%d" r
 
 module Row =
     let ofNat (i : int) : row = RRow i
 
-    let to_string (RRow r : row) : string =
-        Printf.sprintf "r%d" r
-
 type rows = OSet<row>
-
-module Rows =
-    let toString (r : rows) : string =
-        "R" + (OSet.toString r)
 
 (* Each cell is identified by (col, row) *)
 type cell = 
     { col : column;
       row : row }
+    interface OSetMember<cell> with
+        member this.Compare rhs =
+            if this < rhs then -1
+            else if this = rhs then 0
+            else 1
+
+        member this.Print () =
+            this.ToString()
+
+    override this.ToString() =
+        let {col = CColumn c; row = RRow r} = this in
+        Printf.sprintf "c%dr%d" c r
 
 module Cell =
     let make (c : column) (r : row) : cell =
@@ -64,6 +86,14 @@ module Cells =
  A column of vertical boxes is a stack *)
 type stack = 
     | SStack of int
+    interface OSetMember<stack> with
+        member this.Compare rhs =
+            if this < rhs then -1
+            else if this = rhs then 0
+            else 1
+
+        member this.Print () =
+            this.ToString()
 
 module Stack =
     let ofNat (i : int) : stack =
@@ -83,6 +113,14 @@ type boxWidth = int
 (* A row of horizontal boxes is a band *)
 type band = 
     | BBand of int
+    interface OSetMember<band> with
+        member this.Compare rhs =
+            if this < rhs then -1
+            else if this = rhs then 0
+            else 1
+
+        member this.Print () =
+            this.ToString()
 
 module Band =
     let ofNat (i : int) : band =
@@ -103,6 +141,14 @@ type boxHeight = int
 type box = 
     { stack : stack;
       band : band }
+    interface OSetMember<box> with
+        member this.Compare rhs =
+            if this < rhs then -1
+            else if this = rhs then 0
+            else 1
+
+        member this.Print () =
+            this.ToString()
 
 module Box =
     let make (s : stack) (b : band) : box =
@@ -122,12 +168,28 @@ module Boxes =
 type line = 
     | LColumn of column
     | LRow of row
+    interface OSetMember<line> with
+        member this.Compare rhs =
+            if this < rhs then -1
+            else if this = rhs then 0
+            else 1
+
+        member this.Print () =
+            this.ToString()
 
 (* The columns, rows and boxes are collectively called houses *)
 type house = 
     | HColumn of column
     | HRow of row
     | HBox of box
+    interface OSetMember<house> with
+        member this.Compare rhs =
+            if this < rhs then -1
+            else if this = rhs then 0
+            else 1
+
+        member this.Print () =
+            this.ToString()
 
 module House =
     let make_column (column : column) : house =
@@ -141,8 +203,8 @@ module House =
 
     let to_string (house : house) : string =
         match house with
-        | HColumn column -> Column.to_string column
-        | HRow row -> Row.to_string row
+        | HColumn column -> column.ToString()
+        | HRow row -> row.ToString()
         | HBox box -> Box.to_string box
 
 type houses = OSet<house>
@@ -154,6 +216,14 @@ module Houses =
 (* Each cell in the grid contains a Digit, usually numbers 1..9 *)
 type digit = 
     | Digit of char
+    interface OSetMember<digit> with
+        member this.Compare rhs =
+            if this < rhs then -1
+            else if this = rhs then 0
+            else 1
+
+        member this.Print () =
+            this.ToString()
 
 module Digit =
     let ofNat (i : int) : digit =
@@ -190,6 +260,14 @@ module PuzzleShape =
 type cellContents = 
     | BigNumber of digit
     | PencilMarks of digits
+    interface OSetMember<cellContents> with
+        member this.Compare rhs =
+            if this < rhs then -1
+            else if this = rhs then 0
+            else 1
+
+        member this.Print () =
+            this.ToString()
 
 module CellContents =
     let make_big_number (digit : digit) : cellContents =
@@ -228,6 +306,14 @@ module Candidate =
 type candidateReduction = 
     { cell : cell;
       candidates : digits }
+    interface OSetMember<candidateReduction> with
+        member this.Compare rhs =
+            if this < rhs then -1
+            else if this = rhs then 0
+            else 1
+
+        member this.Print () =
+            this.ToString()
 
 module CandidateReduction =
     let make (cell : cell) (digits : digits) : candidateReduction =

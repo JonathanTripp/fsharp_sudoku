@@ -1,7 +1,13 @@
 ﻿module oset
 
-type OSet<[<EqualityConditionalOn>]'T when 'T : comparison> =
+type OSetMember<'T when 'T : comparison> =
+    abstract member Compare : 'T -> int
+
+    abstract member Print : unit -> string
+
+type OSet<[<EqualityConditionalOn>]'T when 'T :> OSetMember<'T> and 'T : comparison> =
     | SSet of Set<'T>
+    interface OSetMember<OSet<'T>>
 
 [<RequireQualifiedAccess>]
 module OSet =

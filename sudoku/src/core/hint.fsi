@@ -11,6 +11,7 @@ type description =
       setCellValueAction : value option;
       pointers : OSet<candidateReduction>;
       focus : digits }
+    interface OSetMember<description>
 
 module Description =
     val to_string : description -> string

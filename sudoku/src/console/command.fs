@@ -168,7 +168,7 @@ let candidateClearCommandCheck (given : given) (cellCandidates : cellCandidates)
         if OSet.contains candidate.digit digits then CCCCROk candidate
         else CCCCRNotACandidate candidate
 
-let supportedHints : SMap<string, (core.Puzzlemap.puzzleMap -> cellCandidates -> OSet<core.Hint.description>)> =
+let supportedHints : Map<string, (core.Puzzlemap.puzzleMap -> cellCandidates -> OSet<core.Hint.description>)> =
     let keys =
         [
             "fh";
@@ -185,7 +185,6 @@ let supportedHints : SMap<string, (core.Puzzlemap.puzzleMap -> cellCandidates ->
             "x";
             "y";
         ]
-        |> OSet.ofList
         in
 
     let command key =
@@ -205,4 +204,4 @@ let supportedHints : SMap<string, (core.Puzzlemap.puzzleMap -> cellCandidates ->
         | "y" -> hints.Wing.yWings
         in
 
-    SMap.ofLookup command keys
+    keys |> List.map (fun c -> (c, command c)) |> Map.ofList

@@ -110,7 +110,7 @@ let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (
         (newSolution, OSet.empty)
 
     else
-        let supportedHintOpt = SMap.tryGet item supportedHints in
+        let supportedHintOpt = Map.tryFind item supportedHints in
         match supportedHintOpt with
         | Some supportedHint ->
             let hints = supportedHint p cellCandidates in
