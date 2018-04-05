@@ -2,110 +2,83 @@
 
 open Sset
 
-type OSetMember<'T when 'T : comparison> =
-    abstract member Compare : 'T -> int
+let inline setElemCompare (x:^T) (y:^T) : Ordering =
+    (^T: (static member setElemCompare: ^T -> ^T -> Ordering) (x, y))
 
-    abstract member Print : unit -> string
-
-type OSet<[<EqualityConditionalOn>]'T when 'T :> OSetMember<'T> and 'T : comparison> =
-    | SSet of Set<'T>
-    interface OSetMember<OSet<'T>> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
-
-    override this.ToString() =
-        let toString a = a.ToString()
-        let (SSet o) = this in
-        let sb = new System.Text.StringBuilder()
-        sb.Append("{")
-          .Append(String.concat "," (o |> Set.toList |> List.map toString))
-          .Append("}")
-          .ToString()
+type OSet<'T> = OSet of 'T list
 
 [<RequireQualifiedAccess>]
 module OSet =
-    let ofSet (o : Set<'T>) : OSet<'T> =
-        o |> SSet
+    let inline ofList (l : ^T list) : OSet<'T> =
+        l |> Sset.setify setElemCompare |> OSet
 
-    let toSet (SSet o : OSet<'T>) : Set<'T> =
+    let toList (OSet o : OSet<'T>) : 'T list =
         o
 
-    let ofList (l : 'T list) : OSet<'T> =
-        l |> Set.ofList |> ofSet
-
-    let toList (o : OSet<'T>) : 'T list =
-        o |> toSet |> Set.toList
-
-    let choose (chooser : 'T -> 'U option) (o : OSet<'T>) : OSet<'U> =
+    let inline choose (chooser : 'T -> 'U option) (o : OSet<'T>) : OSet<'U> =
         o |> toList |> List.choose chooser |> ofList
 
-    let concat (ds : OSet<OSet<'T>>) : OSet<'T> =
-        ds |> toList |> List.map toSet |> Set.unionMany |> ofSet
+    let inline concat (ds : OSet<OSet<'T>>) : OSet<'T> =
+        ds |> toList |> List.map toList |> Sset.unions setElemCompare |> ofList
 
-    let contains (element : 'T) (o : OSet<'T>) : bool =
-        o |> toSet |> Set.contains element
+    let inline contains (element : 'T) (o : OSet<'T>) : bool =
+        o |> toList |> Sset.contains setElemCompare element
 
     let count (o : OSet<'T>) : int =
-        o |> toSet |> Set.count
+        o |> toList |> List.length
 
-    let difference (o : OSet<'T>) (o' : OSet<'T>) : OSet<'T> =
-        Set.difference (o |> toSet) (o' |> toSet) |> ofSet
+    let inline difference (o : OSet<'T>) (o' : OSet<'T>) : OSet<'T> =
+        Sset.subtract setElemCompare (o |> toList) (o' |> toList) |> ofList
 
-    let empty : OSet<'T> = SSet (Set.empty)
+    let empty : OSet<'T> = OSet []
 
     let exists (predicate : 'T -> bool) (o : OSet<'T>) : bool =
-        o |> toSet |> Set.exists predicate 
+        o |> toList |> List.exists predicate 
 
-    let filter (predicate : 'T -> bool) (o : OSet<'T>) : OSet<'T> =
-        o |> toSet |> Set.filter predicate |> ofSet
+    let inline filter (predicate : 'T -> bool) (o : OSet<'T>) : OSet<'T> =
+        o |> toList |> List.filter predicate |> ofList
 
     let find (predicate : 'T -> bool) (o : OSet<'T>) : 'T =
         o |> toList |> List.find predicate
 
     let forall (predicate : 'T -> bool) (o : OSet<'T>) : bool =
-        o |> toSet |> Set.forall predicate 
+        o |> toList |> List.forall predicate 
 
     let head (o : OSet<'T>) : 'T =
         o |> toList |> List.head
 
-    let intersect (o : OSet<'T>) (o' : OSet<'T>) : OSet<'T> =
-        Set.intersect (o |> toSet) (o' |> toSet) |> ofSet
+    let inline intersect (o : OSet<'T>) (o' : OSet<'T>) : OSet<'T> =
+        Sset.intersect setElemCompare (o |> toList) (o' |> toList) |> ofList
 
-    let isSubset (o : OSet<'T>) (o' : OSet<'T>) : bool =
-        Set.isSubset (o |> toSet) (o' |> toSet)
+    let inline isSubset (o : OSet<'T>) (o' : OSet<'T>) : bool =
+        Sset.subset setElemCompare (o |> toList) (o' |> toList)
 
     let item (index : int) (o : OSet<'T>) : 'T =
         o |> toList |> List.item index
 
-    let map (mapping : 'T -> 'U) (o : OSet<'T>) : OSet<'U> =
-        o |> toSet |> Set.map mapping |> ofSet
+    let inline map (mapping : 'T -> 'U) (o : OSet<'T>) : OSet<'U> =
+        o |> toList |> List.map mapping |> ofList
 
-    let mapi (mapping : int -> 'T -> 'U) (o : OSet<'T>) : OSet<'U> =
+    let inline mapi (mapping : int -> 'T -> 'U) (o : OSet<'T>) : OSet<'U> =
         o |> toList |> List.mapi mapping |> ofList
 
-    let range (first : int) (last : int) (fn : int -> 'T) : OSet<'T> =
+    let inline range (first : int) (last : int) (fn : int -> 'T) : OSet<'T> =
         Sset.range first last |> List.map fn |> ofList
 
-    let remove (value : 'T) (o : OSet<'T>) : OSet<'T> = 
-        o |> toSet |> Set.remove value |> ofSet
+    let inline remove (value : 'T) (o : OSet<'T>) : OSet<'T> = 
+        o |> toList |> Sset.remove setElemCompare value |> ofList
 
     let singleton (value : 'T) : OSet<'T> =
-        Set.singleton value |> ofSet
+        List.singleton value |> OSet
 
-    let skip (count : int) (o : OSet<'T>) : OSet<'T> =
+    let inline skip (count : int) (o : OSet<'T>) : OSet<'T> =
         o |> toList |> List.skip count |> ofList
 
-    let subsets (size : int) (o : OSet<'T>) : OSet<OSet<'T>> =
+    let inline subsets (size : int) (o : OSet<'T>) : OSet<'T> list =
         Sset.setSubsets (o |> toList) size
         |> List.map ofList
-        |> ofList
 
-    let take (count : int) (o : OSet<'T>) : OSet<'T> =
+    let inline take (count : int) (o : OSet<'T>) : OSet<'T> =
         o |> toList |> List.take count |> ofList
 
     let toString (o : OSet<'T>) : string =
@@ -116,8 +89,8 @@ module OSet =
           .Append("}")
           .ToString()
 
-    let union (o : OSet<'T>) (o' : OSet<'T>) : OSet<'T> =
-        Set.union (o |> toSet) (o' |> toSet) |> ofSet
+    let inline union (o : OSet<'T>) (o' : OSet<'T>) : OSet<'T> =
+        Sset.union setElemCompare (o |> toList) (o' |> toList) |> ofList
 
-    let unionMany (ds : OSet<'T> list) : OSet<'T> =
-        ds |> List.map toSet |> Set.unionMany |> ofSet
+    let inline unionMany (ds : OSet<'T> list) : OSet<'T> =
+        ds |> List.map toList |> Sset.unions setElemCompare |> ofList
