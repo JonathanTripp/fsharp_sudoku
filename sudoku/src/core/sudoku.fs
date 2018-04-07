@@ -1,5 +1,6 @@
 module core.Sudoku
 
+open Sset
 open oset
 open smap
 
@@ -9,14 +10,11 @@ type size = int
 (* containing columns... *)
 type column = 
     | CColumn of int
-    interface OSetMember<column> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
+    with
+    static member setElemCompare (CColumn lhs:column) (CColumn rhs:column) : Ordering =
+        if lhs < rhs then LT
+        else if lhs = rhs then EQ
+        else GT
 
     override this.ToString() =
         let (CColumn c) = this in
@@ -28,17 +26,16 @@ module Column =
 
 type columns = OSet<column>
 
+module Columns =
+    let toString (c : columns) = c.ToString()
+
 (* ... by rows *)
 type row = 
     | RRow of int
-    interface OSetMember<row> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
+    static member setElemCompare (RRow lhs:row) (RRow rhs:row) : Ordering =
+        if lhs < rhs then LT
+        else if lhs = rhs then EQ
+        else GT
 
     override this.ToString() =
         let (RRow r) = this in
@@ -49,18 +46,20 @@ module Row =
 
 type rows = OSet<row>
 
+module Rows =
+    let toString (r : rows) = r.ToString()
+
 (* Each cell is identified by (col, row) *)
 type cell = 
     { col : column;
       row : row }
-    interface OSetMember<cell> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
+    static member setElemCompare ({ col = CColumn c1; row = RRow r1} : cell) ({ col = CColumn c2; row = RRow r2} : cell) : Ordering =
+        if r1 < r2 then LT
+        else if r1 = r2 then
+            if c1 < c2 then LT
+            else if c1 = c2 then EQ
+            else GT
+        else GT
 
     override this.ToString() =
         let {col = CColumn c; row = RRow r} = this in
@@ -86,14 +85,10 @@ module Cells =
  A column of vertical boxes is a stack *)
 type stack = 
     | SStack of int
-    interface OSetMember<stack> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
+    static member setElemCompare (SStack lhs:stack) (SStack rhs:stack) : Ordering =
+        if lhs < rhs then LT
+        else if lhs = rhs then EQ
+        else GT
 
 module Stack =
     let ofNat (i : int) : stack =
@@ -113,14 +108,10 @@ type boxWidth = int
 (* A row of horizontal boxes is a band *)
 type band = 
     | BBand of int
-    interface OSetMember<band> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
+    static member setElemCompare (BBand lhs:band) (BBand rhs:band) : Ordering =
+        if lhs < rhs then LT
+        else if lhs = rhs then EQ
+        else GT
 
 module Band =
     let ofNat (i : int) : band =
@@ -138,27 +129,26 @@ module Bands =
 type boxHeight = int
 
 (* A box is the intersection of a stack and a band *)
-type box = 
+type bbox = 
     { stack : stack;
       band : band }
-    interface OSetMember<box> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
+    static member setElemCompare ({ stack = SStack s1; band = BBand b1} : bbox) ({ stack = SStack s2; band = BBand b2} : bbox) : Ordering =
+        if b1 < b2 then LT
+        else if b1 = b2 then
+            if s1 < s2 then LT
+            else if s1 = s2 then EQ
+            else GT
+        else GT
 
 module Box =
-    let make (s : stack) (b : band) : box =
+    let make (s : stack) (b : band) : bbox =
         { stack = s;
           band = b }
 
-    let to_string ({stack = SStack s; band = BBand b} : box) : string =
+    let to_string ({stack = SStack s; band = BBand b} : bbox) : string =
         Printf.sprintf "bnd%dstk%d" b s
 
-type boxes = OSet<box>
+type boxes = OSet<bbox>
 
 module Boxes =
     let to_string (bs : boxes) : string =
@@ -168,28 +158,29 @@ module Boxes =
 type line = 
     | LColumn of column
     | LRow of row
-    interface OSetMember<line> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
+    static member setElemCompare (l1 : line) (l2 : line) : Ordering =
+        match l1, l2 with
+        | LColumn c1, LColumn c2 -> column.setElemCompare c1 c2
+        | LColumn _, LRow _ -> LT
+        | LRow _, LColumn _ -> GT
+        | LRow r1, LRow r2 -> row.setElemCompare r1 r2
 
 (* The columns, rows and boxes are collectively called houses *)
 type house = 
     | HColumn of column
     | HRow of row
-    | HBox of box
-    interface OSetMember<house> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
+    | HBox of bbox
+    static member setElemCompare (h1 : house) (h2 : house) : Ordering =
+        match h1, h2 with
+        | HColumn c1, HColumn c2 -> column.setElemCompare c1 c2
+        | HColumn _, HRow _ -> LT
+        | HColumn _, HBox _ -> LT
+        | HRow _, HColumn _ -> GT
+        | HRow r1, HRow r2 -> row.setElemCompare r1 r2
+        | HRow _, HBox _ -> LT
+        | HBox _, HColumn _ -> GT
+        | HBox _, HRow _ -> GT
+        | HBox b1, HBox b2 -> bbox.setElemCompare b1 b2
 
 module House =
     let make_column (column : column) : house =
@@ -198,7 +189,7 @@ module House =
     let make_row (row : row) : house =
         HRow row
 
-    let make_box (box : box) : house =
+    let make_box (box : bbox) : house =
         HBox box
 
     let to_string (house : house) : string =
@@ -216,14 +207,10 @@ module Houses =
 (* Each cell in the grid contains a Digit, usually numbers 1..9 *)
 type digit = 
     | Digit of char
-    interface OSetMember<digit> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
+    static member setElemCompare (Digit lhs:digit) (Digit rhs:digit) : Ordering =
+        if lhs < rhs then LT
+        else if lhs = rhs then EQ
+        else GT
 
 module Digit =
     let ofNat (i : int) : digit =
@@ -260,14 +247,6 @@ module PuzzleShape =
 type cellContents = 
     | BigNumber of digit
     | PencilMarks of digits
-    interface OSetMember<cellContents> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
 
 module CellContents =
     let make_big_number (digit : digit) : cellContents =
@@ -306,14 +285,6 @@ module Candidate =
 type candidateReduction = 
     { cell : cell;
       candidates : digits }
-    interface OSetMember<candidateReduction> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
 
 module CandidateReduction =
     let make (cell : cell) (digits : digits) : candidateReduction =

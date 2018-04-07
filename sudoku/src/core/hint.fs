@@ -13,14 +13,6 @@ type description =
       setCellValueAction : value option;
       pointers : OSet<candidateReduction>;
       focus : digits }
-    interface OSetMember<description> with
-        member this.Compare rhs =
-            if this < rhs then -1
-            else if this = rhs then 0
-            else 1
-
-        member this.Print () =
-            this.ToString()
 
 module Description =
     let to_string (h : description) : string =

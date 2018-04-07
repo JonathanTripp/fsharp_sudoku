@@ -29,5 +29,5 @@ let ``Can find full house``() =
               focus = OSet.empty } ]
         in
 
-    let _ = Assert.AreEqual(1, OSet.count hints) in
+    let _ = Assert.AreEqual(1, List.length hints) in
     Assert.AreEqual(expectedHints, hints)

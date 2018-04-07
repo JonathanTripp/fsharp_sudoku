@@ -27,7 +27,7 @@ let stacks (length : size) (boxWidth : boxWidth) : OSet<stack> =
 let bands (length : size) (boxHeight : boxHeight) : OSet<band> =
     OSet.range 1 (length / boxHeight) Band.ofNat
 
-let boxes (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight) : OSet<box> =
+let boxes (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight) : OSet<bbox> =
     let stacks' = stacks length boxWidth in
 
     bands length boxHeight
@@ -77,12 +77,12 @@ let bandRows (boxHeight : boxHeight) (band : band) : OSet<row> =
 
     OSet.range (c + 1) (c + boxHeight) Row.ofNat
 
-let cellBox (boxWidth : boxWidth) (boxHeight : boxHeight) (cell : cell) : box =
+let cellBox (boxWidth : boxWidth) (boxHeight : boxHeight) (cell : cell) : bbox =
     let stack = columnStack boxWidth cell.col in
     let band = rowBand boxHeight cell.row in
     Box.make stack band
 
-let boxCells (boxWidth : boxWidth) (boxHeight : boxHeight) (box : box) : OSet<cell> =
+let boxCells (boxWidth : boxWidth) (boxHeight : boxHeight) (box : bbox) : OSet<cell> =
     let stackColumns = stackColumns boxWidth box.stack in
     let bandRows = bandRows boxHeight box.band in
 
@@ -123,7 +123,7 @@ type puzzleMap =
         cells : cells;
         stacks : OSet<stack>;
         bands : OSet<band>;
-        boxes : OSet<box>;
+        boxes : OSet<bbox>;
         houses : houses;
         (* for a column, return the cells in it *)
         columnCells : SMap<column, cells>;
@@ -138,9 +138,9 @@ type puzzleMap =
         (* for a band, return the rows in it *)
         bandRows : SMap<band, rows>;
         (* for a cell, which box is it in? *)
-        cellBox : SMap<cell, box>;
+        cellBox : SMap<cell, bbox>;
         (* for a box, return the cells in it *)
-        boxCells : SMap<box, cells>;
+        boxCells : SMap<bbox, cells>;
         (* for a house, return the cells in it *)
         houseCells : SMap<house, cells>;
         cellHouseCells : SMap<cell, cells>;

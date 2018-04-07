@@ -27,9 +27,9 @@ type puzzleMap =
         (* for a band, return the rows in it *)
         bandRows : SMap<band, rows>;
         (* for a cell, which box is it in? *)
-        cellBox : SMap<cell, box>;
+        cellBox : SMap<cell, bbox>;
         (* for a box, return the cells in it *)
-        boxCells : SMap<box, cells>;
+        boxCells : SMap<bbox, cells>;
         (* for a house, return the cells in it *)
         houseCells : SMap<house, cells>;
         cellHouseCells : SMap<cell, cells>;

@@ -55,7 +55,7 @@ let findHidden (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : ce
                focus = OSet.empty }
     else None
 
-let hiddenNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (house : house) : OSet<core.Hint.description> = 
+let hiddenNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (house : house) : core.Hint.description list = 
 
     let houseCandidates =
         p.houseCells
@@ -65,11 +65,12 @@ let hiddenNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates
         in
 
     OSet.subsets count houseCandidates
-    |> OSet.choose
+    |> List.choose
         (fun candidateSubset -> 
             findHidden count p cellCandidates candidateSubset house)
 
-let find (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
+let find (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     p.houses
-    |> OSet.map (hiddenNPerHouse i p cellCandidates)
-    |> OSet.concat
+    |> OSet.toList
+    |> List.map (hiddenNPerHouse i p cellCandidates)
+    |> List.concat

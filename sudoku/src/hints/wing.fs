@@ -127,7 +127,7 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
     | _ -> None
 
 let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (house1 : house) 
-    (house2 : house) : OSet<core.Hint.description> = 
+    (house2 : house) : core.Hint.description list = 
 
     let houseCandidates1 =
         p.houseCells
@@ -144,44 +144,45 @@ let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
         in
 
     OSet.intersect houseCandidates1 houseCandidates2
-    |> OSet.choose (xWingsPerHouseCandidate p cellCandidates house1 house2)
+    |> OSet.toList
+    |> List.choose (xWingsPerHouseCandidate p cellCandidates house1 house2)
 
-let xWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
-    let rows = OSet.map House.make_row p.rows in
-    let cols = OSet.map House.make_column p.columns in
+let xWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
+    let rows = OSet.map House.make_row p.rows |> OSet.toList in
+    let cols = OSet.map House.make_column p.columns |> OSet.toList in
 
     let rowHints1 = 
         rows
-        |> OSet.mapi 
+        |> List.mapi 
             (fun i row1 -> 
-                OSet.skip (i + 1) rows
-                |> OSet.mapi
+                List.skip (i + 1) rows
+                |> List.mapi
                     (fun j row2 -> xWingsPerHouse p cellCandidates row1 row2)) 
         in
 
     let rowHints = 
         rowHints1
-        |> OSet.concat
-        |> OSet.concat
+        |> List.concat
+        |> List.concat
         in
 
     let colHints1 = 
         cols
-        |> OSet.mapi
+        |> List.mapi
             (fun i col1 -> 
-                OSet.skip (i + 1) cols
-                |> OSet.mapi
+                List.skip (i + 1) cols
+                |> List.mapi
                     (fun j col2 -> xWingsPerHouse p cellCandidates col1 col2)) 
         in
 
     let colHints = 
         colHints1
-        |> OSet.concat
-        |> OSet.concat
+        |> List.concat
+        |> List.concat
         in
 
     [ rowHints; colHints ]
-    |> OSet.unionMany
+    |> List.concat
 
 let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates)
     (house1 : house) (house2 : house) houseCandidateCells1 houseCandidateCells2 (candidate : digit) = 
@@ -256,7 +257,7 @@ let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
     | _ -> None
 
 let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (row1 : row) 
-    (row2 : row) (col1 : column) (col2 : column)  : OSet<core.Hint.description> = 
+    (row2 : row) (col1 : column) (col2 : column)  : core.Hint.description list = 
 
     let cell11 = Cell.make col1 row1 in
     let cell12 = Cell.make col2 row1 in
@@ -336,28 +337,30 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
                     | _ -> None
                 else None
             else None)
-        |> OSet.ofList
-        |> OSet.choose Sset.id
-    else OSet.empty
+        |> List.choose Sset.id
+    else []
 
-let yWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
+let yWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
+    let rows = p.rows |> OSet.toList
+    let columns = p.columns |> OSet.toList
+
     let hints =
-        p.rows
-        |> OSet.mapi 
+        rows
+        |> List.mapi 
             (fun i row1 ->
-                OSet.skip (i + 1) p.rows
-                |> OSet.mapi 
+                List.skip (i + 1) rows
+                |> List.mapi 
                     (fun j row2 -> 
-                        p.columns
-                        |> OSet.mapi 
+                        columns
+                        |> List.mapi 
                             (fun k col1 -> 
-                                OSet.skip (k + 1) p.columns
-                                |> OSet.mapi
+                                List.skip (k + 1) columns
+                                |> List.mapi
                                     (fun l col2 -> yWingsPerHouse p cellCandidates row1 row2 col1 col2)))) 
         in
 
     hints
-    |> OSet.concat
-    |> OSet.concat
-    |> OSet.concat
-    |> OSet.concat
+    |> List.concat
+    |> List.concat
+    |> List.concat
+    |> List.concat

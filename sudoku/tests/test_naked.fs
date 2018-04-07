@@ -35,5 +35,5 @@ let ``Can find naked singles``() =
               focus = OSet.empty } ]
         in
 
-    let _ = Assert.AreEqual(2, OSet.count hints) in
+    let _ = Assert.AreEqual(2, List.length hints) in
     Assert.AreEqual(expectedHints, hints)

@@ -28,6 +28,7 @@ let fullHousePerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandi
                focus = OSet.empty }
     else None
 
-let find (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
+let find (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     p.houses
-    |> OSet.choose (fullHousePerHouse p cellCandidates)
+    |> OSet.toList
+    |> List.choose (fullHousePerHouse p cellCandidates)

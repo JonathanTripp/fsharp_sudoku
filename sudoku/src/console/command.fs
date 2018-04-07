@@ -168,7 +168,7 @@ let candidateClearCommandCheck (given : given) (cellCandidates : cellCandidates)
         if OSet.contains candidate.digit digits then CCCCROk candidate
         else CCCCRNotACandidate candidate
 
-let supportedHints : Map<string, (core.Puzzlemap.puzzleMap -> cellCandidates -> OSet<core.Hint.description>)> =
+let supportedHints : Map<string, (core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list)> =
     let keys =
         [
             "fh";

@@ -16,28 +16,36 @@ let twoByFourPuzzleSpec =
             |> OSet.map (fun i -> (char) i + '0' |> Digit)
              }
 
-let pick_some (as' : List<'a>) : List<'a> * List<'a> =
+let pick_some (as' : OSet<'a>) : OSet<'a> * OSet<'a> =
+    let as'' = OSet.toList as'
+
     let picked =
         [9; 5; 2; 5; 5; 5; 1; 8; 9; 3; 5; 6]
-        |> List.map (fun i -> List.item (i - 1) as')
+        |> List.map (fun i -> List.item (i - 1) as'')
+        |> OSet.ofList
         in
 
     let expected =
         [1; 2; 3; 5; 6; 8; 9]
-        |> List.map (fun i -> List.item (i - 1) as')
+        |> List.map (fun i -> List.item (i - 1) as'')
+        |> OSet.ofList
         in
 
     (picked, expected)
 
-let pick_more<'a when 'a : comparison> (as' : List<'a>) : List<'a> * List<'a> =
+let pick_more<'a when 'a : comparison> (as' : OSet<'a>) : OSet<'a> * OSet<'a> =
+    let as'' = OSet.toList as'
+
     let picked =
         [9 * 8 + 1; 9 * 0 + 5; 9 * 2 + 4; 9 * 0 + 5; 9 * 0 + 5; 9 * 5 + 1; 9 * 0 + 8; 9 * 8 + 1; 9 * 3 + 3; 9 * 0 + 6]
-        |> List.map (fun i -> List.item (i - 1) as')
+        |> List.map (fun i -> List.item (i - 1) as'')
+        |> OSet.ofList
         in
 
     let expected =
         [9 * 0 + 5; 9 * 0 + 6; 9 * 0 + 8; 9 * 2 + 4; 9 * 3 + 3; 9 * 5 + 1; 9 * 8 + 1]
-        |> List.map (fun i -> List.item (i - 1) as')
+        |> List.map (fun i -> List.item (i - 1) as'')
+        |> OSet.ofList
         in
 
     (picked, expected)
@@ -48,7 +56,7 @@ let ``Can make column sets``() =
 
     let (picked, expected) = pick_some p.columns in
 
-    Assert.AreEqual(expected, picked, "{0}!={1}", Columns.toString expected, Columns.toString picked)
+    Assert.AreEqual(expected, picked, "{0}!={1}")
 
 [<Test>]
 let ``Can make row sets``() =
@@ -56,7 +64,7 @@ let ``Can make row sets``() =
 
     let (picked, expected) = pick_some p.rows in
 
-    Assert.AreEqual(expected, picked, "{0}!={1}", Rows.toString expected, Rows.toString picked)
+    Assert.AreEqual(expected, picked, "{0}!={1}")
 
 [<Test>]
 let ``Can make cell sets``() =
@@ -64,7 +72,7 @@ let ``Can make cell sets``() =
 
     let (picked, expected) = pick_more p.cells in
 
-    Assert.AreEqual(expected, picked, "{0}!={1}", Cells.toString expected, Cells.toString picked)
+    Assert.AreEqual(expected, picked, "{0}!={1}")
 
 [<Test>]
 let ``Can make digit sets``() =
@@ -72,7 +80,7 @@ let ``Can make digit sets``() =
 
     let (picked, expected) = pick_some PuzzleShape.default'.alphabet in
 
-    Assert.AreEqual(expected, picked, "{0}!={1}", Digits.toString expected, Digits.toString picked)
+    Assert.AreEqual(expected, picked, "{0}!={1}")
 
 [<Test>]
 let ``Can make columns``() =

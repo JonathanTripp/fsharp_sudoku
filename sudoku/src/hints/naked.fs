@@ -20,9 +20,10 @@ let nakedSingleCell (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandida
                 focus = OSet.empty }
     else None
 
-let nakedSingle (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
+let nakedSingle (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     p.cells
-    |> OSet.choose (nakedSingleCell p cellCandidates)
+    |> OSet.toList
+    |> List.choose (nakedSingleCell p cellCandidates)
 
 let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (cellSubset : cells) : core.Hint.description option = 
 
@@ -59,7 +60,7 @@ let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
         else None
     else None
 
-let nakedNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : OSet<core.Hint.description> =
+let nakedNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : core.Hint.description list =
     
     let hht = 
         p.houseCells
@@ -70,13 +71,14 @@ let nakedNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates 
         in
 
     OSet.subsets count hht
-    |> OSet.choose (fun ss -> findNaked count p cellCandidates primaryHouse ss)
+    |> List.choose (fun ss -> findNaked count p cellCandidates primaryHouse ss)
 
-let nakedN (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
+let nakedN (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     p.houses
-    |> OSet.map (nakedNPerHouse i p cellCandidates )
-    |> OSet.concat
+    |> OSet.toList
+    |> List.map (nakedNPerHouse i p cellCandidates )
+    |> List.concat
 
-let find (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : OSet<core.Hint.description> =
+let find (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
     if i = 1 then nakedSingle p cellCandidates
     else nakedN i p cellCandidates
