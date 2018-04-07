@@ -67,7 +67,7 @@ let printLine (cells : cells) (digitTo : cell -> consoleString) : consoleString 
     |> List.concat
 
 (* Combine fences with posts (there's one more fence than posts: f p f p ... p f) *)
-let simpleInterleave (fenceToSeq : 'a -> consoleString) (post : consoleString) (fences : OSet<'a>) : consoleString = 
+let inline simpleInterleave (fenceToSeq : ^a -> consoleString) (post : consoleString) (fences : OSet< ^a >) : consoleString = 
     let rec gen (fences' : 'a list) : consoleString = 
         match fences' with
         | [] -> []
@@ -78,7 +78,7 @@ let simpleInterleave (fenceToSeq : 'a -> consoleString) (post : consoleString) (
 
 (* Create a sequence of fences interleaved with posts (first and last posts may be different)
  l f p f p f ... p f r *)
-let sinterleave (fenceToSeq : 'a -> consoleString) (firstPost : consoleString) (midPost : consoleString) (lastPost : consoleString) (eol : consoleString) (fences : OSet<'a>) : consoleString = 
+let inline sinterleave (fenceToSeq : ^a -> consoleString) (firstPost : consoleString) (midPost : consoleString) (lastPost : consoleString) (eol : consoleString) (fences : OSet< ^a >) : consoleString = 
     List.concat [firstPost; simpleInterleave fenceToSeq midPost fences; lastPost; eol]
 
 (* Print a column *)

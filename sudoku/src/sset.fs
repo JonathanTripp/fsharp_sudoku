@@ -14,7 +14,7 @@ let rec funpow n f x =
   if n < 1 then x else funpow (n-1) f (f x)
 
 (*
-let rec funpow2 (n : int) (f : 'a -> unit) (x : 'a) =
+let rec funpow2 (n : int) (f : ^a -> unit) (x : ^a) =
   if n < 1 then x else f(x); funpow2 (n-1) f x
 *)
 let rec take (n : int) (l : 'a list) : 'a list =
@@ -32,10 +32,10 @@ let rec drop (n : int) (l : 'a list) : 'a list =
         | _::t  when n = 1 -> t
         | h::t -> drop (n-1) t
 
-let rec uniq (comparer:'a->'a->Ordering) (l : 'a list) : 'a list =
+let rec inline uniq (comparer:^a * ^a->Ordering) (l : ^a list) : ^a list =
     match l with
     | [] -> []
-    | x :: (y :: _ as tl) when comparer x y = EQ -> (uniq comparer tl)
+    | x :: (y :: _ as tl) when comparer (x, y) = EQ -> (uniq comparer tl)
     | hd :: tl -> hd :: (uniq comparer tl)
 
 (* ------------------------------------------------------------------------- *)
@@ -72,45 +72,45 @@ let sort ord l =
     | [] -> []
     | _ -> mergepairs ord [] (map (fun x -> [x]) l)
 
-let rec canonical (comparer:'a->'a->Ordering) lis =
+let rec inline canonical (lis : ^a list when ^a : (static member setElemCompare:^t * ^T -> Ordering)) =
     match lis with
-    | x :: (y :: _ as rest) -> ((comparer x y) = LT) && canonical comparer rest
+    | x :: (y :: _ as rest) -> ((comparer (x, y)) = LT) && canonical comparer rest
     | _ -> true
 
-let setify (comparer:'a->'a->Ordering) (l : 'a list) : 'a list =
-  if canonical comparer l then l
-  else uniq comparer (sort (fun x y -> comparer x y <> GT) l)
+let inline setify (l : ^a list when ^a : (static member setElemCompare:^t * ^T -> Ordering)) : ^a list =
+  if canonical l then l
+  else uniq comparer (sort (fun x y -> comparer (x, y) <> GT) l)
 
-let union (comparer:'a->'a->Ordering) =
+let inline union (comparer:^a * ^a->Ordering) =
   let rec union l1 l2 =
     match (l1,l2) with
       | ([],l2) -> l2
       | (l1,[]) -> l1
       | ((h1::t1 as l1),(h2::t2 as l2)) ->
-          if comparer h1 h2 = EQ then h1::(union t1 t2)
-          else if comparer h1 h2 = LT then h1::(union t1 l2)
+          if comparer (h1, h2) = EQ then h1::(union t1 t2)
+          else if comparer (h1, h2) = LT then h1::(union t1 l2)
           else h2::(union l1 t2) in
   fun s1 s2 -> union (setify comparer s1) (setify comparer s2);;
 
-let intersect (comparer:'a->'a->Ordering) =
+let inline intersect (comparer:^a * ^a->Ordering) =
   let rec intersect l1 l2 =
     match (l1,l2) with
         ([],l2) -> []
       | (l1,[]) -> []
       | ((h1::t1 as l1),(h2::t2 as l2)) ->
-          if comparer h1 h2 = EQ then h1::(intersect t1 t2)
-          else if comparer h1 h2 = LT then intersect t1 l2
+          if comparer (h1, h2) = EQ then h1::(intersect t1 t2)
+          else if comparer (h1, h2) = LT then intersect t1 l2
           else intersect l1 t2 in
   fun s1 s2 -> intersect (setify comparer s1) (setify comparer s2);;
 
-let subtract (comparer:'a->'a->Ordering) =
+let inline subtract (comparer:^a * ^a->Ordering) =
   let rec subtract l1 l2 =
     match (l1,l2) with
         ([],l2) -> []
       | (l1,[]) -> l1
       | ((h1::t1 as l1),(h2::t2 as l2)) ->
-          if comparer h1 h2 = EQ then subtract t1 t2
-          else if comparer h1 h2 = LT then h1::(subtract t1 l2)
+          if comparer (h1, h2) = EQ then subtract t1 t2
+          else if comparer (h1, h2) = LT then h1::(subtract t1 l2)
           else subtract l1 t2 in
   fun s1 s2 -> subtract (setify comparer s1) (setify comparer s2);;
 
@@ -135,9 +135,9 @@ let subset,psubset =
   (fun s1 s2 -> subset (setify comparer s1) (setify comparer s2)),
   (fun s1 s2 -> psubset (setify comparer s1) (setify comparer s2));;
 *)
-let insert (comparer : 'a -> 'a -> Ordering) x s = union comparer [x] s;;
+let inline insert (comparer : ^a * ^a->Ordering) x s = union comparer [x] s;;
 
-let image (comparer : 'a -> 'a -> Ordering) f s = setify comparer (map f s);;
+let inline image (comparer : ^a * ^a->Ordering) f s = setify comparer (map f s);;
 
 (* ------------------------------------------------------------------------- *)
 (* Union of a family of sets.                                                *)
@@ -147,22 +147,22 @@ let rec itlist f l b =
     [] -> b
   | (h::t) -> f h (itlist f t b)
 
-let unions comparer s = setify comparer (itlist (@) s [])
+let inline unions (comparer : ^a * ^a->Ordering) (s : ^a list list) = setify comparer (itlist (@) s [])
 
-let contains (comparer : 'a -> 'a -> Ordering) (t : 'a) (s : 'a list) : bool =
-    List.exists (fun t' -> comparer t' t = EQ) s
+let inline contains (comparer : ^a * ^a->Ordering) (t : ^a) (s : ^a list) : bool =
+    List.exists (fun t' -> comparer (t', t) = EQ) s
 
-let remove (comparer : 'a -> 'a -> Ordering) (t : 'a) (s : 'a list) : 'a list =
-    List.filter (fun t' -> comparer t' t <> EQ) s
+let inline remove (comparer : ^a * ^a->Ordering) (t : ^a) (s : ^a list) : ^a list =
+    List.filter (fun t' -> comparer (t', t) <> EQ) s
 
-let subset (comparer : 'a -> 'a -> Ordering) (s1 : 'a list) (s2 : 'a list) =
+let inline subset (comparer : ^a * ^a->Ordering) (s1 : ^a list) (s2 : ^a list) =
   let rec subset l1 l2 =
     match (l1,l2) with
         ([],l2) -> true
       | (l1,[]) -> false
       | (h1::t1,h2::t2) ->
-          if comparer h1 h2 = EQ then subset t1 t2
-          else if comparer h1 h2 = LT then false
+          if comparer (h1, h2) = EQ then subset t1 t2
+          else if comparer (h1, h2) = LT then false
           else subset l1 t2
      in
   subset (setify comparer s1) (setify comparer s2)

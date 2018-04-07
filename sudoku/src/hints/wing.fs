@@ -30,7 +30,7 @@ let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) p
               candidateReductions = candidatesReductions;
               setCellValueAction = None;
               pointers = pointers;
-              focus = OSet.empty }
+              focus = OSet.empty() }
             in
         Some hint
     else None
@@ -327,11 +327,11 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
 
                             let desc : core.Hint.description =
                                 { primaryHouses = primaryHouses;
-                                  secondaryHouses = OSet.empty;
+                                  secondaryHouses = OSet.empty();
                                   candidateReductions = OSet.singleton candidateReductions;
                                   setCellValueAction = None;
                                   pointers = pointers;
-                                  focus = OSet.empty } in
+                                  focus = OSet.empty() } in
                             Some desc
                         else None
                     | _ -> None

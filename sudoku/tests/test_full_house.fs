@@ -22,11 +22,11 @@ let ``Can find full house``() =
 
     let expectedHints : core.Hint.description list =
         [   { primaryHouses = OSet.singleton (HBox (Box.make (Stack.ofNat 2) (Band.ofNat 3)));
-              secondaryHouses = OSet.empty;
-              candidateReductions = OSet.empty;
+              secondaryHouses = OSet.empty();
+              candidateReductions = OSet.empty();
               setCellValueAction = Some (Value.make (Cell.make (Column.ofNat 6) (Row.ofNat 9)) (OSet.item 5 PuzzleShape.default'.alphabet));
-              pointers = OSet.empty;
-              focus = OSet.empty } ]
+              pointers = OSet.empty();
+              focus = OSet.empty() } ]
         in
 
     let _ = Assert.AreEqual(1, List.length hints) in

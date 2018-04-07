@@ -16,7 +16,7 @@ let twoByFourPuzzleSpec =
             |> OSet.map (fun i -> (char) i + '0' |> Digit)
              }
 
-let pick_some (as' : OSet<'a>) : OSet<'a> * OSet<'a> =
+let inline pick_some (as' : OSet< ^a >) : OSet< ^a > * OSet< ^a > =
     let as'' = OSet.toList as'
 
     let picked =
@@ -33,7 +33,7 @@ let pick_some (as' : OSet<'a>) : OSet<'a> * OSet<'a> =
 
     (picked, expected)
 
-let pick_more<'a when 'a : comparison> (as' : OSet<'a>) : OSet<'a> * OSet<'a> =
+let inline pick_more (as' : OSet< ^a >) : OSet< ^a > * OSet< ^a > =
     let as'' = OSet.toList as'
 
     let picked =

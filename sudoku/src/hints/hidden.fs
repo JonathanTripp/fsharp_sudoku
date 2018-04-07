@@ -24,7 +24,7 @@ let findHidden (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : ce
             
                 let crs = 
                     if OSet.count pointerCandidates > 0 then OSet.difference cr.candidates candidateSubset
-                    else OSet.empty
+                    else OSet.empty()
                     in
 
                 let candidateReduction = CandidateReduction.make cr.cell crs in
@@ -48,11 +48,11 @@ let findHidden (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : ce
             in
 
         Some { primaryHouses = OSet.singleton primaryHouse;
-               secondaryHouses = OSet.empty;
+               secondaryHouses = OSet.empty();
                candidateReductions = candidateReductions;
                setCellValueAction = setCellValue;
                pointers = pointers;
-               focus = OSet.empty }
+               focus = OSet.empty() }
     else None
 
 let hiddenNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (house : house) : core.Hint.description list = 

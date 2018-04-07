@@ -11,7 +11,7 @@ type size = int
 type column = 
     | CColumn of int
     with
-    static member setElemCompare (CColumn lhs:column) (CColumn rhs:column) : Ordering =
+    static member setElemCompare ((CColumn lhs, CColumn rhs) :column * column) : Ordering =
         if lhs < rhs then LT
         else if lhs = rhs then EQ
         else GT
@@ -32,7 +32,7 @@ module Columns =
 (* ... by rows *)
 type row = 
     | RRow of int
-    static member setElemCompare (RRow lhs:row) (RRow rhs:row) : Ordering =
+    static member setElemCompare ((RRow lhs, RRow rhs) : row * row) : Ordering =
         if lhs < rhs then LT
         else if lhs = rhs then EQ
         else GT
@@ -53,7 +53,7 @@ module Rows =
 type cell = 
     { col : column;
       row : row }
-    static member setElemCompare ({ col = CColumn c1; row = RRow r1} : cell) ({ col = CColumn c2; row = RRow r2} : cell) : Ordering =
+    static member setElemCompare (({ col = CColumn c1; row = RRow r1}, { col = CColumn c2; row = RRow r2}) : cell * cell) : Ordering =
         if r1 < r2 then LT
         else if r1 = r2 then
             if c1 < c2 then LT
@@ -85,7 +85,7 @@ module Cells =
  A column of vertical boxes is a stack *)
 type stack = 
     | SStack of int
-    static member setElemCompare (SStack lhs:stack) (SStack rhs:stack) : Ordering =
+    static member setElemCompare ((SStack lhs, SStack rhs) : stack * stack) : Ordering =
         if lhs < rhs then LT
         else if lhs = rhs then EQ
         else GT
@@ -108,7 +108,7 @@ type boxWidth = int
 (* A row of horizontal boxes is a band *)
 type band = 
     | BBand of int
-    static member setElemCompare (BBand lhs:band) (BBand rhs:band) : Ordering =
+    static member setElemCompare ((BBand lhs, BBand rhs) : band * band) : Ordering =
         if lhs < rhs then LT
         else if lhs = rhs then EQ
         else GT
@@ -132,7 +132,7 @@ type boxHeight = int
 type bbox = 
     { stack : stack;
       band : band }
-    static member setElemCompare ({ stack = SStack s1; band = BBand b1} : bbox) ({ stack = SStack s2; band = BBand b2} : bbox) : Ordering =
+    static member setElemCompare (({ stack = SStack s1; band = BBand b1}, { stack = SStack s2; band = BBand b2}) : bbox * bbox) : Ordering =
         if b1 < b2 then LT
         else if b1 = b2 then
             if s1 < s2 then LT
@@ -158,29 +158,29 @@ module Boxes =
 type line = 
     | LColumn of column
     | LRow of row
-    static member setElemCompare (l1 : line) (l2 : line) : Ordering =
+    static member setElemCompare ((l1, l2) : line * line) : Ordering =
         match l1, l2 with
-        | LColumn c1, LColumn c2 -> column.setElemCompare c1 c2
+        | LColumn c1, LColumn c2 -> column.setElemCompare (c1, c2)
         | LColumn _, LRow _ -> LT
         | LRow _, LColumn _ -> GT
-        | LRow r1, LRow r2 -> row.setElemCompare r1 r2
+        | LRow r1, LRow r2 -> row.setElemCompare (r1, r2)
 
 (* The columns, rows and boxes are collectively called houses *)
 type house = 
     | HColumn of column
     | HRow of row
     | HBox of bbox
-    static member setElemCompare (h1 : house) (h2 : house) : Ordering =
+    static member setElemCompare ((h1, h2) : house * house) : Ordering =
         match h1, h2 with
-        | HColumn c1, HColumn c2 -> column.setElemCompare c1 c2
+        | HColumn c1, HColumn c2 -> column.setElemCompare (c1, c2)
         | HColumn _, HRow _ -> LT
         | HColumn _, HBox _ -> LT
         | HRow _, HColumn _ -> GT
-        | HRow r1, HRow r2 -> row.setElemCompare r1 r2
+        | HRow r1, HRow r2 -> row.setElemCompare (r1, r2)
         | HRow _, HBox _ -> LT
         | HBox _, HColumn _ -> GT
         | HBox _, HRow _ -> GT
-        | HBox b1, HBox b2 -> bbox.setElemCompare b1 b2
+        | HBox b1, HBox b2 -> bbox.setElemCompare (b1, b2)
 
 module House =
     let make_column (column : column) : house =
@@ -207,7 +207,7 @@ module Houses =
 (* Each cell in the grid contains a Digit, usually numbers 1..9 *)
 type digit = 
     | Digit of char
-    static member setElemCompare (Digit lhs:digit) (Digit rhs:digit) : Ordering =
+    static member setElemCompare ((Digit lhs, Digit rhs) : digit * digit) : Ordering =
         if lhs < rhs then LT
         else if lhs = rhs then EQ
         else GT
@@ -345,7 +345,7 @@ module Solution =
         let getCandidateEntries (cell : cell) : digits =
             let cellContents = SMap.get cell current in
             match cellContents with
-            | BigNumber _ -> OSet.empty
+            | BigNumber _ -> OSet.empty()
             | PencilMarks s -> s
             in
 

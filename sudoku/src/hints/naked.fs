@@ -12,12 +12,12 @@ let nakedSingleCell (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandida
 
         let setCellValue = Value.make cell candidate in
 
-        Some { primaryHouses = OSet.empty;
-                secondaryHouses = OSet.empty;
-                candidateReductions = OSet.empty;
+        Some { primaryHouses = OSet.empty();
+                secondaryHouses = OSet.empty();
+                candidateReductions = OSet.empty();
                 setCellValueAction = Some setCellValue;
-                pointers = OSet.empty;
-                focus = OSet.empty }
+                pointers = OSet.empty();
+                focus = OSet.empty() }
     else None
 
 let nakedSingle (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
@@ -51,11 +51,11 @@ let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
 
         if OSet.count candidateReductions > 0 then 
             Some { primaryHouses = OSet.singleton primaryHouse;
-                   secondaryHouses = OSet.empty;
+                   secondaryHouses = OSet.empty();
                    candidateReductions = candidateReductions;
                    setCellValueAction = None;
                    pointers = pointers;
-                   focus = OSet.empty }
+                   focus = OSet.empty() }
 
         else None
     else None

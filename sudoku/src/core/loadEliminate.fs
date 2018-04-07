@@ -58,12 +58,12 @@ let apply (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReducti
     SMap.ofLookup update p.cells
 
 let description (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReduction>) : Hint.description =
-    { primaryHouses = OSet.empty;
-      secondaryHouses = OSet.empty;
+    { primaryHouses = OSet.empty();
+      secondaryHouses = OSet.empty();
       candidateReductions = candidateReductions;
       setCellValueAction = None;
-      pointers = OSet.empty;
-      focus = OSet.empty }
+      pointers = OSet.empty();
+      focus = OSet.empty() }
 
 let step (p : Puzzlemap.puzzleMap) (solution : solution) (candidateReductions : OSet<candidateReduction>) : solution =
     { solution with current = apply p candidateReductions solution.current;

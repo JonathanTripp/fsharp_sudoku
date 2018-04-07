@@ -55,7 +55,7 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
                            candidateReductions = candidateReductions;
                            setCellValueAction = None;
                            pointers = pointers;
-                           focus = OSet.empty }
+                           focus = OSet.empty() }
                 else None
             else None
             in

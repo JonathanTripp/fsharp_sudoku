@@ -36,7 +36,7 @@ let rec searchr (p : Puzzlemap.puzzleMap) (solution : solution) (existing : solu
         let candidates =
             let cellContents = SMap.get cell solution.current in
             match cellContents with
-            | BigNumber _ -> OSet.empty
+            | BigNumber _ -> OSet.empty()
             | PencilMarks candidates -> candidates
             in
 

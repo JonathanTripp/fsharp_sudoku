@@ -34,12 +34,12 @@ let try' (cell : cell) (candidate : digit) (cellCandidates : cellCandidates) : v
     else None
 
 let description (p : Puzzlemap.puzzleMap) (setCellValue : value) : Hint.description =
-    { primaryHouses = OSet.empty;
-      secondaryHouses = OSet.empty;
-      candidateReductions = OSet.empty;
+    { primaryHouses = OSet.empty();
+      secondaryHouses = OSet.empty();
+      candidateReductions = OSet.empty();
       setCellValueAction = Some setCellValue;
-      pointers = OSet.empty;
-      focus = OSet.empty }
+      pointers = OSet.empty();
+      focus = OSet.empty() }
 
 let step (p : Puzzlemap.puzzleMap) (setCellValue : value) (solution : solution) : solution =
     { solution with current = apply p setCellValue solution.current;

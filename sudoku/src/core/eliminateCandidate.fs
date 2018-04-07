@@ -19,12 +19,12 @@ let apply (p : Puzzlemap.puzzleMap) (candidate : candidate) (current : current) 
 let description (p: Puzzlemap.puzzleMap) (candidate : candidate) : Hint.description =
     let cr = CandidateReduction.make (candidate.cell) (OSet.singleton candidate.digit) in
 
-    { primaryHouses = OSet.empty;
-      secondaryHouses = OSet.empty;
+    { primaryHouses = OSet.empty();
+      secondaryHouses = OSet.empty();
       candidateReductions = OSet.singleton cr;
       setCellValueAction = None;
-      pointers = OSet.empty;
-      focus = OSet.empty }
+      pointers = OSet.empty();
+      focus = OSet.empty() }
 
 let step (p : Puzzlemap.puzzleMap) (candidate : candidate) (solution : solution) : solution =
     { solution with current = apply p candidate solution.current;

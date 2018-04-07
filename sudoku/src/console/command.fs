@@ -89,11 +89,11 @@ let focusCommandParse (s: puzzleShape) (item : string) : focus_command_result =
         FCWrongTermCount (List.length terms)
 
 let focusCommandHintDescription (p : core.Puzzlemap.puzzleMap) (digit : digit) : core.Hint.description =
-    { primaryHouses = OSet.empty;
-      secondaryHouses = OSet.empty;
-      candidateReductions = OSet.empty;
+    { primaryHouses = OSet.empty();
+      secondaryHouses = OSet.empty();
+      candidateReductions = OSet.empty();
       setCellValueAction = None;
-      pointers = OSet.empty;
+      pointers = OSet.empty();
       focus = OSet.singleton digit }
 
 type set_cell_command_parse_result =
