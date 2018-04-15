@@ -1,5 +1,6 @@
 module console.Console
 
+open Sset
 open core.Sudoku
 open oset
 open smap
@@ -29,13 +30,13 @@ let drawBigNumber (annotation : core.Hint.annotation) (digit : digit) : Format.c
 
 let drawPencilMarks (annotation : core.Hint.annotation) (candidate : digit) (candidates : digits) : Format.consoleChar =
     match annotation.setValue with
-    | Some vv when vv = candidate -> 
+    | Some vv when Digit.setElemCompare vv candidate = EQ -> 
         Format.ColouredDigit(candidate, Format.Red, Format.DefaultColour)
     | Some _ when OSet.contains candidate candidates -> 
         Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
     | _ ->
         (match annotation.setValueReduction with
-         | Some svr when svr = candidate && OSet.contains candidate candidates -> 
+         | Some svr when Digit.setElemCompare svr candidate = EQ && OSet.contains candidate candidates -> 
             Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
          | _ ->
             (if OSet.contains candidate annotation.reductions then
@@ -59,7 +60,7 @@ let drawDigitCellContentAnnotations centreCandidate (annotations : SMap<cell, co
     let annotation = SMap.get cell annotations in
 
     match annotation.current with
-    | BigNumber s when centreCandidate = candidate -> drawBigNumber annotation s
+    | BigNumber s when Digit.setElemCompare centreCandidate candidate = EQ -> drawBigNumber annotation s
     | BigNumber _ -> Format.ColouredString(" ", Format.Blue, Format.White)
     | PencilMarks digits -> drawPencilMarks annotation candidate digits
 

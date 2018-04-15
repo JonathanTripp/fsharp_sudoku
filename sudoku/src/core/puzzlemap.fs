@@ -11,14 +11,15 @@ let rows (length : size) : OSet<row> =
     OSet.range 1 length Row.ofNat
 
 let cells (length : size) : OSet<cell> =
+    let rows' = rows length in
     let columns' = columns length in
 
-    rows length
-    |> OSet.map
+    rows'
+    |> OSet.toList
+    |> List.map
         (fun row ->
             columns'
-            |> OSet.map
-                (fun column -> Cell.make column row))
+            |> OSet.map (fun column -> Cell.make column row))
     |> OSet.concat
 
 let stacks (length : size) (boxWidth : boxWidth) : OSet<stack> =
@@ -28,21 +29,23 @@ let bands (length : size) (boxHeight : boxHeight) : OSet<band> =
     OSet.range 1 (length / boxHeight) Band.ofNat
 
 let boxes (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight) : OSet<bbox> =
+    let bands' = bands length boxHeight in
     let stacks' = stacks length boxWidth in
 
-    bands length boxHeight
-    |> OSet.map
+    bands'
+    |> OSet.toList
+    |> List.map
         (fun band ->
           stacks'
           |> OSet.map (fun stack -> Box.make stack band))
-    |>OSet.concat
+    |> OSet.concat
 
 let houses (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight) : OSet<house> =
     let chs = OSet.map House.make_column (columns length) in
     let rhs = OSet.map House.make_row (rows length) in
     let bhs = OSet.map House.make_box (boxes length boxWidth boxHeight) in
 
-    OSet.unionMany [ chs; rhs; bhs ]
+    OSet.concat [ chs; rhs; bhs ]
 
 let columnCells (length : size) (column : column) : OSet<cell> =
     rows length
@@ -87,19 +90,20 @@ let boxCells (boxWidth : boxWidth) (boxHeight : boxHeight) (box : bbox) : OSet<c
     let bandRows = bandRows boxHeight box.band in
 
     bandRows
-    |> OSet.map
+    |> OSet.toList
+    |> List.map
         (fun row ->
             stackColumns
             |> OSet.map (fun column -> Cell.make column row))
     |> OSet.concat
 
-let houseCells (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight) (house : house) : cells =
+let houseCells (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight) (house : house) : OSet<cell> =
     match house with
     | HColumn c -> columnCells length c
     | HRow r -> rowCells length r
     | HBox b -> boxCells boxWidth boxHeight b
 
-let cellHouseCells (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight) (cell : cell) : cells =
+let cellHouseCells (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight) (cell : cell) : OSet<cell> =
     let rowCells' =
         rowCells length cell.row
         |> OSet.remove cell in
@@ -113,39 +117,39 @@ let cellHouseCells (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight)
         |> OSet.remove cell in
 
     [ OSet.singleton cell; rowCells'; columnCells'; boxCells' ]
-    |> OSet.unionMany
+    |> OSet.concat
 
 [<NoComparison; NoEquality>]
 type puzzleMap =
     {
-        columns : columns;
-        rows : rows;
-        cells : cells;
+        columns : OSet<column>;
+        rows : OSet<row>;
+        cells : OSet<cell>;
         stacks : OSet<stack>;
         bands : OSet<band>;
         boxes : OSet<bbox>;
-        houses : houses;
+        houses : OSet<house>;
         (* for a column, return the cells in it *)
-        columnCells : SMap<column, cells>;
+        columnCells : SMap<column, OSet<cell>>;
         (* for a row, return the cells in it *)
-        rowCells : SMap<row, cells>;
+        rowCells : SMap<row, OSet<cell>>;
         (* for a column, which stack is it in? *)
         columnStack : SMap<column, stack>;
         (* for a stack, return the columns in it *)
-        stackColumns : SMap<stack, columns>;
+        stackColumns : SMap<stack, OSet<column>>;
         (* for a row, which band is it in? *)
         rowBand : SMap<row, band>;
         (* for a band, return the rows in it *)
-        bandRows : SMap<band, rows>;
+        bandRows : SMap<band, OSet<row>>;
         (* for a cell, which box is it in? *)
         cellBox : SMap<cell, bbox>;
         (* for a box, return the cells in it *)
-        boxCells : SMap<bbox, cells>;
+        boxCells : SMap<bbox, OSet<cell>>;
         (* for a house, return the cells in it *)
-        houseCells : SMap<house, cells>;
-        cellHouseCells : SMap<cell, cells>;
-        housesCells : houses -> cells;
-        houseCellCandidateReductions : house -> cellCandidates -> OSet<candidateReduction>;
+        houseCells : SMap<house, OSet<cell>>;
+        cellHouseCells : SMap<cell, OSet<cell>>;
+        housesCells : OSet<house> -> OSet<cell>;
+        houseCellCandidateReductions : house -> cellCandidates -> candidateReduction list;
 
         (*abstract member houseCellCandidates : (house, cellCandidates>*)
     }
@@ -181,14 +185,16 @@ let tPuzzleMap (puzzleShape : puzzleShape) : puzzleMap =
     let _houseCellsLookup = SMap.ofLookup _houseCells _houses in
     let _cellHouseCellsLookup = SMap.ofLookup _cellHouseCells _cells in
 
-    let _housesCells (houses : houses) : cells =
+    let _housesCells (houses : OSet<house>) : OSet<cell> =
         houses
-        |> OSet.map (fun house -> SMap.get house _houseCellsLookup)
+        |> OSet.toList
+        |> List.map (fun house -> SMap.get house _houseCellsLookup)
         |> OSet.concat in
 
-    let _houseCellCandidateReductions (house : house) (cellCandidates : cellCandidates) : OSet<candidateReduction> =
+    let _houseCellCandidateReductions (house : house) (cellCandidates : cellCandidates) : candidateReduction list =
         SMap.get house _houseCellsLookup
-        |> OSet.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates)) in
+        |> OSet.toList
+        |> List.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates)) in
 
     {
         columns = _columns;

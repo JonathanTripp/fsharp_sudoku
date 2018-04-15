@@ -1,5 +1,6 @@
 module core.EliminateCandidate
 
+open Sset
 open Sudoku
 open oset
 open smap
@@ -11,7 +12,7 @@ let apply (p : Puzzlemap.puzzleMap) (candidate : candidate) (current : current) 
         match cellContents with
         | BigNumber _ -> cellContents
         | PencilMarks candidates -> 
-            if candidate.cell = cell then PencilMarks(OSet.remove candidate.digit candidates)
+            if Cell.setElemCompare candidate.cell cell = EQ then PencilMarks(OSet.remove candidate.digit candidates)
             else cellContents
 
     SMap.ofLookup update p.cells
@@ -21,9 +22,9 @@ let description (p: Puzzlemap.puzzleMap) (candidate : candidate) : Hint.descript
 
     { primaryHouses = OSet.empty();
       secondaryHouses = OSet.empty();
-      candidateReductions = OSet.singleton cr;
+      candidateReductions = [cr];
       setCellValueAction = None;
-      pointers = OSet.empty();
+      pointers = [];
       focus = OSet.empty() }
 
 let step (p : Puzzlemap.puzzleMap) (candidate : candidate) (solution : solution) : solution =

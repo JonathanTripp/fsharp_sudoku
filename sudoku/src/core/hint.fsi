@@ -4,18 +4,20 @@ open Sudoku
 open oset
 open smap
 
+[<NoComparison; NoEquality>]
 type description = 
-    { primaryHouses : houses;
-      secondaryHouses : houses;
-      candidateReductions : OSet<candidateReduction>;
+    { primaryHouses : OSet<house>;
+      secondaryHouses : OSet<house>;
+      candidateReductions : candidateReduction list;
       setCellValueAction : value option;
-      pointers : OSet<candidateReduction>;
+      pointers : candidateReduction list;
       focus : digits }
 
 module Description =
     val to_string : description -> string
 
 (* To draw a cell we may want to display extra information... *)
+[<NoComparison; NoEquality>]
 type annotation = 
     { given : digit option;
       current: cellContents;
@@ -27,6 +29,7 @@ type annotation =
       pointers : digits;
       focus : digits }
 
+[<NoComparison; NoEquality>]
 type description2 = 
     { annotations : SMap<cell, annotation> }
 

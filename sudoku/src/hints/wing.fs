@@ -7,23 +7,26 @@ open smap
 let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) pointerCells primaryHouses secondaryHouses candidate : core.Hint.description option = 
     let pointers =
         pointerCells
-        |> OSet.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
+        |> OSet.toList
+        |> List.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
         in
 
     let colCells =
         secondaryHouses
-        |> OSet.map (fun house -> SMap.get house p.houseCells)
+        |> OSet.toList
+        |> List.map (fun house -> SMap.get house p.houseCells)
         |> OSet.concat
         in
 
     let candidatesReductions = 
         OSet.difference colCells pointerCells
-        |> OSet.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
-        |> OSet.filter (fun cr -> OSet.contains candidate cr.candidates)
-        |> OSet.map (fun cr -> CandidateReduction.make cr.cell (OSet.singleton candidate))
+        |> OSet.toList
+        |> List.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
+        |> List.filter (fun cr -> OSet.contains candidate cr.candidates)
+        |> List.map (fun cr -> CandidateReduction.make cr.cell (OSet.singleton candidate))
         in
 
-    if OSet.count candidatesReductions > 0 then
+    if List.length candidatesReductions > 0 then
         let hint : core.Hint.description =
             { primaryHouses = primaryHouses;
               secondaryHouses = secondaryHouses;
@@ -132,14 +135,16 @@ let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
     let houseCandidates1 =
         p.houseCells
         |> SMap.get house1
-        |> OSet.map (fun cell -> SMap.get cell cellCandidates)
+        |> OSet.toList
+        |> List.map (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
     let houseCandidates2 =
         p.houseCells
         |> SMap.get house2
-        |> OSet.map (fun cell -> SMap.get cell cellCandidates)
+        |> OSet.toList
+        |> List.map (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
@@ -291,8 +296,8 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
 
         triples
         |> List.map
-          (fun (pivot1, triple, other) -> 
-            let ccs = List.map (fun cr -> cr.candidates) triple in
+          (fun (pivot1, pointers, other) -> 
+            let ccs = List.map (fun cr -> cr.candidates) pointers in
 
             let allPairs =
                 ccs
@@ -306,16 +311,14 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
                     in
 
                 if OSet.count allCandidates = 3 then 
-                    match triple with
+                    match pointers with
                     | [ left; pivot; right; _ ] -> 
                         let removee = OSet.difference allCandidates pivot.candidates in
 
-                        if OSet.count removee = 1 && (left.candidates <> right.candidates) && 
+                        if OSet.count removee = 1 && (OSet.equals left.candidates right.candidates = false) && 
                             OSet.isSubset removee (SMap.get other cellCandidates) then
 
                             let candidateReductions = CandidateReduction.make other removee in
-
-                            let pointers = OSet.ofList triple in
 
                             let primaryHouses = 
                                 [ HRow row1;
@@ -328,7 +331,7 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
                             let desc : core.Hint.description =
                                 { primaryHouses = primaryHouses;
                                   secondaryHouses = OSet.empty();
-                                  candidateReductions = OSet.singleton candidateReductions;
+                                  candidateReductions = [candidateReductions];
                                   setCellValueAction = None;
                                   pointers = pointers;
                                   focus = OSet.empty() } in

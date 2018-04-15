@@ -16,6 +16,7 @@ type basic_color =
     | White
 
 (* Things we may want to write *)
+[<NoComparison;NoEquality>]
 type consoleChar = 
     | CNil
     | CChar of char
@@ -28,6 +29,7 @@ type consoleChar =
 type consoleString = consoleChar list
 
 (* Printing a row, we need special characters at left, in the middle and on the right *)
+[<NoComparison;NoEquality>]
 type gridCharsRow = 
     { l : consoleString;
       m : consoleString;
@@ -35,6 +37,7 @@ type gridCharsRow =
 
 (* Printing a grid, we need special rows at top, in the middle and on the bottom
  Also, horizontal and vertical spacers *)
+ [<NoComparison;NoEquality>]
 type gridChars = 
     { h : consoleString;
       v : gridCharsRow;
@@ -43,10 +46,12 @@ type gridChars =
       b : gridCharsRow;
       n : consoleString }
 
+[<NoComparison;NoEquality>]
 type candidateGridCharsRow = 
     { mi : consoleString;
       x : gridCharsRow }
 
+[<NoComparison;NoEquality>]
 type candidateGridChars = 
     { h : consoleString;
       hi : consoleString;

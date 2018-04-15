@@ -224,8 +224,7 @@ let ``Can make boxes``() =
 
     let expected =
         [1..2]
-        |> OSet.ofList
-        |> OSet.map
+        |> List.map
             (fun b ->
                 [1..4]
                 |> OSet.ofList
@@ -319,8 +318,7 @@ let ``Get stack for a column``() =
 
     let expected =
         [1..3]
-        |> OSet.ofList
-        |> OSet.map
+        |> List.map
             (fun s ->
                 [1..3]
                 |> OSet.ofList
@@ -357,8 +355,7 @@ let ``Get band for a row``() =
 
     let expected =
         [1..3]
-        |> OSet.ofList
-        |> OSet.map
+        |> List.map
             (fun b ->
                 [1..3]
                 |> OSet.ofList
@@ -398,8 +395,7 @@ let ``Get box for a cell``() =
 
     let expected =
         [1..3]
-        |> OSet.ofList
-        |> OSet.map
+        |> List.map
             (fun b ->
                 [1..3]
                 |> OSet.ofList

@@ -23,9 +23,9 @@ let ``Can find full house``() =
     let expectedHints : core.Hint.description list =
         [   { primaryHouses = OSet.singleton (HBox (Box.make (Stack.ofNat 2) (Band.ofNat 3)));
               secondaryHouses = OSet.empty();
-              candidateReductions = OSet.empty();
+              candidateReductions = [];
               setCellValueAction = Some (Value.make (Cell.make (Column.ofNat 6) (Row.ofNat 9)) (OSet.item 5 PuzzleShape.default'.alphabet));
-              pointers = OSet.empty();
+              pointers = [];
               focus = OSet.empty() } ]
         in
 

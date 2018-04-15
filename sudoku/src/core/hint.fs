@@ -1,17 +1,19 @@
 module core.Hint
 
+open Sset
 open Sudoku
 open oset
 open smap
 
 exception CellStateInvalid
 
+[<NoComparison; NoEquality>]
 type description = 
-    { primaryHouses : houses;
-      secondaryHouses : houses;
-      candidateReductions : OSet<candidateReduction>;
+    { primaryHouses : OSet<house>;
+      secondaryHouses : OSet<house>;
+      candidateReductions : candidateReduction list;
       setCellValueAction : value option;
-      pointers : OSet<candidateReduction>;
+      pointers : candidateReduction list;
       focus : digits }
 
 module Description =
@@ -19,11 +21,10 @@ module Description =
 
         let line1 = Printf.sprintf "Primary OSet %s\r\n" (Houses.toString h.primaryHouses) in
         let line2 = Printf.sprintf "Secondary OSet %s\r\n" (Houses.toString h.secondaryHouses) in
-        let line3 = Printf.sprintf "Pointers %s\r\n" (CandidateReductions.to_string (h.pointers |> OSet.toList)) in
+        let line3 = Printf.sprintf "Pointers %s\r\n" (CandidateReductions.to_string h.pointers) in
 
         let crlines =
             h.candidateReductions
-            |> OSet.toList
             |> List.map
                 (fun candidateReduction ->
                     Printf.sprintf "  %s\r\n" (CandidateReduction.to_string candidateReduction))
@@ -33,6 +34,7 @@ module Description =
         |> String.concat ","
 
 (* To draw a cell we may want to display extra information... *)
+[<NoComparison; NoEquality>]
 type annotation = 
     { given : digit option;
       current: cellContents;
@@ -44,6 +46,7 @@ type annotation =
       pointers : digits;
       focus : digits }
 
+[<NoComparison; NoEquality>]
 type description2 = 
     { annotations : SMap<cell, annotation> }
 
@@ -56,7 +59,7 @@ let mhas (solution : solution) (p : Puzzlemap.puzzleMap) (hd : description) : de
             | Some setCellValueAction -> 
                 
                 let r1 = 
-                    if setCellValueAction.cell = cell then Some setCellValueAction.digit
+                    if Cell.setElemCompare setCellValueAction.cell cell = EQ then Some setCellValueAction.digit
                     else None
                     in
 
@@ -73,22 +76,22 @@ let mhas (solution : solution) (p : Puzzlemap.puzzleMap) (hd : description) : de
 
         let cellCandidateReductions =
             hd.candidateReductions
-            |> OSet.filter (fun pointer -> cell = pointer.cell) 
+            |> List.filter (fun pointer -> Cell.setElemCompare cell pointer.cell = EQ) 
             in
 
         let reductions = 
-            match (cellCandidateReductions |> OSet.toList) with
+            match cellCandidateReductions with
             | cr :: _ -> cr.candidates
             | [] -> OSet.empty()
             in
 
         let cellPointers =
             hd.pointers
-            |> OSet.filter (fun pointer -> cell = pointer.cell)
+            |> List.filter (fun pointer -> Cell.setElemCompare cell pointer.cell = EQ)
             in
 
         let pointers = 
-            match (cellPointers |> OSet.toList) with
+            match cellPointers with
             | cr :: _ -> cr.candidates
             | [] -> OSet.empty()
             in

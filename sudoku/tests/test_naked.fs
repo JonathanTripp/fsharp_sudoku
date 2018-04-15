@@ -23,15 +23,15 @@ let ``Can find naked singles``() =
     let expectedHints : core.Hint.description list =
         [   { primaryHouses = OSet.empty();
               secondaryHouses = OSet.empty();
-              candidateReductions = OSet.empty();
+              candidateReductions = [];
               setCellValueAction = Some (Value.make (Cell.make (Column.ofNat 8) (Row.ofNat 1)) (OSet.item 8 PuzzleShape.default'.alphabet));
-              pointers = OSet.empty();
+              pointers = [];
               focus = OSet.empty() };
             { primaryHouses = OSet.empty();
               secondaryHouses = OSet.empty();
-              candidateReductions = OSet.empty();
+              candidateReductions = [];
               setCellValueAction = Some (Value.make (Cell.make (Column.ofNat 8) (Row.ofNat 9)) (OSet.item 5 PuzzleShape.default'.alphabet));
-              pointers = OSet.empty();
+              pointers = [];
               focus = OSet.empty() } ]
         in
 

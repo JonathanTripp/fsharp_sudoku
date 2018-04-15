@@ -14,9 +14,9 @@ let nakedSingleCell (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandida
 
         Some { primaryHouses = OSet.empty();
                 secondaryHouses = OSet.empty();
-                candidateReductions = OSet.empty();
+                candidateReductions = [];
                 setCellValueAction = Some setCellValue;
-                pointers = OSet.empty();
+                pointers = [];
                 focus = OSet.empty() }
     else None
 
@@ -29,7 +29,8 @@ let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
 
     let subsetDigits =
         cellSubset
-        |> OSet.map (fun cell -> SMap.get cell cellCandidates)
+        |> OSet.toList
+        |> List.map (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
@@ -37,19 +38,21 @@ let findNaked (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
         let candidateReductions =
             p.houseCells
             |> SMap.get primaryHouse
-            |> OSet.filter (fun cell -> OSet.contains cell cellSubset = false) 
-            |> OSet.map (fun cell -> 
+            |> OSet.toList
+            |> List.filter (fun cell -> OSet.contains cell cellSubset = false) 
+            |> List.map (fun cell -> 
                 let candidates = SMap.get cell cellCandidates in
                 CandidateReduction.make cell (OSet.intersect subsetDigits candidates))
-            |> OSet.filter (fun cr -> OSet.count cr.candidates > 0)
+            |> List.filter (fun cr -> OSet.count cr.candidates > 0)
             in
 
         let pointers =
             cellSubset
-            |> OSet.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
+            |> OSet.toList
+            |> List.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
             in
 
-        if OSet.count candidateReductions > 0 then 
+        if List.length candidateReductions > 0 then 
             Some { primaryHouses = OSet.singleton primaryHouse;
                    secondaryHouses = OSet.empty();
                    candidateReductions = candidateReductions;

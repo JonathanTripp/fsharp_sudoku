@@ -1,5 +1,6 @@
 module core.SetCell
 
+open Sset
 open Sudoku
 open oset
 open smap
@@ -13,7 +14,7 @@ let apply (p : Puzzlemap.puzzleMap) (value : value) (current : current) : curren
         | PencilMarks candidates -> 
             let cells = SMap.get value.cell p.cellHouseCells in
 
-            if value.cell = cell then BigNumber value.digit
+            if Cell.setElemCompare value.cell cell = EQ then BigNumber value.digit
             else if OSet.contains cell cells then 
                 PencilMarks (OSet.remove value.digit candidates)
             else cellContents
@@ -21,6 +22,7 @@ let apply (p : Puzzlemap.puzzleMap) (value : value) (current : current) : curren
 
     SMap.ofLookup update p.cells
 
+[<NoComparison;NoEquality>]
 type setCellDigitError = 
     { cell : cell;
       candidate : digit;
@@ -36,9 +38,9 @@ let try' (cell : cell) (candidate : digit) (cellCandidates : cellCandidates) : v
 let description (p : Puzzlemap.puzzleMap) (setCellValue : value) : Hint.description =
     { primaryHouses = OSet.empty();
       secondaryHouses = OSet.empty();
-      candidateReductions = OSet.empty();
+      candidateReductions = [];
       setCellValueAction = Some setCellValue;
-      pointers = OSet.empty();
+      pointers = [];
       focus = OSet.empty() }
 
 let step (p : Puzzlemap.puzzleMap) (setCellValue : value) (solution : solution) : solution =

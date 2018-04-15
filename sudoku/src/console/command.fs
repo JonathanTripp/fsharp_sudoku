@@ -1,5 +1,6 @@
 module console.Command
 
+open Sset
 open core.Sudoku
 open oset
 open smap
@@ -23,6 +24,7 @@ let parseColumnRow what gridSize term : parse_column_or_row_results =
     with
         | Failure e -> CRError (what, gridSize)
 
+[<NoComparison;NoEquality>]
 type parse_cell_results = 
     | COk of cell
     | CColError of parse_column_or_row_results * int
@@ -45,7 +47,7 @@ let parseCell (gridSize : int) (cells : cells) (termColumn : string) (termRow : 
     | (CROk col, CROk row) ->
         let cell =
             cells
-            |> OSet.find (fun cell -> cell.col = (Column.ofNat col) && cell.row = (Row.ofNat row))
+            |> OSet.find (fun cell -> Column.setElemCompare cell.col (Column.ofNat col) = EQ && Row.setElemCompare cell.row (Row.ofNat row) = EQ)
             in
         COk cell
     | (CRError _, CROk row) -> CColError (parsedCol, row)
@@ -58,6 +60,7 @@ let charToCandidate (digits : digits) (trialDigit : char) : digit option =
         Some (OSet.find compareAlpha digits)
     else None
 
+[<NoComparison;NoEquality>]
 type parse_value_result =
     | VOk of digit
     | VErrorInvalid of string * string
@@ -77,6 +80,7 @@ let parseValue (digits : digits) (term : string) : parse_value_result =
         | None -> VErrorInvalid (term, (Digits.toString digits))
     else VErrorTooMany term
 
+[<NoComparison;NoEquality>]
 type focus_command_result =
     | FCOk of parse_value_result
     | FCWrongTermCount of int
@@ -91,11 +95,12 @@ let focusCommandParse (s: puzzleShape) (item : string) : focus_command_result =
 let focusCommandHintDescription (p : core.Puzzlemap.puzzleMap) (digit : digit) : core.Hint.description =
     { primaryHouses = OSet.empty();
       secondaryHouses = OSet.empty();
-      candidateReductions = OSet.empty();
+      candidateReductions = [];
       setCellValueAction = None;
-      pointers = OSet.empty();
+      pointers = [];
       focus = OSet.singleton digit }
 
+[<NoComparison;NoEquality>]
 type set_cell_command_parse_result =
     | SCCOk of value
     | SCCBadParams of parse_cell_results * parse_value_result
@@ -112,6 +117,7 @@ let setCellCommandParse (s: puzzleShape) (item : string) (p : core.Puzzlemap.puz
         | _ -> SCCBadParams (parsedCell, parsedValue)
     else SCCWrongTermCount (List.length terms)
 
+[<NoComparison;NoEquality>]
 type set_cell_command_check_result =
     | SSCROk of value
     | SCCRGiven of value * digit
@@ -132,6 +138,7 @@ let setCellCommandCheck (given : given) (cellCandidates : cellCandidates) (value
         if OSet.contains value.digit digits then SSCROk value
         else SCCRNotACandidate value
 
+[<NoComparison;NoEquality>]
 type clear_candidate_command_parse_result =
     | CCCPROk of candidate
     | CCCPRParseError of parse_cell_results * parse_value_result
@@ -148,6 +155,7 @@ let candidateClearCommandParse (s: puzzleShape) (item : string) (p : core.Puzzle
         | _ -> CCCPRParseError (parsedCell, parsedDigit)
     else CCCPRWrongItemCount (List.length terms)
 
+[<NoComparison;NoEquality>]
 type clear_candidate_command_check_result =
     | CCCCROk of candidate
     | CCCCRGiven of candidate * digit

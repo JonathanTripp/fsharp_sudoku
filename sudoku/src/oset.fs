@@ -2,95 +2,131 @@
 
 open Sset
 
-let inline setElemCompare ((x, y) : ^T * ^T) : Ordering =
-    (^T: (static member setElemCompare: ^T * ^T -> Ordering) (x, y))
+module SetElemComparers =
+    let ht = new System.Collections.Generic.Dictionary<System.Type, obj>()
 
-type OSet<'T> = OSet of 'T list
+    let Get<'T> () : 'T -> 'T -> Ordering =
+        let ty = typeof<'T>
+        if ht.ContainsKey(ty) then
+            match ht.[ty] with
+            | :? ('T -> 'T -> Ordering) as r -> r
+            | _ -> invalidArg "ty" ("The type "+ty.Name+" has a numeric association but it was not of the correct type")
+        else
+            invalidArg "ty" ("The type "+ty.Name+" does not have a setElemComparer")
+
+    let Register (r : 'T -> 'T -> Ordering) : unit =
+        ht.Add(typeof<'T>, box r)
+
+[<NoComparison;NoEquality>]
+type OSet<'T> =
+    { data : 'T list;
+      setElemCompare : 'T -> 'T -> Ordering; }
 
 [<RequireQualifiedAccess>]
 module OSet =
-    let inline ofList (l : ^T list) : OSet< ^T > =
-        Sset.setify (^T : (static member setElemCompare : ^T * ^T -> Ordering)) l |> OSet
+    let ofList' (setElemCompare: 'T -> 'T -> Ordering) (l :'T list) : OSet<'T> =
+        let setElemCompare = SetElemComparers.Get<'T>() in
+        let data = l |> Sset.setify setElemCompare in
+        { data = data; setElemCompare = setElemCompare }
 
-    let inline toList (OSet o : OSet< ^T >) : ^T list =
-        o
+    let ofList (l :'T list) : OSet<'T> =
+        let setElemCompare = SetElemComparers.Get<'T>() in
+        ofList' setElemCompare l
 
-    let inline choose (chooser : ^T -> 'U option) (o : OSet< ^T >) : OSet< ^U > =
+    let toList (oset : OSet<'T>) :'T list =
+        oset.data
+
+    let choose (chooser :'T-> 'U option) (o : OSet<'T>) : OSet<'U> =
         o |> toList |> List.choose chooser |> ofList
 
-    let inline concat (ds : OSet<OSet< ^T >>) : OSet< ^T > =
-        ds |> toList |> List.map toList |> Sset.unions setElemCompare |> ofList
+    let concat (ds : OSet<'T> list) : OSet<'T> =
+        let setElemCompare = SetElemComparers.Get<'T>() in
+        ds |> List.map toList |> Sset.unions setElemCompare |> ofList' setElemCompare
 
-    let inline contains (element : ^T) (o : OSet< ^T >) : bool =
+    let contains (element : 'T) (o : OSet<'T>) : bool =
+        let setElemCompare = SetElemComparers.Get<'T>() in
         o |> toList |> Sset.contains setElemCompare element
 
-    let inline count (o : OSet< ^T >) : int =
+    let count (o : OSet<'T>) : int =
         o |> toList |> List.length
 
-    let inline difference (o : OSet< ^T >) (o' : OSet< ^T >) : OSet< ^T > =
-        Sset.subtract setElemCompare (o |> toList) (o' |> toList) |> ofList
+    let difference (o : OSet<'T>) (o' : OSet<'T>) : OSet<'T> =
+        let setElemCompare = SetElemComparers.Get<'T>() in
+        Sset.subtract setElemCompare (o |> toList) (o' |> toList) |> ofList' setElemCompare
 
-    let inline empty () : OSet< ^T > = OSet []
+    let empty () : OSet<'T> = ofList []
 
-    let inline exists (predicate : ^T -> bool) (o : OSet< ^T >) : bool =
+    let equals (lhs : OSet<'T>) (rhs : OSet<'T>) : bool =
+        let setElemCompare = SetElemComparers.Get<'T>() in
+        let l1 = toList lhs in
+        let l2 = toList rhs in
+
+        List.length l1 = List.length l2 &&
+        List.forall2 (fun element1 element2 -> setElemCompare element1 element2 = EQ) l1 l2
+
+    let exists (predicate :'T-> bool) (o : OSet<'T>) : bool =
         o |> toList |> List.exists predicate 
 
-    let inline filter (predicate : ^T -> bool) (o : OSet< ^T >) : OSet< ^T > =
+    let filter (predicate :'T-> bool) (o : OSet<'T>) : OSet<'T> =
         o |> toList |> List.filter predicate |> ofList
 
-    let inline find (predicate : ^T -> bool) (o : OSet< ^T >) : ^T =
+    let find (predicate :'T-> bool) (o : OSet<'T>) :'T=
         o |> toList |> List.find predicate
 
-    let inline forall (predicate : ^T -> bool) (o : OSet< ^T >) : bool =
+    let forall (predicate :'T-> bool) (o : OSet<'T>) : bool =
         o |> toList |> List.forall predicate 
 
-    let inline head (o : OSet< ^T >) : ^T =
+    let head (o : OSet<'T>) :'T=
         o |> toList |> List.head
 
-    let inline intersect (o : OSet< ^T >) (o' : OSet< ^T >) : OSet< ^T > =
-        Sset.intersect setElemCompare (o |> toList) (o' |> toList) |> ofList
+    let intersect (o : OSet<'T>) (o' : OSet<'T>) : OSet<'T> =
+        let setElemCompare = SetElemComparers.Get<'T>() in
+        Sset.intersect setElemCompare (o |> toList) (o' |> toList) |> ofList' setElemCompare
 
-    let inline isSubset (o : OSet< ^T >) (o' : OSet< ^T >) : bool =
+    let isSubset (o : OSet<'T>) (o' : OSet<'T>) : bool =
+        let setElemCompare = SetElemComparers.Get<'T>() in
         Sset.subset setElemCompare (o |> toList) (o' |> toList)
 
-    let inline item (index : int) (o : OSet< ^T >) : ^T =
+    let item (index : int) (o : OSet<'T>) :'T=
         o |> toList |> List.item index
 
-    let inline map (mapping : ^T -> 'U) (o : OSet< ^T >) : OSet< ^U > =
+    let map (mapping :'T-> 'U) (o : OSet<'T>) : OSet<'U> =
         o |> toList |> List.map mapping |> ofList
 
-    let inline mapi (mapping : int -> ^T -> 'U) (o : OSet< ^T >) : OSet< ^U > =
+    let mapi (mapping : int ->'T-> 'U) (o : OSet<'T>) : OSet<'U> =
         o |> toList |> List.mapi mapping |> ofList
 
-    let inline range (first : int) (last : int) (fn : int -> ^T) : OSet< ^T > =
+    let range (first : int) (last : int) (fn : int -> 'T) : OSet<'T> =
         Sset.range first last |> List.map fn |> ofList
 
-    let inline remove (value : ^T) (o : OSet< ^T >) : OSet< ^T > = 
-        o |> toList |> Sset.remove setElemCompare value |> ofList
+    let remove (value : 'T) (o : OSet<'T>) : OSet<'T> = 
+        let setElemCompare = SetElemComparers.Get<'T>() in
+        o |> toList |> Sset.remove setElemCompare value |> ofList' setElemCompare
 
-    let inline singleton (value : ^T) : OSet< ^T > =
-        List.singleton value |> OSet
+    let singleton (value : 'T) : OSet<'T> =
+        List.singleton value |> ofList
 
-    let inline skip (count : int) (o : OSet< ^T >) : OSet< ^T > =
+    let skip (count : int) (o : OSet<'T>) : OSet<'T> =
         o |> toList |> List.skip count |> ofList
 
-    let inline subsets (size : int) (o : OSet< ^T >) : OSet< ^T > list =
+    let subsets (size : int) (o : OSet<'T>) : OSet<'T> list =
         Sset.setSubsets (o |> toList) size
         |> List.map ofList
 
-    let inline take (count : int) (o : OSet< ^T >) : OSet< ^T > =
+    let take (count : int) (o : OSet<'T>) : OSet<'T> =
         o |> toList |> List.take count |> ofList
 
-    let inline toString (o : OSet< ^T >) : string =
-        let toString a = a.ToString()
+    let toString (printer : 'T -> string) (o : OSet<'T>) : string =
         let sb = new System.Text.StringBuilder()
         sb.Append("{")
-          .Append(String.concat "," (o |> toList |> List.map toString))
+          .Append(String.concat "," (o |> toList |> List.map printer))
           .Append("}")
           .ToString()
 
-    let inline union (o : OSet< ^T >) (o' : OSet< ^T >) : OSet< ^T > =
-        Sset.union setElemCompare (o |> toList) (o' |> toList) |> ofList
+    let union (o : OSet<'T>) (o' : OSet<'T>) : OSet<'T> =
+        let setElemCompare = SetElemComparers.Get<'T>() in
+        Sset.union setElemCompare (o |> toList) (o' |> toList) |> ofList' setElemCompare
 
-    let inline unionMany (ds : OSet< ^T > list) : OSet< ^T > =
-        ds |> List.map toList |> Sset.unions setElemCompare |> ofList
+    let unionMany (ds : OSet<'T> list) : OSet<'T> =
+        let setElemCompare = SetElemComparers.Get<'T>() in
+        ds |> List.map toList |> Sset.unions setElemCompare |> ofList' setElemCompare

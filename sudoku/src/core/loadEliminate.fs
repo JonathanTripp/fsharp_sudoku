@@ -4,7 +4,7 @@ open Sudoku
 open oset
 open smap
 
-let find  (p : Puzzlemap.puzzleMap) (current : current) : OSet<candidateReduction> = 
+let find  (p : Puzzlemap.puzzleMap) (current : current) : candidateReduction list = 
 
     let reductions (cell : cell) : digits option =
         let cellContents = SMap.get cell current in
@@ -27,17 +27,17 @@ let find  (p : Puzzlemap.puzzleMap) (current : current) : OSet<candidateReductio
         in
 
     p.cells
-    |> OSet.choose
+    |> OSet.toList
+    |> List.choose
         (fun cell ->
             match reductions cell with
             | Some digits -> Some (CandidateReduction.make cell digits)
             | None -> None)
 
-let apply (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReduction>) (current : current) : current = 
+let apply (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReduction list) (current : current) : current = 
 
     let candidateReductionsLookup =
         candidateReductions
-        |> OSet.toList
         |> List.map (fun cr -> (cr.cell, cr.candidates))
         |> SMap.ofList
         in
@@ -57,15 +57,15 @@ let apply (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReducti
 
     SMap.ofLookup update p.cells
 
-let description (p : Puzzlemap.puzzleMap) (candidateReductions : OSet<candidateReduction>) : Hint.description =
+let description (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReduction list) : Hint.description =
     { primaryHouses = OSet.empty();
       secondaryHouses = OSet.empty();
       candidateReductions = candidateReductions;
       setCellValueAction = None;
-      pointers = OSet.empty();
+      pointers = [];
       focus = OSet.empty() }
 
-let step (p : Puzzlemap.puzzleMap) (solution : solution) (candidateReductions : OSet<candidateReduction>) : solution =
+let step (p : Puzzlemap.puzzleMap) (solution : solution) (candidateReductions : candidateReduction list) : solution =
     { solution with current = apply p candidateReductions solution.current;
                     steps = LoadEliminate :: solution.steps }
 

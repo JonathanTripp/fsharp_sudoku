@@ -11,7 +11,8 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
     let primaryHouseCandidates = 
         p.houseCells
         |> SMap.get primaryHouse
-        |> OSet.map (fun cell -> SMap.get cell cellCandidates)
+        |> OSet.toList
+        |> List.map (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
@@ -19,18 +20,19 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
         let pointerCells = 
             p.houseCells
             |> SMap.get primaryHouse
-            |> OSet.filter (fun cell -> 
+            |> OSet.toList
+            |> List.filter (fun cell -> 
                 let candidates = SMap.get cell cellCandidates in
                 OSet.contains candidate candidates) 
             in
 
         let pointers  = 
             pointerCells
-            |> OSet.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
+            |> List.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
             in
 
         let hintsPerSecondaryHouse (secondaryHouses : houses) : core.Hint.description option = 
-            if OSet.count pointerCells > 1 && OSet.count secondaryHouses = 1 then 
+            if List.length pointerCells > 1 && OSet.count secondaryHouses = 1 then 
                 let primaryHouseCells =
                     p.houseCells
                     |> SMap.get primaryHouse
@@ -43,13 +45,14 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
                 
                 let candidateReductions = 
                     otherHouseCells
-                    |> OSet.filter (fun cell -> 
+                    |> OSet.toList
+                    |> List.filter (fun cell -> 
                         let candidates = SMap.get cell cellCandidates in
                         OSet.contains candidate candidates)
-                    |> OSet.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
+                    |> List.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
                     in
 
-                if OSet.count candidateReductions > 0 then 
+                if List.length candidateReductions > 0 then 
                     Some { primaryHouses = OSet.singleton primaryHouse;
                            secondaryHouses = OSet.singleton secondaryHouse;
                            candidateReductions = candidateReductions;
@@ -61,7 +64,6 @@ let intersectionsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellC
             in
 
         pointerCells
-        |> OSet.toList
         |> List.choose (fun cell -> 
                             SMap.get cell secondaryHouseLookups
                             |> hintsPerSecondaryHouse)
