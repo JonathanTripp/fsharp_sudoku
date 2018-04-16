@@ -6,8 +6,8 @@ open smap
 
 [<NoComparison; NoEquality>]
 type description = 
-    { primaryHouses : OSet<house>;
-      secondaryHouses : OSet<house>;
+    { primaryHouses : houses;
+      secondaryHouses : houses;
       candidateReductions : candidateReduction list;
       setCellValueAction : value option;
       pointers : candidateReduction list;

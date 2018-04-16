@@ -72,7 +72,7 @@ let printLine (cells : cells) (digitTo : cell -> consoleString) : consoleString 
     |> List.concat
 
 (* Combine fences with posts (there's one more fence than posts: f p f p ... p f) *)
-let inline simpleInterleave (fenceToSeq : ^a -> consoleString) (post : consoleString) (fences : OSet< ^a >) : consoleString = 
+let simpleInterleave (fenceToSeq : 'a -> consoleString) (post : consoleString) (fences : OSet<'a>) : consoleString = 
     let rec gen (fences' : 'a list) : consoleString = 
         match fences' with
         | [] -> []
@@ -83,7 +83,7 @@ let inline simpleInterleave (fenceToSeq : ^a -> consoleString) (post : consoleSt
 
 (* Create a sequence of fences interleaved with posts (first and last posts may be different)
  l f p f p f ... p f r *)
-let inline sinterleave (fenceToSeq : ^a -> consoleString) (firstPost : consoleString) (midPost : consoleString) (lastPost : consoleString) (eol : consoleString) (fences : OSet< ^a >) : consoleString = 
+let sinterleave (fenceToSeq : 'a -> consoleString) (firstPost : consoleString) (midPost : consoleString) (lastPost : consoleString) (eol : consoleString) (fences : OSet<'a>) : consoleString = 
     List.concat [firstPost; simpleInterleave fenceToSeq midPost fences; lastPost; eol]
 
 (* Print a column *)
@@ -156,8 +156,9 @@ let printCandidateGrid (p : core.Puzzlemap.puzzleMap) (candidateGridChars : cand
 
     let c : int = OSet.count (SMap.get (OSet.head p.stacks) p.stackColumns) in
     
-    let ss : OSet<digits> = 
-        OSet.range 0 (OSet.count p.stacks - 1) (fun i -> OSet.skip (i * c) alphabet |> OSet.take c)
+    let ss : digits list = 
+        Sset.range 0 (OSet.count p.stacks - 1)
+        |> List.map (fun i -> OSet.skip (i * c) alphabet |> OSet.take c)
         in
 
     let doPrintColumn (digits : digits) : row -> column -> consoleString = 
@@ -177,7 +178,6 @@ let printCandidateGrid (p : core.Puzzlemap.puzzleMap) (candidateGridChars : cand
 
     let doPrintRow (row : row) : consoleString = 
         ss
-        |> OSet.toList
         |> List.map
             (fun digits -> printRow (doPrintStack digits row) candidateGridChars.v candidateGridChars.n p.stacks)
         |> List.concat

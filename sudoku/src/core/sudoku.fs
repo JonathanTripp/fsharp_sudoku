@@ -112,7 +112,7 @@ SetElemComparers.Register Stack.setElemCompare
 type stacks = OSet<stack>
 
 module Stacks =
-    let to_string (ss : OSet<stack>) : string =
+    let to_string (ss : stacks) : string =
         "SS" + (OSet.toString Stack.to_string ss)
 
 type boxWidth = int
@@ -255,7 +255,7 @@ SetElemComparers.Register Digit.setElemCompare
 type digits = OSet<digit>
 
 module Digits =
-    let toString (ds : OSet<digit>) : string =
+    let toString (ds : digits) : string =
         "D" + (OSet.toString Digit.to_string ds)
 
 (* A sudoku is defined by the overall grid size (it is always square)
@@ -266,7 +266,7 @@ type puzzleShape =
     { size : size;
       boxWidth : boxWidth;
       boxHeight : boxHeight;
-      alphabet : OSet<digit> }
+      alphabet : digits }
 
 module PuzzleShape =
     let default' : puzzleShape = 
@@ -281,13 +281,13 @@ module PuzzleShape =
  [<NoComparison;NoEquality>]
 type cellContents = 
     | BigNumber of digit
-    | PencilMarks of OSet<digit>
+    | PencilMarks of digits
 
 module CellContents =
     let make_big_number (digit : digit) : cellContents =
         BigNumber digit
 
-    let make_pencil_marks (digits : OSet<digit>) : cellContents =
+    let make_pencil_marks (digits : digits) : cellContents =
         PencilMarks digits
 
 (* Working towards a solution we take one of the following actions:
@@ -322,10 +322,10 @@ module Candidate =
 [<NoComparison;NoEquality>]
 type candidateReduction = 
     { cell : cell;
-      candidates : OSet<digit> }
+      candidates : digits }
 
 module CandidateReduction =
-    let make (cell : cell) (digits : OSet<digit>) : candidateReduction =
+    let make (cell : cell) (digits : digits) : candidateReduction =
         { cell = cell;
           candidates = digits }
 
@@ -364,7 +364,7 @@ type current = SMap<cell, cellContents>
 
 (* for a cell, return a set of candidates *)
 [<NoComparison;NoEquality>]
-type cellCandidates = SMap<cell, OSet<digit>>
+type cellCandidates = SMap<cell, digits>
 
 [<NoComparison;NoEquality>]
 type solution = 
@@ -373,7 +373,7 @@ type solution =
       steps : action list }
 
 module Solution =
-    let givenToCurrent (cells : cells) (given : given) (alphabet : OSet<digit>) : current =
+    let givenToCurrent (cells : cells) (given : given) (alphabet : digits) : current =
         let makeCellContents (cell : cell) : cellContents =
             let dop = SMap.get cell given in
             match dop with
@@ -385,7 +385,7 @@ module Solution =
         |> SMap.ofLookup makeCellContents
 
     let currentCellCandidates (cells : cells) (current : current) : cellCandidates =
-        let getCandidateEntries (cell : cell) : OSet<digit> =
+        let getCandidateEntries (cell : cell) : digits =
             let cellContents = SMap.get cell current in
             match cellContents with
             | BigNumber _ -> OSet.empty()
