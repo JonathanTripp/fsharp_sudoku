@@ -6,94 +6,99 @@ open NUnit.Framework
 open oset
 open smap
 
-let twoByFourPuzzleSpec =
+let twoByFourPuzzleSpec : puzzleShape =
     { size = 8;
       boxWidth = 2;
       boxHeight = 4;
       alphabet = 
             [1..8]
+            |> List.map (fun i -> (char) i + '0' |> Digit)
             |> OSet.ofList
-            |> OSet.map (fun i -> (char) i + '0' |> Digit)
              }
 
 let pick_some (as' : OSet<'a>) : OSet<'a> * OSet<'a> =
     let as'' = OSet.toList as'
 
-    let picked =
+    let actual : OSet<'a> =
         [9; 5; 2; 5; 5; 5; 1; 8; 9; 3; 5; 6]
         |> List.map (fun i -> List.item (i - 1) as'')
         |> OSet.ofList
         in
 
-    let expected =
+    let expected : OSet<'a> =
         [1; 2; 3; 5; 6; 8; 9]
         |> List.map (fun i -> List.item (i - 1) as'')
         |> OSet.ofList
         in
 
-    (picked, expected)
+    (actual, expected)
 
 let pick_more (as' : OSet<'a>) : OSet<'a> * OSet<'a> =
     let as'' = OSet.toList as'
 
-    let picked =
+    let actual : OSet<'a> =
         [9 * 8 + 1; 9 * 0 + 5; 9 * 2 + 4; 9 * 0 + 5; 9 * 0 + 5; 9 * 5 + 1; 9 * 0 + 8; 9 * 8 + 1; 9 * 3 + 3; 9 * 0 + 6]
         |> List.map (fun i -> List.item (i - 1) as'')
         |> OSet.ofList
         in
 
-    let expected =
+    let expected : OSet<'a> =
         [9 * 0 + 5; 9 * 0 + 6; 9 * 0 + 8; 9 * 2 + 4; 9 * 3 + 3; 9 * 5 + 1; 9 * 8 + 1]
         |> List.map (fun i -> List.item (i - 1) as'')
         |> OSet.ofList
         in
 
-    (picked, expected)
+    (actual, expected)
 
 [<Test>]
 let ``Can make column sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let (picked, expected) = pick_some p.columns in
+    let (actual, expected) = pick_some p.columns in
 
-    Assert.AreEqual(expected, picked, "{0}!={1}")
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}")
 
 [<Test>]
 let ``Can make row sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let (picked, expected) = pick_some p.rows in
+    let (actual, expected) = pick_some p.rows in
 
-    Assert.AreEqual(expected, picked, "{0}!={1}")
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}")
 
 [<Test>]
 let ``Can make cell sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let (picked, expected) = pick_more p.cells in
+    let (actual, expected) = pick_more p.cells in
 
-    Assert.AreEqual(expected, picked, "{0}!={1}")
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}")
 
 [<Test>]
 let ``Can make digit sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let (picked, expected) = pick_some PuzzleShape.default'.alphabet in
+    let (actual, expected) = pick_some PuzzleShape.default'.alphabet in
 
-    Assert.AreEqual(expected, picked, "{0}!={1}")
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}")
 
 [<Test>]
 let ``Can make columns``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.columns in
 
-    let expected =
+    let expected : columns =
         [1..9]
         |> List.map CColumn
         |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Columns.toString expected, Columns.toString actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Columns.print expected, Columns.print actual)
 
 [<Test>]
 let ``Can print columns``() =
@@ -101,17 +106,17 @@ let ``Can print columns``() =
     let actual = p.columns in
 
     let first = OSet.item 0 actual
-    let printedFirst = first.ToString()
+    let printedFirst = Column.print first
 
     Assert.AreEqual("c1", printedFirst)
 
     let fourth = OSet.item 3 actual
-    let printedFourth = fourth.ToString()
+    let printedFourth = Column.print fourth
 
     Assert.AreEqual("c4", printedFourth)
 
     let last = OSet.item 8 actual
-    let printedLast = last.ToString()
+    let printedLast = Column.print last
 
     Assert.AreEqual("c9", printedLast)
 
@@ -120,7 +125,7 @@ let ``Can print columns2``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.columns in
     let middleThree = actual |> OSet.skip 3 |> OSet.take 3
-    let printedMiddleThree = middleThree.ToString()
+    let printedMiddleThree = Columns.print middleThree
 
     Assert.AreEqual("{c4,c5,c6}", printedMiddleThree)
 
@@ -129,13 +134,14 @@ let ``Can make rows``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.rows in
 
-    let expected =
+    let expected : rows =
         [1..9]
         |> List.map RRow
         |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Rows.toString expected, Rows.toString actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Rows.print expected, Rows.print actual)
 
 [<Test>]
 let ``Can print rows``() =
@@ -143,17 +149,17 @@ let ``Can print rows``() =
     let actual = p.rows in
 
     let first = OSet.item 0 actual
-    let printedFirst = first.ToString()
+    let printedFirst = Row.print first
 
     Assert.AreEqual("r1", printedFirst)
 
     let fourth = OSet.item 3 actual
-    let printedFourth = fourth.ToString()
+    let printedFourth = Row.print fourth
 
     Assert.AreEqual("r4", printedFourth)
 
     let last = OSet.item 8 actual
-    let printedLast = last.ToString()
+    let printedLast = Row.print last
 
     Assert.AreEqual("r9", printedLast)
 
@@ -162,7 +168,7 @@ let ``Can print rows2``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.rows in
     let middleThree = actual |> OSet.skip 3 |> OSet.take 3
-    let printedMiddleThree = middleThree.ToString()
+    let printedMiddleThree = Rows.print middleThree
 
     Assert.AreEqual("{r4,r5,r6}", printedMiddleThree)
 
@@ -171,7 +177,7 @@ let ``Can make cells``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.cells in
 
-    let expected =
+    let expected : cells =
         [1..9]
         |> List.map
             (fun r ->
@@ -182,12 +188,13 @@ let ``Can make cells``() =
         |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Cells.toString expected, Cells.toString actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Cells.print expected, Cells.print actual)
 
 [<Test>]
 let ``Can print cells``() = 
     let cell = Cell.make (CColumn 3) (RRow 7)
-    let printedCell = cell.ToString()
+    let printedCell = Cell.print cell
 
     Assert.AreEqual("c3r7", printedCell)
 
@@ -196,63 +203,66 @@ let ``Can make stacks``() =
     let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
     let actual = p.stacks in
 
-    let expected =
+    let expected : stacks =
         [1..4]
+        |> List.map SStack
         |> OSet.ofList
-        |> OSet.map SStack
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Stacks.to_string expected, Stacks.to_string actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Stacks.print expected, Stacks.print actual)
 
 [<Test>]
 let ``Can make bands``() = 
     let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
     let actual = p.bands in
 
-    let expected =
+    let expected : bands =
         [1..2]
+        |> List.map BBand
         |> OSet.ofList
-        |> OSet.map BBand
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Bands.to_string expected, Bands.to_string actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Bands.print expected, Bands.print actual)
 
 [<Test>]
 let ``Can make boxes``() = 
     let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
     let actual = p.boxes in
 
-    let expected =
+    let expected : boxes =
         [1..2]
         |> List.map
             (fun b ->
                 [1..4]
-                |> OSet.ofList
-                |> OSet.map
-                    (fun s -> Box.make (s |> SStack) (b |> BBand)))
+                |> List.map
+                    (fun s -> Box.make (s |> SStack) (b |> BBand))
+                |> OSet.ofList)
         |> OSet.concat
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Boxes.to_string expected, Boxes.to_string actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Boxes.print expected, Boxes.print actual)
 
 [<Test>]
 let ``Can make houses``() = 
     let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
     let actual = p.houses in
 
-    let expectedColumns =
+    let expectedColumns : house list=
         [1..8]
         |> List.map CColumn
         |> List.map HColumn
         in
 
-    let expectedRows =
+    let expectedRows : house list =
         [1..8]
         |> List.map RRow
         |> List.map HRow
         in
 
-    let expectedBoxes =
+    let expectedBoxes : house list =
         [1..2]
         |> List.map
             (fun b ->
@@ -263,13 +273,14 @@ let ``Can make houses``() =
         |> List.map HBox
         in
 
-    let expected =
+    let expected : houses =
         [ expectedColumns; expectedRows; expectedBoxes]
         |> List.concat
         |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Houses.toString expected, Houses.toString actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Houses.print expected, Houses.print actual)
 
 [<Test>]
 let ``Get column cells``() = 
@@ -277,17 +288,18 @@ let ``Get column cells``() =
 
     let column = CColumn 2 in
 
-    let actual =
+    let actual : cells =
         SMap.get column p.columnCells in
 
-    let expected =
+    let expected : cells =
         [1..9]
         |> List.map
             (fun r -> Cell.make column (r |> RRow))
         |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Cells.toString expected, Cells.toString actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Cells.print expected, Cells.print actual)
 
 [<Test>]
 let ``Get row cells``() = 
@@ -295,116 +307,122 @@ let ``Get row cells``() =
 
     let row = RRow 7 in
 
-    let actual =
+    let actual : cells =
         SMap.get row p.rowCells in
 
-    let expected =
+    let expected : cells =
         [1..9]
         |> List.map
             (fun c -> Cell.make (c |> CColumn) (7 |> RRow))
         |> OSet.ofList
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Cells.toString expected, Cells.toString actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Cells.print expected, Cells.print actual)
 
 [<Test>]
 let ``Get stack for a column``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let actual =
+    let actual : stacks =
         p.columns
         |> OSet.map (fun column -> SMap.get column p.columnStack)
         in
 
-    let expected =
+    let expected : stacks =
         [1..3]
         |> List.map
             (fun s ->
                 [1..3]
-                |> OSet.ofList
-                |> OSet.map (fun _ -> s |> SStack))
+                |> List.map (fun _ -> s |> SStack)
+                |> OSet.ofList)
         |> OSet.concat
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Stacks.to_string expected, Stacks.to_string actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Stacks.print expected, Stacks.print actual)
 
 [<Test>]
 let ``Get stack columns``() = 
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let actual =
+    let actual : columns =
         SMap.get (2 |> SStack) p.stackColumns
         in
 
-    let expected =
+    let expected : columns =
         [4..6]
+        |> List.map CColumn
         |> OSet.ofList
-        |> OSet.map CColumn
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Columns.toString expected, Columns.toString actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Columns.print expected, Columns.print actual)
 
 [<Test>]
 let ``Get band for a row``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let actual =
+    let actual : bands =
         p.rows
         |> OSet.map (fun row -> SMap.get row p.rowBand)
         in
 
-    let expected =
+    let expected : bands =
         [1..3]
         |> List.map
             (fun b ->
                 [1..3]
-                |> OSet.ofList
-                |> OSet.map (fun _ -> b |> BBand))
+                |> List.map (fun _ -> b |> BBand)
+                |> OSet.ofList)
         |> OSet.concat
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Bands.to_string expected, Bands.to_string actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Bands.print expected, Bands.print actual)
 
 [<Test>]
 let ``Get band rows``() = 
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let actual =
+    let actual : rows =
         SMap.get (2 |> BBand) p.bandRows
         in
 
-    let expected =
+    let expected : rows =
         [4..6]
+        |> List.map RRow
         |> OSet.ofList
-        |> OSet.map RRow
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Rows.toString expected, Rows.toString actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Rows.print expected, Rows.print actual)
 
 [<Test>]
 let ``Get box for a cell``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-    let actual =
+    let actual : boxes =
         [1..9]
-        |> OSet.ofList
-        |> OSet.map
+        |> List.map
             (fun r -> Cell.make (5 |> CColumn) (r |> RRow))
+        |> OSet.ofList
         |> OSet.map (fun cell -> SMap.get cell p.cellBox)
         in
 
-    let expected =
+    let expected : boxes =
         [1..3]
         |> List.map
             (fun b ->
                 [1..3]
-                |> OSet.ofList
-                |> OSet.map
-                    (fun _ -> Box.make (2 |> SStack) (b |> BBand)))
+                |> List.map
+                    (fun _ -> Box.make (2 |> SStack) (b |> BBand))
+                |> OSet.ofList)
         |> OSet.concat
         in
 
-    Assert.AreEqual(expected, actual, "{0}!={1}", Boxes.to_string expected, Boxes.to_string actual)
+    let eq = OSet.equals expected actual in
+    Assert.AreEqual(true, eq, "{0}!={1}", Boxes.print expected, Boxes.print actual)
 
 let all_tests =
     [

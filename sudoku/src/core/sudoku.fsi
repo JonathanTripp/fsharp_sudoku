@@ -10,51 +10,53 @@ type column =
     | CColumn of int
 module Column =
     val ofNat : int -> column
+    val print : column -> string
     val setElemCompare : column ->column -> Ordering
 type columns = OSet<column>
 module Columns =
-  val toString : columns -> string
+  val print : columns -> string
 [<NoComparison;NoEquality>]
 type row =
     | RRow of int
 module Row =
     val ofNat : int -> row
+    val print : row -> string
     val setElemCompare : row -> row -> Ordering
 type rows = OSet<row>
 module Rows =
-  val toString : rows -> string
+  val print : rows -> string
 [<NoComparison;NoEquality>]
 type cell =
     {col: column;
      row: row;}
 module Cell =
     val make : column -> row -> cell
+    val print : cell -> string
     val setElemCompare : cell -> cell -> Ordering
-    val to_string : cell -> string
 type cells = OSet<cell>
 module Cells =
-  val toString : cells -> string
+  val print : cells -> string
 [<NoComparison;NoEquality>]
 type stack =
     | SStack of int
 module Stack =
     val ofNat : int -> stack
+    val print : stack -> string
     val setElemCompare : stack -> stack -> Ordering
-    val to_string : stack -> string
 type stacks = OSet<stack>
 module Stacks =
-    val to_string : stacks -> string
+    val print : stacks -> string
 type boxWidth = int
 [<NoComparison;NoEquality>]
 type band =
     | BBand of int
 module Band =
     val ofNat : int -> band
+    val print : band -> string
     val setElemCompare : band -> band -> Ordering
-    val to_string : band -> string
 type bands = OSet<band>
 module Bands =
-    val to_string : bands -> string
+    val print : bands -> string
 type boxHeight = int
 [<NoComparison;NoEquality>]
 type bbox =
@@ -62,11 +64,11 @@ type bbox =
      band: band;}
 module Box =
     val make : stack -> band -> bbox
+    val print : bbox -> string
     val setElemCompare : bbox -> bbox -> Ordering
-    val to_string : bbox -> string
 type boxes = OSet<bbox>
 module Boxes =
-    val to_string : boxes -> string
+    val print : boxes -> string
 [<NoComparison;NoEquality>]
 type line =
     | LColumn of column
@@ -80,21 +82,21 @@ module House =
     val make_column : column -> house
     val make_row : row -> house
     val make_box : bbox -> house
+    val print : house -> string
     val setElemCompare : house -> house -> Ordering
-    val to_string : house -> string
 type houses = OSet<house>
 module Houses =
-    val toString : houses -> string
+    val print : houses -> string
 [<NoComparison;NoEquality>]
 type digit =
     | Digit of char
 module Digit =
     val ofNat : int -> digit
+    val print : digit -> string
     val setElemCompare : digit -> digit -> Ordering
-    val to_string : digit -> string
 type digits = OSet<digit>
 module Digits =
-    val toString : digits -> string
+    val print : digits -> string
 [<NoComparison;NoEquality>]
 type puzzleShape =
     {size: size;
@@ -116,23 +118,23 @@ type value =
      digit: digit;}
 module Value =
     val make : cell -> digit -> value
-    val to_string : value -> string
+    val print : value -> string
 [<NoComparison;NoEquality>]
 type candidate =
     {cell: cell;
      digit: digit;}
 module Candidate =
     val make : cell -> digit -> candidate
-    val to_string : candidate -> string
+    val print : candidate -> string
 [<NoComparison;NoEquality>]
 type candidateReduction =
     {cell: cell;
      candidates: digits;}
 module CandidateReduction =
     val make : cell -> digits -> candidateReduction
-    val to_string : candidateReduction -> string
+    val print : candidateReduction -> string
 module CandidateReductions =
-    val to_string : candidateReduction list -> string
+    val print : candidateReduction list -> string
 [<NoComparison;NoEquality>]
 type action =
     | Load of string
@@ -140,7 +142,7 @@ type action =
     | Placement of value
     | Eliminate of candidate
 module Action =
-  val to_string : action -> string
+  val print : action -> string
 [<NoComparison;NoEquality>]
 type given = SMap<cell, digit option>
 [<NoComparison;NoEquality>]
@@ -155,3 +157,5 @@ type solution =
 module Solution =
     val givenToCurrent : cells -> given -> digits -> current
     val currentCellCandidates : cells -> current -> cellCandidates
+
+val registerSetElemComparers : unit -> unit

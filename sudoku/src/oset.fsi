@@ -33,12 +33,12 @@ module OSet =
     val item : int -> OSet<'T> -> 'T
     val map : ('T -> 'U) -> OSet<'T> -> OSet<'U>
     val mapi : (int ->'T-> 'U) -> OSet<'T> -> OSet<'U>
+    val print : ('T -> string) -> OSet<'T> -> string
     val range : int -> int -> (int -> 'T) -> OSet<'T>
     val remove : 'T-> OSet<'T> -> OSet<'T>
     val singleton :'T-> OSet<'T>
     val skip : int -> OSet<'T> -> OSet<'T>
     val subsets : int -> OSet<'T> -> OSet<'T> list
     val take : int -> OSet<'T> -> OSet<'T>
-    val toString : ('T -> string) -> OSet<'T> -> string
     val union : OSet<'T> -> OSet<'T> -> OSet<'T>
     val unionMany : OSet<'T> list -> OSet<'T>

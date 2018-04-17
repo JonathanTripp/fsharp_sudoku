@@ -96,6 +96,13 @@ module OSet =
     let mapi (mapping : int ->'T-> 'U) (o : OSet<'T>) : OSet<'U> =
         o |> toList |> List.mapi mapping |> ofList
 
+    let print (printer : 'T -> string) (o : OSet<'T>) : string =
+        let sb = new System.Text.StringBuilder()
+        sb.Append("{")
+          .Append(String.concat "," (o |> toList |> List.map printer))
+          .Append("}")
+          .ToString()
+
     let range (first : int) (last : int) (fn : int -> 'T) : OSet<'T> =
         Sset.range first last |> List.map fn |> ofList
 
@@ -115,13 +122,6 @@ module OSet =
 
     let take (count : int) (o : OSet<'T>) : OSet<'T> =
         o |> toList |> List.take count |> ofList
-
-    let toString (printer : 'T -> string) (o : OSet<'T>) : string =
-        let sb = new System.Text.StringBuilder()
-        sb.Append("{")
-          .Append(String.concat "," (o |> toList |> List.map printer))
-          .Append("}")
-          .ToString()
 
     let union (o : OSet<'T>) (o' : OSet<'T>) : OSet<'T> =
         let setElemCompare = SetElemComparers.Get<'T>() in

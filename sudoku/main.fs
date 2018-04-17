@@ -119,7 +119,7 @@ let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (
 
 let printHint (p : core.Puzzlemap.puzzleMap) drawHint (solution : solution) (index : int) (hint : core.Hint.description) : unit = 
 
-    Printf.printf "%d: %s\n" index (core.Hint.Description.to_string hint);
+    Printf.printf "%d: %s\n" index (core.Hint.Description.print hint);
 
     let hd3 = core.Hint.mhas solution p hint in
     drawHint hd3.annotations;
@@ -181,8 +181,8 @@ let repl (sudoku : string) (puzzleShape : puzzleShape) : unit =
             (match action with
              | Load _ -> drawConsoleChar (CStr "");
              | LoadEliminate  -> drawConsoleChar (CStr "");
-             | Placement sv -> drawConsoleChar (CStr (Value.to_string sv));
-             | Eliminate candidate -> drawConsoleChar (CStr(Candidate.to_string candidate));
+             | Placement sv -> drawConsoleChar (CStr (Value.print sv));
+             | Eliminate candidate -> drawConsoleChar (CStr(Candidate.print candidate));
             )
         | [] -> ();
 

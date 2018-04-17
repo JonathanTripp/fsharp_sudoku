@@ -11,65 +11,60 @@ type size = int
 [<NoComparison;NoEquality>]
 type column = 
     | CColumn of int
-    override this.ToString() =
-        let (CColumn c) = this in
-        Printf.sprintf "c%d" c
 
 module Column =
     let ofNat (i : int) : column =
         CColumn i
+
+    let print (CColumn c : column) : string =
+        Printf.sprintf "c%d" c
 
     let setElemCompare (CColumn lhs : column) (CColumn rhs : column) : Ordering =
         if lhs < rhs then LT
         else if lhs = rhs then EQ
         else GT
 
-SetElemComparers.Register Column.setElemCompare
-
 type columns = OSet<column>
 
 module Columns =
-    let toString (c : columns) = c.ToString()
+    let print (c : columns) =
+        OSet.print Column.print c
 
 (* ... by rows *)
 [<NoComparison;NoEquality>]
 type row = 
     | RRow of int
-    override this.ToString() =
-        let (RRow r) = this in
-        Printf.sprintf "r%d" r
 
 module Row =
     let ofNat (i : int) : row = RRow i
+
+    let print (RRow r : row) : string =
+        Printf.sprintf "r%d" r
 
     let setElemCompare (RRow lhs : row) (RRow rhs : row) : Ordering =
         if lhs < rhs then LT
         else if lhs = rhs then EQ
         else GT
 
-SetElemComparers.Register Row.setElemCompare
-
 type rows = OSet<row>
 
 module Rows =
-    let toString (r : rows) = r.ToString()
+    let print (r : rows) =
+        OSet.print Row.print r
 
 (* Each cell is identified by (col, row) *)
 [<NoComparison;NoEquality>]
 type cell = 
     { col : column;
       row : row }
-    override this.ToString() =
-        let {col = CColumn c; row = RRow r} = this in
-        Printf.sprintf "c%dr%d" c r
 
 module Cell =
     let make (c : column) (r : row) : cell =
         { col = c;
           row = r }
 
-    let to_string ({col = CColumn c; row = RRow r} : cell) : string =
-        Printf.sprintf "r%dc%d" r c
+    let print ({col = CColumn c; row = RRow r} : cell) : string =
+        Printf.sprintf "c%dr%d" c r
 
     let setElemCompare ({ col = CColumn c1; row = RRow r1} : cell) ({ col = CColumn c2; row = RRow r2} : cell) : Ordering =
         if r1 < r2 then LT
@@ -79,13 +74,11 @@ module Cell =
             else GT
         else GT
 
-SetElemComparers.Register Cell.setElemCompare
-
 type cells = OSet<cell>
 
 module Cells =
-    let toString (cs : cells) : string =
-        "CS" + (OSet.toString Cell.to_string cs)
+    let print (cs : cells) : string =
+        "CS" + (OSet.print Cell.print cs)
 
 (* The grid is divided into boxes,
  these do not have to be square, but they are
@@ -99,7 +92,7 @@ module Stack =
     let ofNat (i : int) : stack =
         SStack i
 
-    let to_string (SStack s : stack) : string =
+    let print (SStack s : stack) : string =
         Printf.sprintf "stk%d" s
 
     let setElemCompare (SStack lhs : stack) (SStack rhs : stack) : Ordering =
@@ -107,13 +100,11 @@ module Stack =
         else if lhs = rhs then EQ
         else GT
 
-SetElemComparers.Register Stack.setElemCompare
-
 type stacks = OSet<stack>
 
 module Stacks =
-    let to_string (ss : stacks) : string =
-        "SS" + (OSet.toString Stack.to_string ss)
+    let print (ss : stacks) : string =
+        "SS" + (OSet.print Stack.print ss)
 
 type boxWidth = int
 
@@ -126,7 +117,7 @@ module Band =
     let ofNat (i : int) : band =
         BBand i
 
-    let to_string (BBand b : band) : string =
+    let print (BBand b : band) : string =
         Printf.sprintf "bnd%d" b
 
     let setElemCompare (BBand lhs : band) (BBand rhs : band) : Ordering =
@@ -134,13 +125,11 @@ module Band =
         else if lhs = rhs then EQ
         else GT
 
-SetElemComparers.Register Band.setElemCompare
-
 type bands = OSet<band>
 
 module Bands =
-    let to_string (bs : bands) : string =
-        "BD" + (OSet.toString Band.to_string bs)
+    let print (bs : bands) : string =
+        "BD" + (OSet.print Band.print bs)
 
 type boxHeight = int
 
@@ -155,7 +144,7 @@ module Box =
         { stack = s;
           band = b }
 
-    let to_string ({stack = SStack s; band = BBand b} : bbox) : string =
+    let print ({stack = SStack s; band = BBand b} : bbox) : string =
         Printf.sprintf "bnd%dstk%d" b s
 
     let setElemCompare ({ stack = SStack s1; band = BBand b1} : bbox) ({ stack = SStack s2; band = BBand b2} : bbox) : Ordering =
@@ -166,13 +155,11 @@ module Box =
             else GT
         else GT
 
-SetElemComparers.Register Box.setElemCompare
-
 type boxes = OSet<bbox>
 
 module Boxes =
-    let to_string (bs : boxes) : string =
-        "B" + (OSet.toString Box.to_string bs)
+    let print (bs : boxes) : string =
+        "B" + (OSet.print Box.print bs)
 
 (* The columns and rows are collectively called lines *)
 [<NoComparison;NoEquality>]
@@ -187,8 +174,6 @@ module Line =
         | LColumn _, LRow _ -> LT
         | LRow _, LColumn _ -> GT
         | LRow r1, LRow r2 -> Row.setElemCompare r1 r2
-
-SetElemComparers.Register Line.setElemCompare
 
 (* The columns, rows and boxes are collectively called houses *)
 [<NoComparison;NoEquality>]
@@ -207,11 +192,11 @@ module House =
     let make_box (box : bbox) : house =
         HBox box
 
-    let to_string (house : house) : string =
+    let print (house : house) : string =
         match house with
-        | HColumn column -> column.ToString()
-        | HRow row -> row.ToString()
-        | HBox box -> Box.to_string box
+        | HColumn column -> Column.print column
+        | HRow row -> Row.print row
+        | HBox box -> Box.print box
 
     let setElemCompare (h1 : house) (h2 : house) : Ordering =
         match h1, h2 with
@@ -225,13 +210,11 @@ module House =
         | HBox _, HRow _ -> GT
         | HBox b1, HBox b2 -> Box.setElemCompare b1 b2
 
-SetElemComparers.Register House.setElemCompare
-
 type houses = OSet<house>
 
 module Houses =
-    let toString (hs : houses) : string =
-        "H" + (OSet.toString House.to_string hs)
+    let print (hs : houses) : string =
+        "H" + (OSet.print House.print hs)
 
 (* Each cell in the grid contains a Digit, usually numbers 1..9 *)
 [<NoComparison;NoEquality>]
@@ -242,7 +225,7 @@ module Digit =
     let ofNat (i : int) : digit =
         Digit (Schar.chr (i + (Schar.code '0')))
 
-    let to_string (Digit s : digit) : string =
+    let print (Digit s : digit) : string =
         Sstring.make 1 s
 
     let setElemCompare (Digit lhs : digit ) (Digit rhs : digit) : Ordering =
@@ -250,18 +233,29 @@ module Digit =
         else if lhs = rhs then EQ
         else GT
 
-SetElemComparers.Register Digit.setElemCompare
-
 type digits = OSet<digit>
 
 module Digits =
-    let toString (ds : digits) : string =
-        "D" + (OSet.toString Digit.to_string ds)
+    let print (ds : digits) : string =
+        "D" + (OSet.print Digit.print ds)
+
+let registerSetElemComparers () : unit =
+    SetElemComparers.Register Column.setElemCompare
+    SetElemComparers.Register Row.setElemCompare
+    SetElemComparers.Register Cell.setElemCompare
+    SetElemComparers.Register Stack.setElemCompare
+    SetElemComparers.Register Band.setElemCompare
+    SetElemComparers.Register Box.setElemCompare
+    SetElemComparers.Register Line.setElemCompare
+    SetElemComparers.Register House.setElemCompare
+    SetElemComparers.Register Digit.setElemCompare
+
+registerSetElemComparers()
 
 (* A sudoku is defined by the overall grid size (it is always square)
  which is the same as the OSet in the alphabet
  and also by the width and height of the boxes *)
- [<NoComparison;NoEquality>]
+[<NoComparison;NoEquality>]
 type puzzleShape = 
     { size : size;
       boxWidth : boxWidth;
@@ -302,8 +296,8 @@ module Value =
         { cell = cell;
           digit = digit }
 
-    let to_string ({ cell = cell; digit = digit} : value) : string =
-        Printf.sprintf "%s=%s" (Cell.to_string cell) (Digit.to_string digit)
+    let print ({ cell = cell; digit = digit} : value) : string =
+        Printf.sprintf "%s=%s" (Cell.print cell) (Digit.print digit)
 
 (* A candidate is a digit in a cell, which is still a pencilmark *)
 [<NoComparison;NoEquality>]
@@ -316,8 +310,8 @@ module Candidate =
         { cell = cell;
           digit = digit }
 
-    let to_string ({ cell = cell; digit = digit} : candidate) : string =
-        Printf.sprintf "(%s)%s" (Cell.to_string cell) (Digit.to_string digit)
+    let print ({ cell = cell; digit = digit} : candidate) : string =
+        Printf.sprintf "(%s)%s" (Cell.print cell) (Digit.print digit)
 
 [<NoComparison;NoEquality>]
 type candidateReduction = 
@@ -329,13 +323,13 @@ module CandidateReduction =
         { cell = cell;
           candidates = digits }
 
-    let to_string ({ cell = cell; candidates = digits} : candidateReduction) : string =
-        Printf.sprintf "Cell %s, Candidates %s" (Cell.to_string cell) (OSet.toString Digit.to_string digits)
+    let print ({ cell = cell; candidates = digits} : candidateReduction) : string =
+        Printf.sprintf "Cell %s, Candidates %s" (Cell.print cell) (OSet.print Digit.print digits)
 
 module CandidateReductions =
-    let to_string (s : candidateReduction list) : string =
+    let print (s : candidateReduction list) : string =
         s
-        |> List.map CandidateReduction.to_string
+        |> List.map CandidateReduction.print
         |> String.concat ","
 
 (* Working towards a solution we take one of the following actions:
@@ -349,12 +343,12 @@ type action =
     | Eliminate of candidate
 
 module Action =
-    let to_string (action : action) : string =
+    let print (action : action) : string =
         match action with
         | Load sudoku -> Printf.sprintf "Load:%s" sudoku
         | LoadEliminate  -> "Load"
-        | Placement a -> Printf.sprintf "%s=%s" (Cell.to_string a.cell) (Digit.to_string a.digit)
-        | Eliminate candidate -> Printf.sprintf "%s<>%s" (Cell.to_string candidate.cell) (Digit.to_string candidate.digit)
+        | Placement a -> Printf.sprintf "%s=%s" (Cell.print a.cell) (Digit.print a.digit)
+        | Eliminate candidate -> Printf.sprintf "%s<>%s" (Cell.print candidate.cell) (Digit.print candidate.digit)
 
 [<NoComparison;NoEquality>]
 type given = SMap<cell, digit option>

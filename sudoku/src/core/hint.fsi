@@ -14,7 +14,7 @@ type description =
       focus : digits }
 
 module Description =
-    val to_string : description -> string
+    val print : description -> string
 
 (* To draw a cell we may want to display extra information... *)
 [<NoComparison; NoEquality>]

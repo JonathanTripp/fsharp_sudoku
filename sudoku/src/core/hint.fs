@@ -17,17 +17,17 @@ type description =
       focus : digits }
 
 module Description =
-    let to_string (h : description) : string =
+    let print (h : description) : string =
 
-        let line1 = Printf.sprintf "Primary OSet %s\r\n" (Houses.toString h.primaryHouses) in
-        let line2 = Printf.sprintf "Secondary OSet %s\r\n" (Houses.toString h.secondaryHouses) in
-        let line3 = Printf.sprintf "Pointers %s\r\n" (CandidateReductions.to_string h.pointers) in
+        let line1 = Printf.sprintf "Primary OSet %s\r\n" (Houses.print h.primaryHouses) in
+        let line2 = Printf.sprintf "Secondary OSet %s\r\n" (Houses.print h.secondaryHouses) in
+        let line3 = Printf.sprintf "Pointers %s\r\n" (CandidateReductions.print h.pointers) in
 
         let crlines =
             h.candidateReductions
             |> List.map
                 (fun candidateReduction ->
-                    Printf.sprintf "  %s\r\n" (CandidateReduction.to_string candidateReduction))
+                    Printf.sprintf "  %s\r\n" (CandidateReduction.print candidateReduction))
             in
 
         [ line1; line2; line3; String.concat "," crlines]
