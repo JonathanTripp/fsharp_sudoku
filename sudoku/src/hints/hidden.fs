@@ -1,10 +1,12 @@
 module hints.Hidden
 
-open core.Sudoku
 open compat.oset
 open compat.smap
+open core.Sudoku
+open core.Puzzlemap
+open core.Hint
 
-let findHidden (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (candidateSubset : digits) (primaryHouse : house) : core.Hint.description option = 
+let findHidden (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (candidateSubset : digits) (primaryHouse : house) : description option = 
 
     let pointers = 
         p.houseCells
@@ -57,7 +59,7 @@ let findHidden (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : ce
                focus = OSet.empty() }
     else None
 
-let hiddenNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (house : house) : core.Hint.description list = 
+let hiddenNPerHouse (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (house : house) : descriptions = 
 
     let houseCandidates =
         p.houseCells
@@ -72,7 +74,7 @@ let hiddenNPerHouse (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates
         (fun candidateSubset -> 
             findHidden count p cellCandidates candidateSubset house)
 
-let find (i : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
+let find (i : int) (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
     p.houses
     |> OSet.toList
     |> List.map (hiddenNPerHouse i p cellCandidates)

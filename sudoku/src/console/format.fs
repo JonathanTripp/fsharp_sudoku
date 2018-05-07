@@ -4,6 +4,7 @@ open compat
 open compat.oset
 open compat.smap
 open core.Sudoku
+open core.Puzzlemap
 
 type basic_color =
     | DefaultColour
@@ -96,7 +97,7 @@ let printColumn (printCell : cell -> consoleString) (row : row) (column : column
     printCell cell
 
 (* Print a stack *)
-let printStack (p : core.Puzzlemap.puzzleMap) (columnPrinter : row -> column -> consoleString) (columnSeparator : consoleString) (row : row) (stack : stack) : consoleString = 
+let printStack (p : puzzleMap) (columnPrinter : row -> column -> consoleString) (columnSeparator : consoleString) (row : row) (stack : stack) : consoleString = 
     simpleInterleave (columnPrinter row) columnSeparator (SMap.get stack p.stackColumns)
 
 (* Print a row *)
@@ -104,11 +105,11 @@ let printRow (stackPrinter : stack -> consoleString) (gridCharsRow : gridCharsRo
     List.concat [gridCharsRow.l; simpleInterleave stackPrinter gridCharsRow.m stacks; gridCharsRow.r; eol ]
 
 (* Print a band *)
-let printBand (p : core.Puzzlemap.puzzleMap) (rowToSeq : row -> consoleString) (rowSeparator : consoleString) (band : band) : consoleString = 
+let printBand (p : puzzleMap) (rowToSeq : row -> consoleString) (rowSeparator : consoleString) (band : band) : consoleString = 
     simpleInterleave rowToSeq rowSeparator (SMap.get band p.bandRows)
 
 (* Print a puzzle grid, supply callback to draw each cell *)
-let printGrid (p : core.Puzzlemap.puzzleMap) (gridChars : gridChars) (digitTo : cell -> consoleString) : consoleString = 
+let printGrid (p : puzzleMap) (gridChars : gridChars) (digitTo : cell -> consoleString) : consoleString = 
 
     let doPrintColumn : row -> column -> consoleString = printColumn (printCell digitTo) in
 
@@ -133,7 +134,7 @@ let printGrid (p : core.Puzzlemap.puzzleMap) (gridChars : gridChars) (digitTo : 
 
     sinterleave doPrintBand t m b [] p.bands
 
-let printCandidateGrid (p : core.Puzzlemap.puzzleMap) (candidateGridChars : candidateGridChars) (alphabet : digits) (draw_cell : cell -> digit -> consoleString) : consoleString = 
+let printCandidateGrid (p : puzzleMap) (candidateGridChars : candidateGridChars) (alphabet : digits) (draw_cell : cell -> digit -> consoleString) : consoleString = 
 
     let d : consoleString =
         SMap.get (OSet.head p.stacks) p.stackColumns

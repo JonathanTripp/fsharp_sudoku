@@ -1,6 +1,7 @@
 module test.Test_full_house
 
 open core.Sudoku
+open core.Hint
 
 open NUnit.Framework
 open compat.oset
@@ -20,7 +21,7 @@ let ``Can find full house``() =
 
     let hints = hints.FullHouse.find p cellCandidates in
 
-    let expectedHints : core.Hint.description list =
+    let expectedHints : descriptions =
         [   { primaryHouses = OSet.singleton (HBox (Box.make (Stack.ofNat 2) (Band.ofNat 3)));
               secondaryHouses = OSet.empty();
               candidateReductions = [];

@@ -1,6 +1,7 @@
 module console.Format
 
 open core.Sudoku
+open core.Puzzlemap
 
 type basic_color =
     | DefaultColour
@@ -63,6 +64,6 @@ type candidateGridChars =
 
 val printLine : cells -> (cell -> consoleString) -> consoleString
 
-val printGrid : core.Puzzlemap.puzzleMap -> gridChars -> (cell -> consoleString) -> consoleString
+val printGrid : puzzleMap -> gridChars -> (cell -> consoleString) -> consoleString
 
-val printCandidateGrid : core.Puzzlemap.puzzleMap -> candidateGridChars -> digits -> (cell -> digit -> consoleString) -> consoleString
+val printCandidateGrid : puzzleMap -> candidateGridChars -> digits -> (cell -> digit -> consoleString) -> consoleString

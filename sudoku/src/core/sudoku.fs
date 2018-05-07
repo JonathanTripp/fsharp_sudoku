@@ -327,8 +327,10 @@ module CandidateReduction =
     let print ({ cell = cell; candidates = digits} : candidateReduction) : string =
         Printf.sprintf "Cell %s, Candidates %s" (Cell.print cell) (OSet.print Digit.print digits)
 
+type candidateReductions = candidateReduction list
+
 module CandidateReductions =
-    let print (s : candidateReduction list) : string =
+    let print (s : candidateReductions) : string =
         s
         |> List.map CandidateReduction.print
         |> String.concat ","

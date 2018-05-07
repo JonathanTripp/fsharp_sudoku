@@ -1,8 +1,8 @@
 module core.Puzzlemap
 
-open Sudoku
 open compat.oset
 open compat.smap
+open Sudoku
 
 let columns (length : size) : columns =
     OSet.range 1 length Column.ofNat
@@ -149,7 +149,7 @@ type puzzleMap =
         houseCells : SMap<house, cells>;
         cellHouseCells : SMap<cell, cells>;
         housesCells : houses -> cells;
-        houseCellCandidateReductions : house -> cellCandidates -> candidateReduction list;
+        houseCellCandidateReductions : house -> cellCandidates -> candidateReductions;
 
         (*abstract member houseCellCandidates : (house, cellCandidates>*)
     }
@@ -191,7 +191,7 @@ let tPuzzleMap (puzzleShape : puzzleShape) : puzzleMap =
         |> List.map (fun house -> SMap.get house _houseCellsLookup)
         |> OSet.concat in
 
-    let _houseCellCandidateReductions (house : house) (cellCandidates : cellCandidates) : candidateReduction list =
+    let _houseCellCandidateReductions (house : house) (cellCandidates : cellCandidates) : candidateReductions =
         SMap.get house _houseCellsLookup
         |> OSet.toList
         |> List.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates)) in

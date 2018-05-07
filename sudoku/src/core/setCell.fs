@@ -1,9 +1,9 @@
 module core.SetCell
 
 open compat.Sset
-open Sudoku
 open compat.oset
 open compat.smap
+open Sudoku
 
 let apply (p : Puzzlemap.puzzleMap) (value : value) (current : current) : current = 
 

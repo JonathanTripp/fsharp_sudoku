@@ -133,8 +133,9 @@ type candidateReduction =
 module CandidateReduction =
     val make : cell -> digits -> candidateReduction
     val print : candidateReduction -> string
+type candidateReductions = candidateReduction list
 module CandidateReductions =
-    val print : candidateReduction list -> string
+    val print : candidateReductions -> string
 [<NoComparison;NoEquality>]
 type action =
     | Load of string

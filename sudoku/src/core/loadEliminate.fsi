@@ -1,10 +1,9 @@
 module core.LoadEliminate
 
 open Sudoku
-open compat.oset
 
-val find : Puzzlemap.puzzleMap -> current -> candidateReduction list
-val apply : Puzzlemap.puzzleMap -> candidateReduction list -> current -> current
-val description : Puzzlemap.puzzleMap -> candidateReduction list -> Hint.description
-val step : Puzzlemap.puzzleMap -> solution -> candidateReduction list -> solution
+val find : Puzzlemap.puzzleMap -> current -> candidateReductions
+val apply : Puzzlemap.puzzleMap -> candidateReductions -> current -> current
+val description : Puzzlemap.puzzleMap -> candidateReductions -> Hint.description
+val step : Puzzlemap.puzzleMap -> solution -> candidateReductions -> solution
 val findAndApply : Puzzlemap.puzzleMap -> solution -> solution

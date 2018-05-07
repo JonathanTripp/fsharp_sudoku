@@ -1,6 +1,7 @@
 module tests.Test_naked
 
 open core.Sudoku
+open core.Hint
 
 open NUnit.Framework
 open compat.oset
@@ -20,7 +21,7 @@ let ``Can find naked singles``() =
 
     let hints = hints.Naked.find 1 p cellCandidates in
 
-    let expectedHints : core.Hint.description list =
+    let expectedHints : descriptions =
         [   { primaryHouses = OSet.empty();
               secondaryHouses = OSet.empty();
               candidateReductions = [];

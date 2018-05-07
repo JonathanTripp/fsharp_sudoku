@@ -1,15 +1,16 @@
-open core.Sudoku
-
+open compat
+open compat.oset
+open compat.smap
 open console.Command
 open console.Console
 open console.Format
 open console.Console_win
-open compat
-open compat.oset
-open compat.smap
+open core.Sudoku
+open core.Puzzlemap
+open core.Hint
 
-let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (puzzle : puzzleShape) 
-    (cellCandidates : cellCandidates) puzzleDrawFull2 print_last : solution * core.Hint.description list = 
+let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzleShape) 
+    (cellCandidates : cellCandidates) puzzleDrawFull2 print_last : solution * descriptions = 
 
     printfn "%s" item;
 
@@ -118,7 +119,7 @@ let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (
             (solution, hints)
         | None -> (solution, [])
 
-let printHint (p : core.Puzzlemap.puzzleMap) drawHint (solution : solution) (index : int) (hint : core.Hint.description) : unit = 
+let printHint (p : puzzleMap) drawHint (solution : solution) (index : int) (hint : description) : unit = 
 
     Printf.printf "%d: %s\n" index (core.Hint.Description.print hint);
 

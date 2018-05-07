@@ -1,8 +1,9 @@
 module hints.Intersection
 
 open core.Sudoku
-open compat.oset
+open core.Puzzlemap
+open core.Hint
 
-val pointingPairs : core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list
+val pointingPairs : puzzleMap -> cellCandidates -> descriptions
 
-val boxLineReductions : core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list
+val boxLineReductions : puzzleMap -> cellCandidates -> descriptions

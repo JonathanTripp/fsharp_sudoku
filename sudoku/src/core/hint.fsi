@@ -1,17 +1,18 @@
 module core.Hint
 
-open Sudoku
-open compat.oset
 open compat.smap
+open Sudoku
 
 [<NoComparison; NoEquality>]
 type description = 
     { primaryHouses : houses;
       secondaryHouses : houses;
-      candidateReductions : candidateReduction list;
+      candidateReductions : candidateReductions;
       setCellValueAction : value option;
-      pointers : candidateReduction list;
+      pointers : candidateReductions;
       focus : digits }
+
+type descriptions = description list
 
 module Description =
     val print : description -> string

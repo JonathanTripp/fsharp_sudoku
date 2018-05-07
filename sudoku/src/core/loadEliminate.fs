@@ -1,10 +1,10 @@
 module core.LoadEliminate
 
-open Sudoku
 open compat.oset
 open compat.smap
+open Sudoku
 
-let find  (p : Puzzlemap.puzzleMap) (current : current) : candidateReduction list = 
+let find  (p : Puzzlemap.puzzleMap) (current : current) : candidateReductions = 
 
     let reductions (cell : cell) : digits option =
         let cellContents = SMap.get cell current in
@@ -34,7 +34,7 @@ let find  (p : Puzzlemap.puzzleMap) (current : current) : candidateReduction lis
             | Some digits -> Some (CandidateReduction.make cell digits)
             | None -> None)
 
-let apply (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReduction list) (current : current) : current = 
+let apply (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReductions) (current : current) : current = 
 
     let candidateReductionsLookup =
         candidateReductions
@@ -57,7 +57,7 @@ let apply (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReduction li
 
     SMap.ofLookup update p.cells
 
-let description (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReduction list) : Hint.description =
+let description (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReductions) : Hint.description =
     { primaryHouses = OSet.empty();
       secondaryHouses = OSet.empty();
       candidateReductions = candidateReductions;
@@ -65,7 +65,7 @@ let description (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReduct
       pointers = [];
       focus = OSet.empty() }
 
-let step (p : Puzzlemap.puzzleMap) (solution : solution) (candidateReductions : candidateReduction list) : solution =
+let step (p : Puzzlemap.puzzleMap) (solution : solution) (candidateReductions : candidateReductions) : solution =
     { solution with current = apply p candidateReductions solution.current;
                     steps = LoadEliminate :: solution.steps }
 

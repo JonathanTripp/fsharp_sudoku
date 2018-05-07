@@ -4,8 +4,10 @@ open compat
 open compat.oset
 open compat.smap
 open core.Sudoku
+open core.Puzzlemap
+open core.Hint
 
-let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) pointerCells primaryHouses secondaryHouses candidate : core.Hint.description option = 
+let makeHints (p : puzzleMap) (cellCandidates : cellCandidates) pointerCells primaryHouses secondaryHouses candidate : description option = 
     let pointers =
         pointerCells
         |> OSet.toList
@@ -28,7 +30,7 @@ let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) p
         in
 
     if List.length candidatesReductions > 0 then
-        let hint : core.Hint.description =
+        let hint : description =
             { primaryHouses = primaryHouses;
               secondaryHouses = secondaryHouses;
               candidateReductions = candidatesReductions;
@@ -39,7 +41,7 @@ let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) p
         Some hint
     else None
 
-let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (house1 : house) (house2 : house) (candidate : digit) = 
+let xWingsPerHouseCandidate (p : puzzleMap) (cellCandidates : cellCandidates) (house1 : house) (house2 : house) (candidate : digit) = 
 
     let houseCandidateCells1 =
         p.houseCells
@@ -130,8 +132,8 @@ let xWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
         else None
     | _ -> None
 
-let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (house1 : house) 
-    (house2 : house) : core.Hint.description list = 
+let xWingsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (house1 : house) 
+    (house2 : house) : descriptions = 
 
     let houseCandidates1 =
         p.houseCells
@@ -153,7 +155,7 @@ let xWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
     |> OSet.toList
     |> List.choose (xWingsPerHouseCandidate p cellCandidates house1 house2)
 
-let xWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
+let xWings (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
     let rows = OSet.map House.make_row p.rows |> OSet.toList in
     let cols = OSet.map House.make_column p.columns |> OSet.toList in
 
@@ -190,7 +192,7 @@ let xWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : co
     [ rowHints; colHints ]
     |> List.concat
 
-let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates)
+let yWingsPerHouseCandidate (p : puzzleMap) (cellCandidates : cellCandidates)
     (house1 : house) (house2 : house) houseCandidateCells1 houseCandidateCells2 (candidate : digit) = 
     let hht1 =
         houseCandidateCells1
@@ -262,8 +264,8 @@ let yWingsPerHouseCandidate (p : core.Puzzlemap.puzzleMap) (cellCandidates : cel
         else None
     | _ -> None
 
-let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (row1 : row) 
-    (row2 : row) (col1 : column) (col2 : column)  : core.Hint.description list = 
+let yWingsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (row1 : row) 
+    (row2 : row) (col1 : column) (col2 : column)  : descriptions = 
 
     let cell11 = Cell.make col1 row1 in
     let cell12 = Cell.make col2 row1 in
@@ -329,7 +331,7 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
                                 |> OSet.ofList
                                 in
 
-                            let desc : core.Hint.description =
+                            let desc : description =
                                 { primaryHouses = primaryHouses;
                                   secondaryHouses = OSet.empty();
                                   candidateReductions = [candidateReductions];
@@ -344,7 +346,7 @@ let yWingsPerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidat
         |> List.choose Sset.id
     else []
 
-let yWings (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) : core.Hint.description list =
+let yWings (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
     let rows = p.rows |> OSet.toList
     let columns = p.columns |> OSet.toList
 

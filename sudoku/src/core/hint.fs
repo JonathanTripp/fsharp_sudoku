@@ -1,9 +1,9 @@
 module core.Hint
 
 open compat.Sset
-open Sudoku
 open compat.oset
 open compat.smap
+open Sudoku
 
 exception CellStateInvalid
 
@@ -11,10 +11,12 @@ exception CellStateInvalid
 type description = 
     { primaryHouses : houses;
       secondaryHouses : houses;
-      candidateReductions : candidateReduction list;
+      candidateReductions : candidateReductions;
       setCellValueAction : value option;
-      pointers : candidateReduction list;
+      pointers : candidateReductions;
       focus : digits }
+
+type descriptions = description list
 
 module Description =
     let print (h : description) : string =

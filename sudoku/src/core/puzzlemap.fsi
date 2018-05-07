@@ -1,8 +1,7 @@
 module core.Puzzlemap
 
-open Sudoku
-open compat.oset
 open compat.smap
+open Sudoku
 
 [<NoComparison; NoEquality>]
 type puzzleMap =
@@ -34,7 +33,7 @@ type puzzleMap =
         houseCells : SMap<house, cells>;
         cellHouseCells : SMap<cell, cells>;
         housesCells : houses -> cells;
-        houseCellCandidateReductions : house -> cellCandidates -> candidateReduction list;
+        houseCellCandidateReductions : house -> cellCandidates -> candidateReductions;
 
         (*abstract member houseCellCandidates : (house, cellCandidates) list*)
     }

@@ -1,6 +1,7 @@
 module hints.FullHouse
 
 open core.Sudoku
-open compat.oset
+open core.Puzzlemap
+open core.Hint
 
-val find : core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list
+val find : puzzleMap -> cellCandidates -> descriptions

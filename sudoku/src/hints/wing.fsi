@@ -1,8 +1,9 @@
 module hints.Wing
 
 open core.Sudoku
-open compat.oset
+open core.Puzzlemap
+open core.Hint
 
-val xWings : core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list
+val xWings : puzzleMap -> cellCandidates -> descriptions
 
-val yWings : core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list
+val yWings : puzzleMap -> cellCandidates -> descriptions

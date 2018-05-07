@@ -5,6 +5,8 @@ open compat.Sset
 open compat.oset
 open compat.smap
 open core.Sudoku
+open core.Puzzlemap
+open core.Hint
 
 type parse_column_or_row_results =
     | CROk of int
@@ -93,7 +95,7 @@ let focusCommandParse (s: puzzleShape) (item : string) : focus_command_result =
     else
         FCWrongTermCount (List.length terms)
 
-let focusCommandHintDescription (p : core.Puzzlemap.puzzleMap) (digit : digit) : core.Hint.description =
+let focusCommandHintDescription (p : puzzleMap) (digit : digit) : description =
     { primaryHouses = OSet.empty();
       secondaryHouses = OSet.empty();
       candidateReductions = [];
@@ -107,7 +109,7 @@ type set_cell_command_parse_result =
     | SCCBadParams of parse_cell_results * parse_value_result
     | SCCWrongTermCount of int
 
-let setCellCommandParse (s: puzzleShape) (item : string) (p : core.Puzzlemap.puzzleMap) : set_cell_command_parse_result = 
+let setCellCommandParse (s: puzzleShape) (item : string) (p : puzzleMap) : set_cell_command_parse_result = 
     let terms = Sset.split_char ' ' item in
     if List.length terms = 4 then 
         let parsedCell = parseCell (OSet.count s.alphabet) p.cells (List.item 1 terms) (List.item 2 terms) in
@@ -145,7 +147,7 @@ type clear_candidate_command_parse_result =
     | CCCPRParseError of parse_cell_results * parse_value_result
     | CCCPRWrongItemCount of int
 
-let candidateClearCommandParse (s: puzzleShape) (item : string) (p : core.Puzzlemap.puzzleMap) : clear_candidate_command_parse_result = 
+let candidateClearCommandParse (s: puzzleShape) (item : string) (p : puzzleMap) : clear_candidate_command_parse_result = 
     let terms = Sset.split_char ' ' item in
     if List.length terms = 4 then 
         let parsedCell = parseCell (OSet.count s.alphabet) p.cells (List.item 1 terms) (List.item 2 terms) in
@@ -177,7 +179,7 @@ let candidateClearCommandCheck (given : given) (cellCandidates : cellCandidates)
         if OSet.contains candidate.digit digits then CCCCROk candidate
         else CCCCRNotACandidate candidate
 
-let supportedHints : Map<string, (core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list)> =
+let supportedHints : Map<string, (puzzleMap -> cellCandidates -> descriptions)> =
     let keys =
         [
             "fh";
