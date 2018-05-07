@@ -1,4 +1,4 @@
-module Sset
+module compat.Sset
 
 type Ordering = LT|EQ|GT
 

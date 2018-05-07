@@ -1,8 +1,8 @@
 module hints.Naked
 
 open core.Sudoku
-open oset
-open smap
+open compat.oset
+open compat.smap
 
 let nakedSingleCell (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (cell : cell) : core.Hint.description option =
     let candidates = SMap.get cell cellCandidates in

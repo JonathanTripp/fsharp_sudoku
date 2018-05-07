@@ -1,8 +1,9 @@
 module hints.Wing
 
+open compat
+open compat.oset
+open compat.smap
 open core.Sudoku
-open oset
-open smap
 
 let makeHints (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) pointerCells primaryHouses secondaryHouses candidate : core.Hint.description option = 
     let pointers =

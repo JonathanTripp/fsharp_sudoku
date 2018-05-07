@@ -1,9 +1,9 @@
 module core.EliminateCandidate
 
-open Sset
+open compat.Sset
 open Sudoku
-open oset
-open smap
+open compat.oset
+open compat.smap
 
 let apply (p : Puzzlemap.puzzleMap) (candidate : candidate) (current : current) : current = 
 

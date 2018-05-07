@@ -1,8 +1,9 @@
 module core.Sudoku
 
-open Sset
-open oset
-open smap
+open compat
+open compat.Sset
+open compat.oset
+open compat.smap
 
 (* A sudoku is a square grid of size... *)
 type size = int

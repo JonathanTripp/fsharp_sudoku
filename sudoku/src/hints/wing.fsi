@@ -1,7 +1,7 @@
 module hints.Wing
 
 open core.Sudoku
-open oset
+open compat.oset
 
 val xWings : core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list
 

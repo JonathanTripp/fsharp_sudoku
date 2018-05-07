@@ -1,8 +1,8 @@
 module core.Hint
 
 open Sudoku
-open oset
-open smap
+open compat.oset
+open compat.smap
 
 [<NoComparison; NoEquality>]
 type description = 

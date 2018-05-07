@@ -1,6 +1,6 @@
 module hints.Hidden
 
 open core.Sudoku
-open oset
+open compat.oset
 
 val find : int -> core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list

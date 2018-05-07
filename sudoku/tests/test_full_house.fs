@@ -3,7 +3,7 @@ module test.Test_full_house
 open core.Sudoku
 
 open NUnit.Framework
-open oset
+open compat.oset
 
 [<Test>]
 let ``Can find full house``() =

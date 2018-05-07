@@ -1,8 +1,8 @@
 module hints.Hidden
 
 open core.Sudoku
-open oset
-open smap
+open compat.oset
+open compat.smap
 
 let findHidden (count : int) (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (candidateSubset : digits) (primaryHouse : house) : core.Hint.description option = 
 

@@ -1,8 +1,9 @@
 module input.Load
 
+open compat
+open compat.oset
+open compat.smap
 open core.Sudoku
-open oset
-open smap
 
 (* Load a sudoku given as a single line of gridSize*gridSize characters *)
 let loadPuzzle (cells : cells) (alphabetisedLine : digit option list) : given =

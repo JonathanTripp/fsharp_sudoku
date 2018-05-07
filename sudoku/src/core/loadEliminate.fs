@@ -1,8 +1,8 @@
 module core.LoadEliminate
 
 open Sudoku
-open oset
-open smap
+open compat.oset
+open compat.smap
 
 let find  (p : Puzzlemap.puzzleMap) (current : current) : candidateReduction list = 
 

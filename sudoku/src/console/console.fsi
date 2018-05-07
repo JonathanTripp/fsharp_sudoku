@@ -1,7 +1,7 @@
 module console.Console
 
 open core.Sudoku
-open smap
+open compat.smap
 
 val drawDigitCellString : digit option -> cellContents -> Format.consoleString
 

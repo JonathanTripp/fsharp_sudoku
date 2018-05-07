@@ -1,9 +1,10 @@
 module console.Command
 
-open Sset
+open compat
+open compat.Sset
+open compat.oset
+open compat.smap
 open core.Sudoku
-open oset
-open smap
 
 type parse_column_or_row_results =
     | CROk of int

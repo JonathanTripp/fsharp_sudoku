@@ -1,8 +1,8 @@
 module hints.Intersection
 
 open core.Sudoku
-open oset
-open smap
+open compat.oset
+open compat.smap
 
 type cellHouses = SMap<cell, houses>
 

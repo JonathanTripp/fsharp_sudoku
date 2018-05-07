@@ -1,7 +1,7 @@
 module core.LoadEliminate
 
 open Sudoku
-open oset
+open compat.oset
 
 val find : Puzzlemap.puzzleMap -> current -> candidateReduction list
 val apply : Puzzlemap.puzzleMap -> candidateReduction list -> current -> current

@@ -4,7 +4,7 @@ module hints.FullHouse
  For a house there is only one cell that is neither given nor set i.e. has candidates *)
 
 open core.Sudoku
-open oset
+open compat.oset
 
 let fullHousePerHouse (p : core.Puzzlemap.puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : core.Hint.description option =
 

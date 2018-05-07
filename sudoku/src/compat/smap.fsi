@@ -1,6 +1,6 @@
-﻿module smap
+﻿module compat.smap
 
-open oset
+open compat.oset
 
 [<NoComparison;NoEquality>]
 type SMap<'Key, 'Value> =

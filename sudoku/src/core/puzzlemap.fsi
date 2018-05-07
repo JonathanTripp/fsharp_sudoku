@@ -1,8 +1,8 @@
 module core.Puzzlemap
 
 open Sudoku
-open oset
-open smap
+open compat.oset
+open compat.smap
 
 [<NoComparison; NoEquality>]
 type puzzleMap =

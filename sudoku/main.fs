@@ -4,8 +4,9 @@ open console.Command
 open console.Console
 open console.Format
 open console.Console_win
-open oset
-open smap
+open compat
+open compat.oset
+open compat.smap
 
 let parse (p : core.Puzzlemap.puzzleMap) (item : string) (solution : solution) (puzzle : puzzleShape) 
     (cellCandidates : cellCandidates) puzzleDrawFull2 print_last : solution * core.Hint.description list = 

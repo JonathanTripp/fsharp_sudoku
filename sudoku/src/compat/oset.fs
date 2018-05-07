@@ -1,6 +1,6 @@
-﻿module oset
+﻿module compat.oset
 
-open Sset
+open compat.Sset
 
 module SetElemComparers =
     let ht = new System.Collections.Generic.Dictionary<System.Type, obj>()

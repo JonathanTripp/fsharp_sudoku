@@ -1,8 +1,9 @@
 module console.Format
 
+open compat
+open compat.oset
+open compat.smap
 open core.Sudoku
-open oset
-open smap
 
 type basic_color =
     | DefaultColour

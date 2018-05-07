@@ -1,8 +1,8 @@
 module core.Sudoku
 
-open Sset
-open oset
-open smap
+open compat.Sset
+open compat.oset
+open compat.smap
 
 type size = int
 [<NoComparison;NoEquality>]

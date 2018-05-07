@@ -3,8 +3,8 @@ module tests.Test_core
 open core.Sudoku
 
 open NUnit.Framework
-open oset
-open smap
+open compat.oset
+open compat.smap
 
 let twoByFourPuzzleSpec : puzzleShape =
     { size = 8;

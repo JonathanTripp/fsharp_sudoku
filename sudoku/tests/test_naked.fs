@@ -3,7 +3,7 @@ module tests.Test_naked
 open core.Sudoku
 
 open NUnit.Framework
-open oset
+open compat.oset
 
 [<Test>]
 let ``Can find naked singles``() =

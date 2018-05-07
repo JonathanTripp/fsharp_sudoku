@@ -1,9 +1,9 @@
 module core.Hint
 
-open Sset
+open compat.Sset
 open Sudoku
-open oset
-open smap
+open compat.oset
+open compat.smap
 
 exception CellStateInvalid
 

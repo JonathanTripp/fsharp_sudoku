@@ -1,9 +1,9 @@
 module console.Console
 
-open Sset
+open compat.Sset
 open core.Sudoku
-open oset
-open smap
+open compat.oset
+open compat.smap
 
 let drawDigitCellContents (given : digit option) (current : cellContents) : Format.consoleChar = 
     match given, current with

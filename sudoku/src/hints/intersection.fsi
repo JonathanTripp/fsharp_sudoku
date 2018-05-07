@@ -1,7 +1,7 @@
 module hints.Intersection
 
 open core.Sudoku
-open oset
+open compat.oset
 
 val pointingPairs : core.Puzzlemap.puzzleMap -> cellCandidates -> core.Hint.description list
 

@@ -1,6 +1,6 @@
-﻿module oset
+﻿module compat.oset
 
-open Sset
+open compat.Sset
 
 module SetElemComparers =
     val Get<'T> : unit -> ('T -> 'T -> Ordering)

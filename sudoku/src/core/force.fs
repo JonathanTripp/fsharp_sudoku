@@ -1,8 +1,8 @@
 module core.Force
 
 open Sudoku
-open oset
-open smap
+open compat.oset
+open compat.smap
 
 let isPencilMarksCellContents (cellContents : cellContents) : bool =
     match cellContents with

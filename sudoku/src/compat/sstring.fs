@@ -1,4 +1,4 @@
-﻿module Sstring
+﻿module compat.Sstring
 
 let compare (s1 : string) (s2 : string) : int =
     compare s1 s2

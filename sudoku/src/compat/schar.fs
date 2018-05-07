@@ -1,4 +1,4 @@
-﻿module Schar
+﻿module compat.Schar
 
 let chr (i : int) : char =
     i
