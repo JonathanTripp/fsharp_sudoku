@@ -27,8 +27,7 @@ let find  (p : Puzzlemap.puzzleMap) (current : current) : candidateReductions =
         in
 
     p.cells
-    |> OSet.toList
-    |> List.choose
+    |> OSet.choosel
         (fun cell ->
             match reductions cell with
             | Some digits -> Some (CandidateReduction.make cell digits)

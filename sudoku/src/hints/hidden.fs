@@ -11,8 +11,7 @@ let findHidden (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (
     let pointers = 
         p.houseCells
         |> SMap.get primaryHouse
-        |> OSet.toList
-        |> List.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
+        |> OSet.mapl (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
         |> List.map (fun cr -> CandidateReduction.make cr.cell (OSet.intersect cr.candidates candidateSubset))
         |> List.filter (fun cr -> OSet.count cr.candidates > 0) 
         in
@@ -20,8 +19,7 @@ let findHidden (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (
     let candidateReductions = 
         p.houseCells
         |> SMap.get primaryHouse
-        |> OSet.toList
-        |> List.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
+        |> OSet.mapl (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
         |> List.map
             (fun cr -> 
                 let pointerCandidates = OSet.intersect cr.candidates candidateSubset in
@@ -61,11 +59,10 @@ let findHidden (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (
 
 let hiddenNPerHouse (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (house : house) : descriptions = 
 
-    let houseCandidates =
+    let houseCandidates : digits =
         p.houseCells
         |> SMap.get house
-        |> OSet.toList
-        |> List.map (fun cell -> SMap.get cell cellCandidates)
+        |> OSet.mapl (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
@@ -76,6 +73,5 @@ let hiddenNPerHouse (count : int) (p : puzzleMap) (cellCandidates : cellCandidat
 
 let find (i : int) (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
     p.houses
-    |> OSet.toList
-    |> List.map (hiddenNPerHouse i p cellCandidates)
+    |> OSet.mapl (hiddenNPerHouse i p cellCandidates)
     |> List.concat

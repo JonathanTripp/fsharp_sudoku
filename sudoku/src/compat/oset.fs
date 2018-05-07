@@ -39,6 +39,9 @@ module OSet =
     let choose (chooser :'T-> 'U option) (o : OSet<'T>) : OSet<'U> =
         o |> toList |> List.choose chooser |> ofList
 
+    let choosel (chooser :'T-> 'U option) (o : OSet<'T>) : 'U list =
+        o |> toList |> List.choose chooser
+
     let concat (ds : OSet<'T> list) : OSet<'T> =
         let setElemCompare = SetElemComparers.Get<'T>() in
         ds |> List.map toList |> Sset.unions setElemCompare |> ofList' setElemCompare
@@ -95,6 +98,9 @@ module OSet =
 
     let mapi (mapping : int ->'T-> 'U) (o : OSet<'T>) : OSet<'U> =
         o |> toList |> List.mapi mapping |> ofList
+
+    let mapl (mapping :'T-> 'U) (o : OSet<'T>) : 'U list =
+        o |> toList |> List.map mapping
 
     let print (printer : 'T -> string) (o : OSet<'T>) : string =
         let sb = new System.Text.StringBuilder()

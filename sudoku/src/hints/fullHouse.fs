@@ -32,5 +32,4 @@ let fullHousePerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (primary
 
 let find (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
     p.houses
-    |> OSet.toList
-    |> List.choose (fullHousePerHouse p cellCandidates)
+    |> OSet.choosel (fullHousePerHouse p cellCandidates)

@@ -10,42 +10,41 @@ type cellHouses = SMap<cell, houses>
 
 let intersectionsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (secondaryHouseLookups : cellHouses) : descriptions = 
 
-    let primaryHouseCandidates = 
+    let primaryHouseCandidates : digits = 
         p.houseCells
         |> SMap.get primaryHouse
-        |> OSet.toList
-        |> List.map (fun cell -> SMap.get cell cellCandidates)
+        |> OSet.mapl (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
     let uniqueSecondaryForCandidate (candidate : digit) : descriptions = 
-        let pointerCells = 
+        let pointerCells : cells = 
             p.houseCells
             |> SMap.get primaryHouse
-            |> OSet.toList
-            |> List.filter (fun cell -> 
+            |> OSet.filter (fun cell -> 
                 let candidates = SMap.get cell cellCandidates in
                 OSet.contains candidate candidates) 
             in
 
-        let pointers  = 
+        let pointers : candidateReductions = 
             pointerCells
+            |> OSet.toList
             |> List.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
             in
 
         let hintsPerSecondaryHouse (secondaryHouses : houses) : description option = 
-            if List.length pointerCells > 1 && OSet.count secondaryHouses = 1 then 
-                let primaryHouseCells =
+            if OSet.count pointerCells > 1 && OSet.count secondaryHouses = 1 then 
+                let primaryHouseCells : cells =
                     p.houseCells
                     |> SMap.get primaryHouse
                     in
 
-                let secondaryHouse = OSet.item 0 secondaryHouses in
-                let secondaryHouseCells = SMap.get secondaryHouse p.houseCells in
+                let secondaryHouse : house = OSet.item 0 secondaryHouses in
+                let secondaryHouseCells : cells = SMap.get secondaryHouse p.houseCells in
 
-                let otherHouseCells = OSet.difference secondaryHouseCells primaryHouseCells in
+                let otherHouseCells : cells = OSet.difference secondaryHouseCells primaryHouseCells in
                 
-                let candidateReductions = 
+                let candidateReductions : candidateReductions = 
                     otherHouseCells
                     |> OSet.toList
                     |> List.filter (fun cell -> 
@@ -66,23 +65,22 @@ let intersectionsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (pri
             in
 
         pointerCells
-        |> List.choose (fun cell -> 
+        |> OSet.choosel (fun cell -> 
                             SMap.get cell secondaryHouseLookups
                             |> hintsPerSecondaryHouse)
         in
 
     primaryHouseCandidates
-    |> OSet.map uniqueSecondaryForCandidate
-    |> OSet.toList
+    |> OSet.mapl uniqueSecondaryForCandidate
     |> List.concat
 
 let pointingPairsPerBox (p : puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : descriptions =
-    let cellLines (cell : cell) =
+    let cellLines (cell : cell) : houses =
         [ HRow cell.row; HColumn cell.col ]
         |> OSet.ofList
         in
 
-    let secondaryHouseLookups =
+    let secondaryHouseLookups : SMap<cell, houses> =
         SMap.ofLookup cellLines p.cells
         in
 
@@ -102,25 +100,22 @@ let boxLineReductionsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) 
 
 let pointingPairs (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
     p.boxes
-    |> OSet.toList
-    |> List.map House.make_box
-    |> List.map (pointingPairsPerBox p cellCandidates) 
+    |> OSet.map House.make_box
+    |> OSet.mapl (pointingPairsPerBox p cellCandidates) 
     |> List.concat
 
 let boxLineReductions (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
     let rowHints =
         p.rows
-        |> OSet.toList
-        |> List.map House.make_row
-        |> List.map (boxLineReductionsPerHouse p cellCandidates)
+        |> OSet.map House.make_row
+        |> OSet.mapl (boxLineReductionsPerHouse p cellCandidates)
         |> List.concat
         in
 
     let colHints =
         p.columns
-        |> OSet.toList
-        |> List.map House.make_column
-        |> List.map (boxLineReductionsPerHouse p cellCandidates)
+        |> OSet.map House.make_column
+        |> OSet.mapl (boxLineReductionsPerHouse p cellCandidates)
         |> List.concat
         in
 

@@ -24,20 +24,18 @@ let nakedSingleCell (p : puzzleMap) (cellCandidates : cellCandidates) (cell : ce
 
 let nakedSingle (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
     p.cells
-    |> OSet.toList
-    |> List.choose (nakedSingleCell p cellCandidates)
+    |> OSet.choosel (nakedSingleCell p cellCandidates)
 
 let findNaked (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) (cellSubset : cells) : description option = 
 
-    let subsetDigits =
+    let subsetDigits : digits =
         cellSubset
-        |> OSet.toList
-        |> List.map (fun cell -> SMap.get cell cellCandidates)
+        |> OSet.mapl (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
     if OSet.count subsetDigits <= count then
-        let candidateReductions =
+        let candidateReductions : candidateReductions =
             p.houseCells
             |> SMap.get primaryHouse
             |> OSet.toList
@@ -48,10 +46,9 @@ let findNaked (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (p
             |> List.filter (fun cr -> OSet.count cr.candidates > 0)
             in
 
-        let pointers =
+        let pointers : candidateReductions =
             cellSubset
-            |> OSet.toList
-            |> List.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
+            |> OSet.mapl (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
             in
 
         if List.length candidateReductions > 0 then 
@@ -80,8 +77,7 @@ let nakedNPerHouse (count : int) (p : puzzleMap) (cellCandidates : cellCandidate
 
 let nakedN (i : int) (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
     p.houses
-    |> OSet.toList
-    |> List.map (nakedNPerHouse i p cellCandidates )
+    |> OSet.mapl (nakedNPerHouse i p cellCandidates )
     |> List.concat
 
 let find (i : int) (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =

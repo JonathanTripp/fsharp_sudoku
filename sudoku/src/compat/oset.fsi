@@ -17,6 +17,7 @@ module OSet =
     val toList : OSet<'T> ->'T list
 
     val choose : ('T ->'U option) -> OSet<'T> -> OSet<'U>
+    val choosel : ('T ->'U option) -> OSet<'T> -> 'U list
     val concat : OSet<'T> list -> OSet<'T>
     val contains : 'T-> OSet<'T> -> bool
     val count : OSet<'T> -> int
@@ -32,7 +33,8 @@ module OSet =
     val isSubset : OSet<'T> -> OSet<'T> -> bool
     val item : int -> OSet<'T> -> 'T
     val map : ('T -> 'U) -> OSet<'T> -> OSet<'U>
-    val mapi : (int ->'T-> 'U) -> OSet<'T> -> OSet<'U>
+    val mapi : (int -> 'T-> 'U) -> OSet<'T> -> OSet<'U>
+    val mapl : ('T -> 'U) -> OSet<'T> -> 'U list
     val print : ('T -> string) -> OSet<'T> -> string
     val range : int -> int -> (int -> 'T) -> OSet<'T>
     val remove : 'T-> OSet<'T> -> OSet<'T>

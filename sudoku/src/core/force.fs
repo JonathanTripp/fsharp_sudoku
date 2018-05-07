@@ -41,8 +41,7 @@ let rec searchr (p : Puzzlemap.puzzleMap) (solution : solution) (existing : solu
             in
 
         candidates
-        |> OSet.toList
-        |> List.map
+        |> OSet.mapl
             (fun digit ->
                 let setCellValue = Value.make cell digit in
                 

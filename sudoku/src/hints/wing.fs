@@ -7,24 +7,21 @@ open core.Sudoku
 open core.Puzzlemap
 open core.Hint
 
-let makeHints (p : puzzleMap) (cellCandidates : cellCandidates) pointerCells primaryHouses secondaryHouses candidate : description option = 
-    let pointers =
+let makeHints (p : puzzleMap) (cellCandidates : cellCandidates) (pointerCells : cells) (primaryHouses : houses) (secondaryHouses : houses) (candidate : digit) : description option = 
+    let pointers : candidateReductions =
         pointerCells
-        |> OSet.toList
-        |> List.map (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
+        |> OSet.mapl (fun cell -> CandidateReduction.make cell (OSet.singleton candidate))
         in
 
-    let colCells =
+    let colCells : cells =
         secondaryHouses
-        |> OSet.toList
-        |> List.map (fun house -> SMap.get house p.houseCells)
+        |> OSet.mapl (fun house -> SMap.get house p.houseCells)
         |> OSet.concat
         in
 
-    let candidatesReductions = 
+    let candidatesReductions : candidateReductions = 
         OSet.difference colCells pointerCells
-        |> OSet.toList
-        |> List.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
+        |> OSet.mapl (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
         |> List.filter (fun cr -> OSet.contains candidate cr.candidates)
         |> List.map (fun cr -> CandidateReduction.make cr.cell (OSet.singleton candidate))
         in
@@ -43,32 +40,32 @@ let makeHints (p : puzzleMap) (cellCandidates : cellCandidates) pointerCells pri
 
 let xWingsPerHouseCandidate (p : puzzleMap) (cellCandidates : cellCandidates) (house1 : house) (house2 : house) (candidate : digit) = 
 
-    let houseCandidateCells1 =
+    let houseCandidateCells1 : candidateReductions =
         p.houseCells
         |> SMap.get house1
-        |> OSet.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
+        |> OSet.mapl (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
         in
 
-    let houseCandidateCells2 =
+    let houseCandidateCells2 : candidateReductions =
         p.houseCells
         |> SMap.get house2
-        |> OSet.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
+        |> OSet.mapl (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates))
         in
 
-    let hht1 =
+    let hht1 : candidateReductions =
         houseCandidateCells1
-        |> OSet.filter (fun cr -> OSet.contains candidate cr.candidates)
+        |> List.filter (fun cr -> OSet.contains candidate cr.candidates)
         in
 
-    let hht2 =
+    let hht2 : candidateReductions =
         houseCandidateCells2
-        |> OSet.filter (fun cr -> OSet.contains candidate cr.candidates)
+        |> List.filter (fun cr -> OSet.contains candidate cr.candidates)
         in
 
     match house1, house2 with
     | HRow row1, HRow row2 -> 
-        let cols1 = OSet.map (fun cr -> cr.cell.col) hht1 in
-        let cols2 = OSet.map (fun cr -> cr.cell.col) hht2 in
+        let cols1 : columns = hht1 |> List.map (fun cr -> cr.cell.col) |> OSet.ofList in
+        let cols2 : columns = hht2 |> List.map (fun cr -> cr.cell.col) |> OSet.ofList in
 
         let cols = OSet.union cols1 cols2 in
 
@@ -100,8 +97,8 @@ let xWingsPerHouseCandidate (p : puzzleMap) (cellCandidates : cellCandidates) (h
         else None
 
     | HColumn col1, HColumn col2 -> 
-        let rows1 = OSet.map (fun cr -> cr.cell.row) hht1 in
-        let rows2 = OSet.map (fun cr -> cr.cell.row) hht2 in
+        let rows1 : rows = hht1 |> List.map (fun cr -> cr.cell.row) |> OSet.ofList in
+        let rows2 : rows = hht2 |> List.map (fun cr -> cr.cell.row) |> OSet.ofList in
 
         let rows = OSet.union rows1 rows2 in
 
@@ -135,31 +132,28 @@ let xWingsPerHouseCandidate (p : puzzleMap) (cellCandidates : cellCandidates) (h
 let xWingsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (house1 : house) 
     (house2 : house) : descriptions = 
 
-    let houseCandidates1 =
+    let houseCandidates1 : digits =
         p.houseCells
         |> SMap.get house1
-        |> OSet.toList
-        |> List.map (fun cell -> SMap.get cell cellCandidates)
+        |> OSet.mapl (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
-    let houseCandidates2 =
+    let houseCandidates2 : digits =
         p.houseCells
         |> SMap.get house2
-        |> OSet.toList
-        |> List.map (fun cell -> SMap.get cell cellCandidates)
+        |> OSet.mapl (fun cell -> SMap.get cell cellCandidates)
         |> OSet.concat
         in
 
     OSet.intersect houseCandidates1 houseCandidates2
-    |> OSet.toList
-    |> List.choose (xWingsPerHouseCandidate p cellCandidates house1 house2)
+    |> OSet.choosel (xWingsPerHouseCandidate p cellCandidates house1 house2)
 
 let xWings (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
-    let rows = OSet.map House.make_row p.rows |> OSet.toList in
-    let cols = OSet.map House.make_column p.columns |> OSet.toList in
+    let rows = OSet.mapl House.make_row p.rows in
+    let cols = OSet.mapl House.make_column p.columns in
 
-    let rowHints1 = 
+    let rowHints1 : descriptions list list = 
         rows
         |> List.mapi 
             (fun i row1 -> 
@@ -168,13 +162,13 @@ let xWings (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
                     (fun j row2 -> xWingsPerHouse p cellCandidates row1 row2)) 
         in
 
-    let rowHints = 
+    let rowHints : descriptions = 
         rowHints1
         |> List.concat
         |> List.concat
         in
 
-    let colHints1 = 
+    let colHints1 : descriptions list list = 
         cols
         |> List.mapi
             (fun i col1 -> 
@@ -183,7 +177,7 @@ let xWings (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
                     (fun j col2 -> xWingsPerHouse p cellCandidates col1 col2)) 
         in
 
-    let colHints = 
+    let colHints : descriptions = 
         colHints1
         |> List.concat
         |> List.concat
@@ -193,13 +187,13 @@ let xWings (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
     |> List.concat
 
 let yWingsPerHouseCandidate (p : puzzleMap) (cellCandidates : cellCandidates)
-    (house1 : house) (house2 : house) houseCandidateCells1 houseCandidateCells2 (candidate : digit) = 
-    let hht1 =
+    (house1 : house) (house2 : house) (houseCandidateCells1 : candidateReductions) (houseCandidateCells2 : candidateReductions) (candidate : digit) = 
+    let hht1 : candidateReductions =
         houseCandidateCells1
         |> List.filter (fun cr -> OSet.contains candidate cr.candidates)
         in
 
-    let hht2 =
+    let hht2 : candidateReductions =
         houseCandidateCells2
         |> List.filter (fun cr -> OSet.contains candidate cr.candidates)
         in
@@ -209,7 +203,7 @@ let yWingsPerHouseCandidate (p : puzzleMap) (cellCandidates : cellCandidates)
         let cols1 = List.map (fun cr -> cr.cell.col) hht1 |> OSet.ofList in
         let cols2 = List.map (fun cr -> cr.cell.col) hht2 |> OSet.ofList in
 
-        let cols = OSet.union cols1 cols2 in
+        let cols : columns = OSet.union cols1 cols2 in
 
         if OSet.count cols1 = 2 && OSet.count cols2 = 2 && OSet.count cols = 2 then 
             let row1Cells =
@@ -238,7 +232,7 @@ let yWingsPerHouseCandidate (p : puzzleMap) (cellCandidates : cellCandidates)
         let rows1 = List.map (fun cr -> cr.cell.row) hht1 |> OSet.ofList in
         let rows2 = List.map (fun cr -> cr.cell.row) hht2 |> OSet.ofList in
 
-        let rows = OSet.union rows1 rows2 in
+        let rows : rows = OSet.union rows1 rows2 in
 
         if OSet.count rows1 = 2 && OSet.count rows2 = 2 && OSet.count rows = 2 then 
             let col1Cells = 
@@ -347,10 +341,10 @@ let yWingsPerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (row1 : row
     else []
 
 let yWings (p : puzzleMap) (cellCandidates : cellCandidates) : descriptions =
-    let rows = p.rows |> OSet.toList
+    let rows : row list = p.rows |> OSet.toList
     let columns = p.columns |> OSet.toList
 
-    let hints =
+    let hints : descriptions list list list list =
         rows
         |> List.mapi 
             (fun i row1 ->

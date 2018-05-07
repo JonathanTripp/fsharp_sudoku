@@ -15,8 +15,7 @@ let cells (length : size) : cells =
     let columns' = columns length in
 
     rows'
-    |> OSet.toList
-    |> List.map
+    |> OSet.mapl
         (fun row ->
             columns'
             |> OSet.map (fun column -> Cell.make column row))
@@ -33,8 +32,7 @@ let boxes (length : size) (boxWidth : boxWidth) (boxHeight : boxHeight) : boxes 
     let stacks' = stacks length boxWidth in
 
     bands'
-    |> OSet.toList
-    |> List.map
+    |> OSet.mapl
         (fun band ->
           stacks'
           |> OSet.map (fun stack -> Box.make stack band))
@@ -90,8 +88,7 @@ let boxCells (boxWidth : boxWidth) (boxHeight : boxHeight) (box : bbox) : cells 
     let bandRows = bandRows boxHeight box.band in
 
     bandRows
-    |> OSet.toList
-    |> List.map
+    |> OSet.mapl
         (fun row ->
             stackColumns
             |> OSet.map (fun column -> Cell.make column row))
@@ -187,14 +184,12 @@ let tPuzzleMap (puzzleShape : puzzleShape) : puzzleMap =
 
     let _housesCells (houses : houses) : cells =
         houses
-        |> OSet.toList
-        |> List.map (fun house -> SMap.get house _houseCellsLookup)
+        |> OSet.mapl (fun house -> SMap.get house _houseCellsLookup)
         |> OSet.concat in
 
     let _houseCellCandidateReductions (house : house) (cellCandidates : cellCandidates) : candidateReductions =
         SMap.get house _houseCellsLookup
-        |> OSet.toList
-        |> List.map (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates)) in
+        |> OSet.mapl (fun cell -> CandidateReduction.make cell (SMap.get cell cellCandidates)) in
 
     {
         columns = _columns;
