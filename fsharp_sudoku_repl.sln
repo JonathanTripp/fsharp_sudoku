@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "fsharp_sudoku_repl", "sudoku\fsharp_sudoku_repl.fsproj", "{28210934-817C-4569-B97F-4147CD2F4491}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "fsharp_sudoku_lib", "fsharp_sudoku_lib\fsharp_sudoku_lib.fsproj", "{F1262881-267A-4B95-95AE-9885E5E31BE7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,8 +17,15 @@ Global
 		{28210934-817C-4569-B97F-4147CD2F4491}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28210934-817C-4569-B97F-4147CD2F4491}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28210934-817C-4569-B97F-4147CD2F4491}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F1262881-267A-4B95-95AE-9885E5E31BE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F1262881-267A-4B95-95AE-9885E5E31BE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F1262881-267A-4B95-95AE-9885E5E31BE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F1262881-267A-4B95-95AE-9885E5E31BE7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {77CFFDDA-1A66-4F3B-A6F1-C9A1A86C84BC}
 	EndGlobalSection
 EndGlobal
