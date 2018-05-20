@@ -11,12 +11,13 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>fsharp_sudoku_repl</RootNamespace>
     <AssemblyName>fsharp_sudoku_repl</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <TargetFSharpCoreVersion>4.4.1.0</TargetFSharpCoreVersion>
     <Name>fsharp_sudoku_repl</Name>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -61,37 +62,6 @@
     <Compile Include="AssemblyInfo.fs" />
     <None Include="App.config" />
     <Content Include="packages.config" />
-    <Compile Include="src\compat\schar.fs" />
-    <Compile Include="src\compat\sstring.fs" />
-    <Compile Include="src\compat\sset.fs" />
-    <Compile Include="src\compat\oset.fsi" />
-    <Compile Include="src\compat\oset.fs" />
-    <Compile Include="src\compat\smap.fsi" />
-    <Compile Include="src\compat\smap.fs" />
-    <Compile Include="src\core\sudoku.fsi" />
-    <Compile Include="src\core\sudoku.fs" />
-    <Compile Include="src\core\puzzlemap.fsi" />
-    <Compile Include="src\core\puzzlemap.fs" />
-    <Compile Include="src\core\hint.fsi" />
-    <Compile Include="src\core\hint.fs" />
-    <Compile Include="src\core\loadEliminate.fsi" />
-    <Compile Include="src\core\loadEliminate.fs" />
-    <Compile Include="src\core\eliminateCandidate.fsi" />
-    <Compile Include="src\core\eliminateCandidate.fs" />
-    <Compile Include="src\core\setCell.fsi" />
-    <Compile Include="src\core\setCell.fs" />
-    <Compile Include="src\core\force.fsi" />
-    <Compile Include="src\core\force.fs" />
-    <Compile Include="src\hints\fullHouse.fsi" />
-    <Compile Include="src\hints\fullHouse.fs" />
-    <Compile Include="src\hints\hidden.fsi" />
-    <Compile Include="src\hints\hidden.fs" />
-    <Compile Include="src\hints\intersection.fsi" />
-    <Compile Include="src\hints\intersection.fs" />
-    <Compile Include="src\hints\naked.fsi" />
-    <Compile Include="src\hints\naked.fs" />
-    <Compile Include="src\hints\wing.fsi" />
-    <Compile Include="src\hints\wing.fs" />
     <Compile Include="src\console\format.fsi" />
     <Compile Include="src\console\format.fs" />
     <Compile Include="src\console\console.fsi" />
@@ -123,6 +93,13 @@
     <Reference Include="System.ValueTuple">
       <HintPath>..\packages\System.ValueTuple.4.3.0\lib\netstandard1.0\System.ValueTuple.dll</HintPath>
     </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\fsharp_sudoku_lib\fsharp_sudoku_lib.fsproj">
+      <Name>fsharp_sudoku_lib</Name>
+      <Project>{f1262881-267a-4b95-95ae-9885e5e31be7}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

@@ -52,6 +52,37 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="compat\schar.fs" />
+    <Compile Include="compat\sstring.fs" />
+    <Compile Include="compat\sset.fs" />
+    <Compile Include="compat\oset.fsi" />
+    <Compile Include="compat\oset.fs" />
+    <Compile Include="compat\smap.fsi" />
+    <Compile Include="compat\smap.fs" />
+    <Compile Include="core\sudoku.fsi" />
+    <Compile Include="core\sudoku.fs" />
+    <Compile Include="core\puzzlemap.fsi" />
+    <Compile Include="core\puzzlemap.fs" />
+    <Compile Include="core\hint.fsi" />
+    <Compile Include="core\hint.fs" />
+    <Compile Include="core\loadEliminate.fsi" />
+    <Compile Include="core\loadEliminate.fs" />
+    <Compile Include="core\eliminateCandidate.fsi" />
+    <Compile Include="core\eliminateCandidate.fs" />
+    <Compile Include="core\setCell.fsi" />
+    <Compile Include="core\setCell.fs" />
+    <Compile Include="core\force.fsi" />
+    <Compile Include="core\force.fs" />
+    <Compile Include="hints\fullHouse.fsi" />
+    <Compile Include="hints\fullHouse.fs" />
+    <Compile Include="hints\hidden.fsi" />
+    <Compile Include="hints\hidden.fs" />
+    <Compile Include="hints\intersection.fsi" />
+    <Compile Include="hints\intersection.fs" />
+    <Compile Include="hints\naked.fsi" />
+    <Compile Include="hints\naked.fs" />
+    <Compile Include="hints\wing.fsi" />
+    <Compile Include="hints\wing.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
