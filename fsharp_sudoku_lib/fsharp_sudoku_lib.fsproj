@@ -53,13 +53,6 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Content Include="packages.config" />
-    <Compile Include="compat\schar.fs" />
-    <Compile Include="compat\sstring.fs" />
-    <Compile Include="compat\sset.fs" />
-    <Compile Include="compat\oset.fsi" />
-    <Compile Include="compat\oset.fs" />
-    <Compile Include="compat\smap.fsi" />
-    <Compile Include="compat\smap.fs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
