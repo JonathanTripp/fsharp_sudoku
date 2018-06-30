@@ -1,7 +1,7 @@
-module core.Hint
+module Sudoku.Lib.core.Hint
 
-open compat.smap
-open Sudoku
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Sudoku
 
 [<NoComparison; NoEquality>]
 type description = 

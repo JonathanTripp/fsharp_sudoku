@@ -1,7 +1,7 @@
-module console.Format
+module Sudoku.Repl.console.Format
 
-open core.Sudoku
-open core.Puzzlemap
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib.core.Puzzlemap
 
 type basic_color =
     | DefaultColour

@@ -1,12 +1,12 @@
-module hints.FullHouse
+module Sudoku.Lib.hints.FullHouse
 
 (* Full House means:
  For a house there is only one cell that is neither given nor set i.e. has candidates *)
 
-open compat.oset
-open core.Sudoku
-open core.Puzzlemap
-open core.Hint
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib.core.Puzzlemap
+open Sudoku.Lib.core.Hint
 
 let fullHousePerHouse (p : puzzleMap) (cellCandidates : cellCandidates) (primaryHouse : house) : description option =
 

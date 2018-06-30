@@ -1,4 +1,4 @@
-﻿module compat.Schar
+﻿module Sudoku.Lib.compat.Schar
 
 let chr (i : int) : char =
     i

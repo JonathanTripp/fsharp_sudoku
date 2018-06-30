@@ -1,5 +1,5 @@
-module input.Load
+module Sudoku.Repl.input.Load
 
-open core.Sudoku
+open Sudoku.Lib.core.Sudoku
 
 val load : puzzleShape -> string -> solution

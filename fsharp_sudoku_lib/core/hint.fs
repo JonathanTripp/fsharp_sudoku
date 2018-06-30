@@ -1,9 +1,9 @@
-module core.Hint
+module Sudoku.Lib.core.Hint
 
-open compat.Sset
-open compat.oset
-open compat.smap
-open Sudoku
+open Sudoku.Lib.compat.Sset
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Sudoku
 
 exception CellStateInvalid
 

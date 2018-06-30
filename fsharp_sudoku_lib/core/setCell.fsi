@@ -1,6 +1,6 @@
-module core.SetCell
+module Sudoku.Lib.core.SetCell
 
-open Sudoku
+open Sudoku.Lib.core.Sudoku
 
 val apply : Puzzlemap.puzzleMap -> value -> current -> current
 

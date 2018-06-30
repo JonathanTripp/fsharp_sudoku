@@ -1,7 +1,7 @@
-module compat.smap
+module Sudoku.Lib.compat.smap
 
-open compat.Sset
-open compat.oset
+open Sudoku.Lib.compat.Sset
+open Sudoku.Lib.compat.oset
 
 [<NoComparison;NoEquality>]
 type SMap<'Key, 'Value> =

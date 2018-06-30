@@ -1,11 +1,11 @@
-module hints.Wing
+module Sudoku.Lib.hints.Wing
 
-open compat
-open compat.oset
-open compat.smap
-open core.Sudoku
-open core.Puzzlemap
-open core.Hint
+open Sudoku.Lib.compat
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib.core.Puzzlemap
+open Sudoku.Lib.core.Hint
 
 let makeHints (p : puzzleMap) (cellCandidates : cellCandidates) (pointerCells : cells) (primaryHouses : houses) (secondaryHouses : houses) (candidate : digit) : description option = 
     let pointers : candidateReductions =

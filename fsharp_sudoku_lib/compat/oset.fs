@@ -1,6 +1,6 @@
-﻿module compat.oset
+﻿module Sudoku.Lib.compat.oset
 
-open compat.Sset
+open Sudoku.Lib.compat.Sset
 
 module SetElemComparers =
     let ht = new System.Collections.Generic.Dictionary<System.Type, obj>()

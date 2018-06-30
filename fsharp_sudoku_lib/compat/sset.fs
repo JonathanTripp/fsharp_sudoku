@@ -1,4 +1,4 @@
-module compat.Sset
+module Sudoku.Lib.compat.Sset
 
 type Ordering = LT|EQ|GT
 

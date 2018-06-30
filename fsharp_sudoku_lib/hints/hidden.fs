@@ -1,10 +1,10 @@
-module hints.Hidden
+module Sudoku.Lib.hints.Hidden
 
-open compat.oset
-open compat.smap
-open core.Sudoku
-open core.Puzzlemap
-open core.Hint
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib.core.Puzzlemap
+open Sudoku.Lib.core.Hint
 
 let findHidden (count : int) (p : puzzleMap) (cellCandidates : cellCandidates) (candidateSubset : digits) (primaryHouse : house) : description option = 
 

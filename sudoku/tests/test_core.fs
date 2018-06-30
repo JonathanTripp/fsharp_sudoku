@@ -1,10 +1,11 @@
 module tests.Test_core
 
-open core.Sudoku
+open Sudoku.Lib.core.Sudoku
 
 open NUnit.Framework
-open compat.oset
-open compat.smap
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib
 
 let twoByFourPuzzleSpec : puzzleShape =
     { size = 8;

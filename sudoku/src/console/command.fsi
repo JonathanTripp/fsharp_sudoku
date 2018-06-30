@@ -1,8 +1,8 @@
-module console.Command
+module Sudoku.Repl.console.Command
 
-open core.Sudoku
-open core.Puzzlemap
-open core.Hint
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib.core.Puzzlemap
+open Sudoku.Lib.core.Hint
 
 type parse_column_or_row_results =
     | CROk of int

@@ -1,4 +1,4 @@
-module console.Console_win
+module Sudoku.Repl.console.Console_win
 
 val defaultGridChars : Format.gridChars
 

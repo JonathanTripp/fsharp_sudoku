@@ -1,9 +1,9 @@
-module core.Sudoku
+module Sudoku.Lib.core.Sudoku
 
-open compat
-open compat.Sset
-open compat.oset
-open compat.smap
+open Sudoku.Lib.compat
+open Sudoku.Lib.compat.Sset
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
 
 (* A sudoku is a square grid of size... *)
 type size = int
@@ -341,7 +341,7 @@ module CandidateReductions =
  [<NoComparison;NoEquality>]
 type action =
     | Load of string
-    | LoadEliminate
+    | LoadEliminateAction
     | Placement of value
     | Eliminate of candidate
 
@@ -349,7 +349,7 @@ module Action =
     let print (action : action) : string =
         match action with
         | Load sudoku -> Printf.sprintf "Load:%s" sudoku
-        | LoadEliminate  -> "Load"
+        | LoadEliminateAction -> "Load"
         | Placement a -> Printf.sprintf "%s=%s" (Cell.print a.cell) (Digit.print a.digit)
         | Eliminate candidate -> Printf.sprintf "%s<>%s" (Cell.print candidate.cell) (Digit.print candidate.digit)
 

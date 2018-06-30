@@ -1,10 +1,10 @@
-module console.Format
+module Sudoku.Repl.console.Format
 
-open compat
-open compat.oset
-open compat.smap
-open core.Sudoku
-open core.Puzzlemap
+open Sudoku.Lib.compat
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib.core.Puzzlemap
 
 type basic_color =
     | DefaultColour

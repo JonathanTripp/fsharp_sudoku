@@ -1,6 +1,6 @@
-module core.EliminateCandidate
+module Sudoku.Lib.core.EliminateCandidate
 
-open Sudoku
+open Sudoku.Lib.core.Sudoku
 
 val description : Puzzlemap.puzzleMap -> candidate -> Hint.description
 

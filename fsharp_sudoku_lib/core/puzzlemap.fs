@@ -1,8 +1,8 @@
-module core.Puzzlemap
+module Sudoku.Lib.core.Puzzlemap
 
-open compat.oset
-open compat.smap
-open Sudoku
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Sudoku
 
 let columns (length : size) : columns =
     OSet.range 1 length Column.ofNat

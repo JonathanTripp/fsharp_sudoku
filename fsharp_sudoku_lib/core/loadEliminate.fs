@@ -1,8 +1,8 @@
-module core.LoadEliminate
+module Sudoku.Lib.core.LoadEliminate
 
-open compat.oset
-open compat.smap
-open Sudoku
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Sudoku
 
 let find  (p : Puzzlemap.puzzleMap) (current : current) : candidateReductions = 
 
@@ -66,7 +66,7 @@ let description (p : Puzzlemap.puzzleMap) (candidateReductions : candidateReduct
 
 let step (p : Puzzlemap.puzzleMap) (solution : solution) (candidateReductions : candidateReductions) : solution =
     { solution with current = apply p candidateReductions solution.current;
-                    steps = LoadEliminate :: solution.steps }
+                    steps = LoadEliminateAction :: solution.steps }
 
 let findAndApply (p : Puzzlemap.puzzleMap) (solution : solution) : solution =
     let candidateReductions = find p solution.current in

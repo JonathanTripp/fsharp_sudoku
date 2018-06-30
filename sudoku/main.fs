@@ -1,13 +1,15 @@
-open compat
-open compat.oset
-open compat.smap
-open console.Command
-open console.Console
-open console.Format
-open console.Console_win
-open core.Sudoku
-open core.Puzzlemap
-open core.Hint
+open Sudoku.Lib.compat
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Repl.console.Command
+open Sudoku.Repl.console.Console
+open Sudoku.Repl.console.Format
+open Sudoku.Repl.console.Console_win
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib.core.Puzzlemap
+open Sudoku.Lib.core.Hint
+open Sudoku.Lib
+open Sudoku.Repl
 
 let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzleShape) 
     (cellCandidates : cellCandidates) puzzleDrawFull2 print_last : solution * descriptions = 
@@ -15,7 +17,7 @@ let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzle
     printfn "%s" item;
 
     if item = "print" then 
-        let hd3 = core.Hint.mhas2 solution p in
+        let hd3 = mhas2 solution p in
         puzzleDrawFull2 hd3.annotations;
         (solution, [])
     else if String.length item >= 5 && Sstring.compare (Sstring.sub item 0 5) "focus" = 0 then
@@ -23,7 +25,7 @@ let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzle
         match focusDigitResult with
         | FCOk (VOk focusDigit) ->
             let hd2 = focusCommandHintDescription p focusDigit in
-            let hd3 = core.Hint.mhas solution p hd2 in
+            let hd3 = mhas solution p hd2 in
             puzzleDrawFull2 hd3.annotations;
             (solution, [])
 
@@ -182,7 +184,7 @@ let repl (sudoku : string) (puzzleShape : puzzleShape) : unit =
         | action :: _ -> 
             (match action with
              | Load _ -> drawConsoleChar (CStr "");
-             | LoadEliminate  -> drawConsoleChar (CStr "");
+             | LoadEliminateAction -> drawConsoleChar (CStr "");
              | Placement sv -> drawConsoleChar (CStr (Value.print sv));
              | Eliminate candidate -> drawConsoleChar (CStr(Candidate.print candidate));
             )

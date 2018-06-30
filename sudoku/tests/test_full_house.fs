@@ -1,10 +1,12 @@
 module test.Test_full_house
 
-open core.Sudoku
-open core.Hint
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib.core.Hint
 
 open NUnit.Framework
-open compat.oset
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib
+open Sudoku.Repl
 
 [<Test>]
 let ``Can find full house``() =

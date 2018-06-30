@@ -1,9 +1,10 @@
-module console.Console
+module Sudoku.Repl.console.Console
 
-open compat.Sset
-open core.Sudoku
-open compat.oset
-open compat.smap
+open Sudoku.Lib.compat.Sset
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Hint
 
 let drawDigitCellContents (given : digit option) (current : cellContents) : Format.consoleChar = 
     match given, current with
@@ -14,7 +15,7 @@ let drawDigitCellContents (given : digit option) (current : cellContents) : Form
 let drawDigitCellString (given : digit option) (current : cellContents) : Format.consoleString =
     [drawDigitCellContents given current]
 
-let drawBigNumber (annotation : core.Hint.annotation) (digit : digit) : Format.consoleChar =
+let drawBigNumber (annotation : annotation) (digit : digit) : Format.consoleChar =
     if annotation.primaryHintHouse then
         match annotation.given with
         | Some _ -> Format.ColouredDigit(digit, Format.Cyan, Format.DefaultColour)
@@ -28,7 +29,7 @@ let drawBigNumber (annotation : core.Hint.annotation) (digit : digit) : Format.c
         | Some _ -> Format.ColouredDigit(digit, Format.Blue, Format.White)
         | None -> Format.ColouredDigit(digit, Format.Red, Format.DefaultColour)
 
-let drawPencilMarks (annotation : core.Hint.annotation) (candidate : digit) (candidates : digits) : Format.consoleChar =
+let drawPencilMarks (annotation : annotation) (candidate : digit) (candidates : digits) : Format.consoleChar =
     match annotation.setValue with
     | Some vv when Digit.setElemCompare vv candidate = EQ -> 
         Format.ColouredDigit(candidate, Format.Red, Format.DefaultColour)
@@ -55,7 +56,7 @@ let drawPencilMarks (annotation : core.Hint.annotation) (candidate : digit) (can
                 if OSet.contains candidate candidates then Format.ColouredDigit(candidate, Format.Green, Format.DefaultColour)
                 else Format.CChar ' '))
 
-let drawDigitCellContentAnnotations centreCandidate (annotations : SMap<cell, core.Hint.annotation>) (cell : cell) (candidate : digit) : Format.consoleChar = 
+let drawDigitCellContentAnnotations centreCandidate (annotations : SMap<cell, annotation>) (cell : cell) (candidate : digit) : Format.consoleChar = 
 
     let annotation = SMap.get cell annotations in
 
@@ -64,5 +65,5 @@ let drawDigitCellContentAnnotations centreCandidate (annotations : SMap<cell, co
     | BigNumber _ -> Format.ColouredString(" ", Format.Blue, Format.White)
     | PencilMarks digits -> drawPencilMarks annotation candidate digits
 
-let drawDigitCellContentAnnotationString (centreCandidate : digit) (annotations : SMap<cell, core.Hint.annotation>) (cell : cell) (candidate : digit) : Format.consoleString =
+let drawDigitCellContentAnnotationString (centreCandidate : digit) (annotations : SMap<cell, annotation>) (cell : cell) (candidate : digit) : Format.consoleString =
     [drawDigitCellContentAnnotations centreCandidate annotations cell candidate]

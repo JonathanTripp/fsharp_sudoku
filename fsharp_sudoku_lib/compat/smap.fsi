@@ -1,6 +1,6 @@
 ﻿module compat.smap
 
-open compat.oset
+open Sudoku.Lib.compat.oset
 
 [<NoComparison;NoEquality>]
 type SMap<'Key, 'Value> =

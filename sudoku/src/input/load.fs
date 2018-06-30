@@ -1,9 +1,10 @@
-module input.Load
+module Sudoku.Repl.input.Load
 
-open compat
-open compat.oset
-open compat.smap
-open core.Sudoku
+open Sudoku.Lib.compat
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib
 
 (* Load a sudoku given as a single line of gridSize*gridSize characters *)
 let loadPuzzle (cells : cells) (alphabetisedLine : digit option list) : given =

@@ -1,9 +1,9 @@
-module core.EliminateCandidate
+module Sudoku.Lib.core.EliminateCandidate
 
-open compat.Sset
-open compat.oset
-open compat.smap
-open Sudoku
+open Sudoku.Lib.compat.Sset
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Sudoku
 
 let apply (p : Puzzlemap.puzzleMap) (candidate : candidate) (current : current) : current = 
 

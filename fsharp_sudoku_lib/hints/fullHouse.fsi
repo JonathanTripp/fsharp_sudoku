@@ -1,7 +1,7 @@
-module hints.FullHouse
+module Sudoku.Lib.hints.FullHouse
 
-open core.Sudoku
-open core.Puzzlemap
-open core.Hint
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib.core.Puzzlemap
+open Sudoku.Lib.core.Hint
 
 val find : puzzleMap -> cellCandidates -> descriptions

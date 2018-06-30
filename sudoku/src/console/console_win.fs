@@ -1,6 +1,6 @@
-module console.Console_win
+module Sudoku.Repl.console.Console_win
 
-open core.Sudoku
+open Sudoku.Lib.core.Sudoku
 
 open System
 open System.Diagnostics

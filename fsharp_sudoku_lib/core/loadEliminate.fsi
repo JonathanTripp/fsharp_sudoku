@@ -1,6 +1,6 @@
-module core.LoadEliminate
+module Sudoku.Lib.core.LoadEliminate
 
-open Sudoku
+open Sudoku.Lib.core.Sudoku
 
 val find : Puzzlemap.puzzleMap -> current -> candidateReductions
 val apply : Puzzlemap.puzzleMap -> candidateReductions -> current -> current

@@ -1,10 +1,10 @@
-module hints.Intersection
+module Sudoku.Lib.hints.Intersection
 
-open compat.oset
-open compat.smap
-open core.Sudoku
-open core.Puzzlemap
-open core.Hint
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib.core.Puzzlemap
+open Sudoku.Lib.core.Hint
 
 type cellHouses = SMap<cell, houses>
 

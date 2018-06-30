@@ -1,8 +1,8 @@
-module core.Sudoku
+module Sudoku.Lib.core.Sudoku
 
-open compat.Sset
-open compat.oset
-open compat.smap
+open Sudoku.Lib.compat.Sset
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
 
 type size = int
 [<NoComparison;NoEquality>]
@@ -139,7 +139,7 @@ module CandidateReductions =
 [<NoComparison;NoEquality>]
 type action =
     | Load of string
-    | LoadEliminate
+    | LoadEliminateAction
     | Placement of value
     | Eliminate of candidate
 module Action =

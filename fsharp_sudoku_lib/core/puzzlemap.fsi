@@ -1,7 +1,7 @@
-module core.Puzzlemap
+module Sudoku.Lib.core.Puzzlemap
 
-open compat.smap
-open Sudoku
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Sudoku
 
 [<NoComparison; NoEquality>]
 type puzzleMap =

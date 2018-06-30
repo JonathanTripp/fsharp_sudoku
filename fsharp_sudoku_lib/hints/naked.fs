@@ -1,10 +1,10 @@
-module hints.Naked
+module Sudoku.Lib.hints.Naked
 
-open compat.oset
-open compat.smap
-open core.Sudoku
-open core.Puzzlemap
-open core.Hint
+open Sudoku.Lib.compat.oset
+open Sudoku.Lib.compat.smap
+open Sudoku.Lib.core.Sudoku
+open Sudoku.Lib.core.Puzzlemap
+open Sudoku.Lib.core.Hint
 
 let nakedSingleCell (p : puzzleMap) (cellCandidates : cellCandidates) (cell : cell) : description option =
     let candidates = SMap.get cell cellCandidates in
