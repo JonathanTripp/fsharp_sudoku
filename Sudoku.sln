@@ -3,9 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "fsharp_sudoku_repl", "sudoku\fsharp_sudoku_repl.fsproj", "{28210934-817C-4569-B97F-4147CD2F4491}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sudoku.Lib", "Sudoku.Lib\Sudoku.Lib.fsproj", "{2DECF155-185D-457F-95F0-B2E912C0A186}"
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "fsharp_sudoku_lib", "fsharp_sudoku_lib\fsharp_sudoku_lib.fsproj", "{F1262881-267A-4B95-95AE-9885E5E31BE7}"
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Sudoku.Repl", "Sudoku.Repl\Sudoku.Repl.fsproj", "{B7D1CE7C-98F1-49E3-9616-BB56114994F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sudoku.Test", "Sudoku.Test\Sudoku.Test.csproj", "{B0BEE21F-E7AC-453F-9A1F-7CB4E4BA0875}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,14 +15,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{28210934-817C-4569-B97F-4147CD2F4491}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{28210934-817C-4569-B97F-4147CD2F4491}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{28210934-817C-4569-B97F-4147CD2F4491}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{28210934-817C-4569-B97F-4147CD2F4491}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F1262881-267A-4B95-95AE-9885E5E31BE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F1262881-267A-4B95-95AE-9885E5E31BE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F1262881-267A-4B95-95AE-9885E5E31BE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F1262881-267A-4B95-95AE-9885E5E31BE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2DECF155-185D-457F-95F0-B2E912C0A186}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2DECF155-185D-457F-95F0-B2E912C0A186}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2DECF155-185D-457F-95F0-B2E912C0A186}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2DECF155-185D-457F-95F0-B2E912C0A186}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7D1CE7C-98F1-49E3-9616-BB56114994F0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7D1CE7C-98F1-49E3-9616-BB56114994F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7D1CE7C-98F1-49E3-9616-BB56114994F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7D1CE7C-98F1-49E3-9616-BB56114994F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0BEE21F-E7AC-453F-9A1F-7CB4E4BA0875}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0BEE21F-E7AC-453F-9A1F-7CB4E4BA0875}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0BEE21F-E7AC-453F-9A1F-7CB4E4BA0875}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0BEE21F-E7AC-453F-9A1F-7CB4E4BA0875}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

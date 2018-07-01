@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>f1262881-267a-4b95-95ae-9885e5e31be7</ProjectGuid>
+    <ProjectGuid>{2decf155-185d-457f-95f0-b2e912c0a186}</ProjectGuid>
     <OutputType>Library</OutputType>
     <RootNamespace>fsharp_sudoku_lib</RootNamespace>
     <AssemblyName>fsharp_sudoku_lib</AssemblyName>
@@ -53,37 +53,39 @@
   <Import Project="$(FSharpTargetsPath)" />
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
-    <Compile Include="compat\schar.fs" />
-    <Compile Include="compat\sstring.fs" />
-    <Compile Include="compat\sset.fs" />
-    <Compile Include="compat\oset.fsi" />
-    <Compile Include="compat\oset.fs" />
-    <Compile Include="compat\smap.fsi" />
-    <Compile Include="compat\smap.fs" />
-    <Compile Include="core\sudoku.fsi" />
-    <Compile Include="core\sudoku.fs" />
-    <Compile Include="core\puzzlemap.fsi" />
-    <Compile Include="core\puzzlemap.fs" />
-    <Compile Include="core\hint.fsi" />
-    <Compile Include="core\hint.fs" />
-    <Compile Include="core\loadEliminate.fsi" />
-    <Compile Include="core\loadEliminate.fs" />
-    <Compile Include="core\eliminateCandidate.fsi" />
-    <Compile Include="core\eliminateCandidate.fs" />
-    <Compile Include="core\setCell.fsi" />
-    <Compile Include="core\setCell.fs" />
-    <Compile Include="core\force.fsi" />
-    <Compile Include="core\force.fs" />
-    <Compile Include="hints\fullHouse.fsi" />
-    <Compile Include="hints\fullHouse.fs" />
-    <Compile Include="hints\hidden.fsi" />
-    <Compile Include="hints\hidden.fs" />
-    <Compile Include="hints\intersection.fsi" />
-    <Compile Include="hints\intersection.fs" />
-    <Compile Include="hints\naked.fsi" />
-    <Compile Include="hints\naked.fs" />
-    <Compile Include="hints\wing.fsi" />
-    <Compile Include="hints\wing.fs" />
+    <Compile Include="Compat\schar.fs" />
+    <Compile Include="Compat\sstring.fs" />
+    <Compile Include="Compat\sset.fs" />
+    <Compile Include="Compat\oset.fsi" />
+    <Compile Include="Compat\oset.fs" />
+    <Compile Include="Compat\smap.fsi" />
+    <Compile Include="Compat\smap.fs" />
+    <Compile Include="Core\sudoku.fsi" />
+    <Compile Include="Core\sudoku.fs" />
+    <Compile Include="Core\puzzlemap.fsi" />
+    <Compile Include="Core\puzzlemap.fs" />
+    <Compile Include="Core\hint.fsi" />
+    <Compile Include="Core\hint.fs" />
+    <Compile Include="Core\loadEliminate.fsi" />
+    <Compile Include="Core\loadEliminate.fs" />
+    <Compile Include="Core\eliminateCandidate.fsi" />
+    <Compile Include="Core\eliminateCandidate.fs" />
+    <Compile Include="Core\setCell.fsi" />
+    <Compile Include="Core\setCell.fs" />
+    <Compile Include="Core\force.fsi" />
+    <Compile Include="Core\force.fs" />
+    <Compile Include="Hints\fullHouse.fsi" />
+    <Compile Include="Hints\fullHouse.fs" />
+    <Compile Include="Hints\hidden.fsi" />
+    <Compile Include="Hints\hidden.fs" />
+    <Compile Include="Hints\intersection.fsi" />
+    <Compile Include="Hints\intersection.fs" />
+    <Compile Include="Hints\naked.fsi" />
+    <Compile Include="Hints\naked.fs" />
+    <Compile Include="Hints\wing.fsi" />
+    <Compile Include="Hints\wing.fs" />
+    <Compile Include="Input\load.fsi" />
+    <Compile Include="Input\load.fs" />
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
