@@ -1,4 +1,4 @@
-﻿module compat.smap
+﻿module Sudoku.Lib.compat.smap
 
 open Sudoku.Lib.compat.oset
 
