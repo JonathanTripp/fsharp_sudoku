@@ -1,4 +1,4 @@
-﻿namespace fsharp_sudoku_lib.AssemblyInfo
+﻿namespace Sudoku.Lib.AssemblyInfo
 
 open System.Reflection
 open System.Runtime.CompilerServices
@@ -7,11 +7,11 @@ open System.Runtime.InteropServices
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[<assembly: AssemblyTitle("fsharp_sudoku_lib")>]
+[<assembly: AssemblyTitle("Sudoku.Lib")>]
 [<assembly: AssemblyDescription("")>]
 [<assembly: AssemblyConfiguration("")>]
 [<assembly: AssemblyCompany("")>]
-[<assembly: AssemblyProduct("fsharp_sudoku_lib")>]
+[<assembly: AssemblyProduct("Sudoku.Lib")>]
 [<assembly: AssemblyCopyright("Copyright ©  2018")>]
 [<assembly: AssemblyTrademark("")>]
 [<assembly: AssemblyCulture("")>]

@@ -7,14 +7,13 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2decf155-185d-457f-95f0-b2e912c0a186}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>fsharp_sudoku_lib</RootNamespace>
-    <AssemblyName>fsharp_sudoku_lib</AssemblyName>
+    <RootNamespace>Sudoku.Lib</RootNamespace>
+    <AssemblyName>Sudoku.Lib</AssemblyName>
     <UseStandardResourceNames>true</UseStandardResourceNames>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <TargetFSharpCoreVersion>4.4.3.0</TargetFSharpCoreVersion>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
-    <Name>fsharp_sudoku_lib</Name>
-    <TargetFrameworkProfile />
+    <Name>Sudoku.Lib</Name>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
