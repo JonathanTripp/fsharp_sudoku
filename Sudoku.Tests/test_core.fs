@@ -1,8 +1,6 @@
-module tests.Test_core
+module Sudoku.Test.Test_core
 
 open Sudoku.Lib.core.Sudoku
-
-open NUnit.Framework
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
 open Sudoku.Lib

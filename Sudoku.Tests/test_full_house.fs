@@ -1,9 +1,8 @@
-module test.Test_full_house
+module Sudoku.Test.Test_full_house
 
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Hint
 
-open NUnit.Framework
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib
 open Sudoku.Repl

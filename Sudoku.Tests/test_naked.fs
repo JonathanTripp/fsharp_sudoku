@@ -1,9 +1,8 @@
-module tests.Test_naked
+module Sudoku.Test.Test_naked
 
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Hint
 
-open NUnit.Framework
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib
 open Sudoku.Repl
