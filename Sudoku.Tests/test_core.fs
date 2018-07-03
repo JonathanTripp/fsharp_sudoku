@@ -1,4 +1,6 @@
-module Sudoku.Test.Test_core
+module Sudoku.Tests.Test_core
+
+open Microsoft.VisualStudio.TestTools.UnitTesting
 
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.compat.oset
@@ -49,7 +51,7 @@ let pick_more (as' : OSet<'a>) : OSet<'a> * OSet<'a> =
 
     (actual, expected)
 
-[<Test>]
+[<TestMethod>]
 let ``Can make column sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
@@ -58,7 +60,7 @@ let ``Can make column sets``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}")
 
-[<Test>]
+[<TestMethod>]
 let ``Can make row sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
@@ -67,7 +69,7 @@ let ``Can make row sets``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}")
 
-[<Test>]
+[<TestMethod>]
 let ``Can make cell sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
@@ -76,7 +78,7 @@ let ``Can make cell sets``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}")
 
-[<Test>]
+[<TestMethod>]
 let ``Can make digit sets``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
@@ -85,7 +87,7 @@ let ``Can make digit sets``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}")
 
-[<Test>]
+[<TestMethod>]
 let ``Can make columns``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.columns in
@@ -99,7 +101,7 @@ let ``Can make columns``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Columns.print expected, Columns.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Can print columns``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.columns in
@@ -119,7 +121,7 @@ let ``Can print columns``() =
 
     Assert.AreEqual("c9", printedLast)
 
-[<Test>]
+[<TestMethod>]
 let ``Can print columns2``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.columns in
@@ -128,7 +130,7 @@ let ``Can print columns2``() =
 
     Assert.AreEqual("{c4,c5,c6}", printedMiddleThree)
 
-[<Test>]
+[<TestMethod>]
 let ``Can make rows``() = 
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.rows in
@@ -142,7 +144,7 @@ let ``Can make rows``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Rows.print expected, Rows.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Can print rows``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.rows in
@@ -162,7 +164,7 @@ let ``Can print rows``() =
 
     Assert.AreEqual("r9", printedLast)
 
-[<Test>]
+[<TestMethod>]
 let ``Can print rows2``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.rows in
@@ -171,7 +173,7 @@ let ``Can print rows2``() =
 
     Assert.AreEqual("{r4,r5,r6}", printedMiddleThree)
 
-[<Test>]
+[<TestMethod>]
 let ``Can make cells``() = 
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
     let actual = p.cells in
@@ -190,14 +192,14 @@ let ``Can make cells``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Cells.print expected, Cells.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Can print cells``() = 
     let cell = Cell.make (CColumn 3) (RRow 7)
     let printedCell = Cell.print cell
 
     Assert.AreEqual("c3r7", printedCell)
 
-[<Test>]
+[<TestMethod>]
 let ``Can make stacks``() = 
     let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
     let actual = p.stacks in
@@ -211,7 +213,7 @@ let ``Can make stacks``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Stacks.print expected, Stacks.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Can make bands``() = 
     let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
     let actual = p.bands in
@@ -225,7 +227,7 @@ let ``Can make bands``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Bands.print expected, Bands.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Can make boxes``() = 
     let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
     let actual = p.boxes in
@@ -244,7 +246,7 @@ let ``Can make boxes``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Boxes.print expected, Boxes.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Can make houses``() = 
     let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
     let actual = p.houses in
@@ -281,7 +283,7 @@ let ``Can make houses``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Houses.print expected, Houses.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Get column cells``() = 
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
@@ -300,7 +302,7 @@ let ``Get column cells``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Cells.print expected, Cells.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Get row cells``() = 
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
@@ -319,7 +321,7 @@ let ``Get row cells``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Cells.print expected, Cells.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Get stack for a column``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
@@ -341,7 +343,7 @@ let ``Get stack for a column``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Stacks.print expected, Stacks.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Get stack columns``() = 
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
@@ -358,7 +360,7 @@ let ``Get stack columns``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Columns.print expected, Columns.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Get band for a row``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
@@ -380,7 +382,7 @@ let ``Get band for a row``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Bands.print expected, Bands.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Get band rows``() = 
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
@@ -397,7 +399,7 @@ let ``Get band rows``() =
     let eq = OSet.equals expected actual in
     Assert.AreEqual(true, eq, "{0}!={1}", Rows.print expected, Rows.print actual)
 
-[<Test>]
+[<TestMethod>]
 let ``Get box for a cell``() =
     let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 

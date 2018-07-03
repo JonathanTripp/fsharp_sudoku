@@ -1,13 +1,14 @@
-module Sudoku.Test.Test_full_house
+module Sudoku.Tests.Test_full_house
+
+open Microsoft.VisualStudio.TestTools.UnitTesting
 
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Hint
-
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib
 open Sudoku.Repl
 
-[<Test>]
+[<TestMethod>]
 let ``Can find full house``() =
     let sudoku = "800739006370465000040182009000600040054300610060500000400853070000271064100940002" in
 

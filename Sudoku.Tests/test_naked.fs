@@ -1,4 +1,6 @@
-module Sudoku.Test.Test_naked
+module Sudoku.Tests.Test_naked
+
+open Microsoft.VisualStudio.TestTools.UnitTesting
 
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Hint
@@ -7,7 +9,7 @@ open Sudoku.Lib.compat.oset
 open Sudoku.Lib
 open Sudoku.Repl
 
-[<Test>]
+[<TestMethod>]
 let ``Can find naked singles``() =
     let sudoku = "000105000140000670080002400063070010900000003010090520007200080026000035000409000" in
 
