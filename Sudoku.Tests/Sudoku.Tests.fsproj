@@ -14,6 +14,7 @@
     <Compile Include="test_core.fs" />
     <Compile Include="test_full_house.fs" />
     <Compile Include="test_naked.fs" />
+    <Compile Include="Program.fs" />
   </ItemGroup>
 
   <ItemGroup>
