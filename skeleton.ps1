@@ -1,29 +1,29 @@
-dotnet new sln
-
+$sln = "Sudoku"
 $libdir = "Sudoku.Lib"
 $libproj = "$libdir\$libdir.fsproj"
 $exedir = "Sudoku.Repl"
 $exeproj = "$exedir\$exedir.fsproj"
 $testdir = "Sudoku.Tests"
 $testproj = "$testdir\$testdir.fsproj"
- 
-New-Item -ItemType Directory $libdir
+
+dotnet new sln -o $sln
+
 Push-Location
-Set-Location $libdir
-dotnet new classlib -lang F#
-Pop-Location
+Set-Location $sln
+ 
+#New-Item -ItemType Directory $libdir
+#Push-Location
+#Set-Location $libdir
+dotnet new classlib -lang F# -o $libdir
+#Pop-Location
 dotnet sln add $libproj
 
-mkdir $exedir
-cd $exedir
-dotnet new console -lang F#
-dotnet add reference "..\$libproj"
-cd ..
+dotnet new console -lang F# -o $exedir
+dotnet add $exeproj reference $libproj
 dotnet sln add $exeproj
 
-mkdir $testdir
-cd $testdir
-dotnet new mstest -lang F#
-dotnet add reference "..\$libproj"
-cd ..
+dotnet new mstest -lang F# -o $testdir
+dotnet add $testproj reference $libproj
 dotnet sln add $testproj
+
+Pop-Location
