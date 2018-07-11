@@ -3,6 +3,7 @@ module Sudoku.Lib.core.Hint
 open Sudoku.Lib.compat.Sset
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
+
 open Sudoku.Lib.core.Sudoku
 
 exception CellStateInvalid

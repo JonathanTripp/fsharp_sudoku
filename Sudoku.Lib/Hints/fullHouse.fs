@@ -4,6 +4,7 @@ module Sudoku.Lib.hints.FullHouse
  For a house there is only one cell that is neither given nor set i.e. has candidates *)
 
 open Sudoku.Lib.compat.oset
+
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Puzzlemap
 open Sudoku.Lib.core.Hint

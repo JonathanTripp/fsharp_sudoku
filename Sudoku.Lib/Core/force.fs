@@ -2,6 +2,7 @@ module Sudoku.Lib.core.Force
 
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
+
 open Sudoku.Lib.core.Sudoku
 
 let isPencilMarksCellContents (cellContents : cellContents) : bool =

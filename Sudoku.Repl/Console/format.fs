@@ -3,6 +3,7 @@ module Sudoku.Repl.console.Format
 open Sudoku.Lib.compat
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
+
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Puzzlemap
 

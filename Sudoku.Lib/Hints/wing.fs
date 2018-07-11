@@ -3,6 +3,7 @@ module Sudoku.Lib.hints.Wing
 open Sudoku.Lib.compat
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
+
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Puzzlemap
 open Sudoku.Lib.core.Hint

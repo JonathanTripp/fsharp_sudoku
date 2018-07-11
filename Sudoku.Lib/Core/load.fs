@@ -3,6 +3,7 @@ module Sudoku.Lib.core.Load
 open Sudoku.Lib.compat
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
+
 open Sudoku.Lib.core.Sudoku
 
 (* Load a sudoku given as a single line of gridSize*gridSize characters *)

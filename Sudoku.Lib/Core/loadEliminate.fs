@@ -2,6 +2,7 @@ module Sudoku.Lib.core.LoadEliminate
 
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
+
 open Sudoku.Lib.core.Sudoku
 
 let find  (p : Puzzlemap.puzzleMap) (current : current) : candidateReductions = 
