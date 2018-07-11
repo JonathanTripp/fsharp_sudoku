@@ -1,9 +1,10 @@
 module Sudoku.Repl.console.Console
 
 open Sudoku.Lib.compat.Sset
-open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
+
+open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Hint
 
 let drawDigitCellContents (given : digit option) (current : cellContents) : Format.consoleChar = 

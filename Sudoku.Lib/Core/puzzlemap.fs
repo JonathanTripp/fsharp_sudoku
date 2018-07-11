@@ -2,6 +2,7 @@ module Sudoku.Lib.core.Puzzlemap
 
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
+
 open Sudoku.Lib.core.Sudoku
 
 let columns (length : size) : columns =

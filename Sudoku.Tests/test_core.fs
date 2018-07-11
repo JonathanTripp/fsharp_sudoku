@@ -2,10 +2,11 @@ module Sudoku.Tests.Test_core
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
 
-open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
+
 open Sudoku.Lib.core
+open Sudoku.Lib.core.Sudoku
 
 let twoByFourPuzzleSpec : puzzleShape =
     { size = 8;
@@ -83,7 +84,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can make digit sets``() =
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
         let (actual, expected) = pick_some PuzzleShape.default'.alphabet in
 
@@ -92,7 +93,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can make columns``() =
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
         let actual = p.columns in
 
         let expected : columns =
@@ -106,7 +107,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can print columns``() =
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
         let actual = p.columns in
 
         let first = OSet.item 0 actual
@@ -126,7 +127,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can print columns2``() =
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
         let actual = p.columns in
         let middleThree = actual |> OSet.skip 3 |> OSet.take 3
         let printedMiddleThree = Columns.print middleThree
@@ -135,7 +136,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can make rows``() = 
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
         let actual = p.rows in
 
         let expected : rows =
@@ -149,7 +150,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can print rows``() =
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
         let actual = p.rows in
 
         let first = OSet.item 0 actual
@@ -169,7 +170,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can print rows2``() =
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
         let actual = p.rows in
         let middleThree = actual |> OSet.skip 3 |> OSet.take 3
         let printedMiddleThree = Rows.print middleThree
@@ -178,7 +179,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can make cells``() = 
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
         let actual = p.cells in
 
         let expected : cells =
@@ -204,7 +205,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can make stacks``() = 
-        let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
+        let p = Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
         let actual = p.stacks in
 
         let expected : stacks =
@@ -218,7 +219,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can make bands``() = 
-        let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
+        let p = Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
         let actual = p.bands in
 
         let expected : bands =
@@ -232,7 +233,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can make boxes``() = 
-        let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
+        let p = Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
         let actual = p.boxes in
 
         let expected : boxes =
@@ -251,7 +252,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can make houses``() = 
-        let p = core.Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
+        let p = Puzzlemap.tPuzzleMap twoByFourPuzzleSpec in
         let actual = p.houses in
 
         let expectedColumns : house list=
@@ -288,7 +289,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Get column cells``() = 
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
         let column = CColumn 2 in
 
@@ -307,7 +308,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Get row cells``() = 
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
         let row = RRow 7 in
 
@@ -326,7 +327,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Get stack for a column``() =
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
         let actual : stacks =
             p.columns
@@ -348,7 +349,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Get stack columns``() = 
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
         let actual : columns =
             SMap.get (2 |> SStack) p.stackColumns
@@ -365,7 +366,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Get band for a row``() =
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
         let actual : bands =
             p.rows
@@ -387,7 +388,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Get band rows``() = 
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
         let actual : rows =
             SMap.get (2 |> BBand) p.bandRows
@@ -404,7 +405,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Get box for a cell``() =
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
         let actual : boxes =
             [1..9]

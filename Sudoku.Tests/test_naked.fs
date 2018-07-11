@@ -7,6 +7,7 @@ open Sudoku.Lib.compat.oset
 open Sudoku.Lib.core
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Hint
+
 open Sudoku.Lib.hints
 
 [<TestClass>]

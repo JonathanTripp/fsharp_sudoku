@@ -4,9 +4,11 @@ open Sudoku.Lib.compat
 open Sudoku.Lib.compat.Sset
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
+
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Puzzlemap
 open Sudoku.Lib.core.Hint
+
 open Sudoku.Lib.hints
 
 type parse_column_or_row_results =

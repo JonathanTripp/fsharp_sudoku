@@ -1,15 +1,16 @@
 open Sudoku.Lib.compat
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
-open Sudoku.Repl.console.Command
-open Sudoku.Repl.console.Console
-open Sudoku.Repl.console.Format
-open Sudoku.Repl.console.Console_win
 
 open Sudoku.Lib.core
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Puzzlemap
 open Sudoku.Lib.core.Hint
+
+open Sudoku.Repl.console.Command
+open Sudoku.Repl.console.Console
+open Sudoku.Repl.console.Format
+open Sudoku.Repl.console.Console_win
 
 let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzleShape) 
     (cellCandidates : cellCandidates) puzzleDrawFull2 print_last : solution * descriptions = 

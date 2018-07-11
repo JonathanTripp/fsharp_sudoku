@@ -1,6 +1,7 @@
 module Sudoku.Lib.core.Puzzlemap
 
 open Sudoku.Lib.compat.smap
+
 open Sudoku.Lib.core.Sudoku
 
 [<NoComparison; NoEquality>]

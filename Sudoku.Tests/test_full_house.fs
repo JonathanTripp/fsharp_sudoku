@@ -2,10 +2,12 @@ module Sudoku.Tests.Test_full_house
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
 
+open Sudoku.Lib.compat.oset
+
 open Sudoku.Lib.core
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Hint
-open Sudoku.Lib.compat.oset
+
 open Sudoku.Lib.hints
 
 [<TestClass>]
