@@ -2,11 +2,11 @@ module Sudoku.Tests.Test_full_house
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
 
-open Sudoku.Lib
 open Sudoku.Lib.core
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Hint
 open Sudoku.Lib.compat.oset
+open Sudoku.Lib.hints
 
 [<TestClass>]
 type TestFullHouse() =
@@ -15,16 +15,16 @@ type TestFullHouse() =
     member this.``Can find full house``() =
         let sudoku = "800739006370465000040182009000600040054300610060500000400853070000271064100940002" in
 
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
         let solution = Load.load PuzzleShape.default' sudoku in
 
-        let candidateReductions = core.LoadEliminate.find p solution.current in
-        let newSolution = core.LoadEliminate.step p solution candidateReductions in
+        let candidateReductions = LoadEliminate.find p solution.current in
+        let newSolution = LoadEliminate.step p solution candidateReductions in
 
         let cellCandidates = Solution.currentCellCandidates p.cells newSolution.current in
 
-        let hints = hints.FullHouse.find p cellCandidates in
+        let hints = FullHouse.find p cellCandidates in
 
         let expectedHints : descriptions =
             [   { primaryHouses = OSet.singleton (HBox (Box.make (Stack.ofNat 2) (Band.ofNat 3)));

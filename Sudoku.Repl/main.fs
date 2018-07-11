@@ -10,7 +10,6 @@ open Sudoku.Lib.core
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Puzzlemap
 open Sudoku.Lib.core.Hint
-open Sudoku.Lib
 
 let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzleShape) 
     (cellCandidates : cellCandidates) puzzleDrawFull2 print_last : solution * descriptions = 
@@ -39,13 +38,13 @@ let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzle
             (solution, [])
 
     else if item = "load" then
-        let candidateReductions = core.LoadEliminate.find p solution.current in
+        let candidateReductions = LoadEliminate.find p solution.current in
 
-        let hd2 = core.LoadEliminate.description p candidateReductions in
-        let hd3 = core.Hint.mhas solution p hd2 in
+        let hd2 = LoadEliminate.description p candidateReductions in
+        let hd3 = Hint.mhas solution p hd2 in
         puzzleDrawFull2 hd3.annotations;
 
-        let newSolution = core.LoadEliminate.step p solution candidateReductions in
+        let newSolution = LoadEliminate.step p solution candidateReductions in
         (*print_last newSolution*)
         (newSolution, [])
     else if Sstring.get item 0 = 's' then
@@ -57,11 +56,11 @@ let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzle
                 let setCellValueOpt = setCellCommandCheck solution.given cellCandidates value in
                 (match setCellValueOpt with
                  | SSCROk setCellValue ->
-                    let hd2 = core.SetCell.description p setCellValue in
-                    let hd3 = core.Hint.mhas solution p hd2 in
+                    let hd2 = SetCell.description p setCellValue in
+                    let hd3 = Hint.mhas solution p hd2 in
                     puzzleDrawFull2 hd3.annotations;
 
-                    core.SetCell.step p setCellValue solution
+                    SetCell.step p setCellValue solution
 
                  | SCCRGiven _
                  | SCCRNotACandidate _ ->
@@ -90,11 +89,11 @@ let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzle
                 let clearCommandOpt = candidateClearCommandCheck solution.given cellCandidates candidate in
                 (match clearCommandOpt with
                  | CCCCROk clearCommand ->
-                    let hd2 = core.EliminateCandidate.description p candidate in
-                    let hd3 = core.Hint.mhas solution p hd2 in
+                    let hd2 = EliminateCandidate.description p candidate in
+                    let hd3 = Hint.mhas solution p hd2 in
                     puzzleDrawFull2 hd3.annotations;
 
-                    core.EliminateCandidate.step p candidate solution
+                    EliminateCandidate.step p candidate solution
 
                  | CCCCRGiven _
                  | CCCCRNotACandidate _ -> 
@@ -124,9 +123,9 @@ let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzle
 
 let printHint (p : puzzleMap) drawHint (solution : solution) (index : int) (hint : description) : unit = 
 
-    Printf.printf "%d: %s\n" index (core.Hint.Description.print hint);
+    Printf.printf "%d: %s\n" index (Hint.Description.print hint);
 
-    let hd3 = core.Hint.mhas solution p hint in
+    let hd3 = Hint.mhas solution p hint in
     drawHint hd3.annotations;
 
     System.Console.ReadLine()
@@ -136,7 +135,7 @@ let run (solution : solution ref) (puzzle : puzzleShape)
     puzzleDrawCandidateGridAnnotations print_last puzzlePrintHint item : string option = 
     if item = "quit" then Some "quit"
     else
-        let p = core.Puzzlemap.tPuzzleMap puzzle in
+        let p = Puzzlemap.tPuzzleMap puzzle in
 
         let cellCandidates = Solution.currentCellCandidates p.cells (!solution).current in
 
@@ -152,7 +151,7 @@ let repl (sudoku : string) (puzzleShape : puzzleShape) : unit =
 
     printfn "%s" sudoku;
 
-    let p = core.Puzzlemap.tPuzzleMap puzzleShape in
+    let p = Puzzlemap.tPuzzleMap puzzleShape in
 
     let solution = ref (Load.load puzzleShape sudoku) in
 

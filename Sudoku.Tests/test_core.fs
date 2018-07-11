@@ -5,7 +5,7 @@ open Microsoft.VisualStudio.TestTools.UnitTesting
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
-open Sudoku.Lib
+open Sudoku.Lib.core
 
 let twoByFourPuzzleSpec : puzzleShape =
     { size = 8;
@@ -56,7 +56,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can make column sets``() =
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
         let (actual, expected) = pick_some p.columns in
 
@@ -65,7 +65,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can make row sets``() =
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
         let (actual, expected) = pick_some p.rows in
 
@@ -74,7 +74,7 @@ type TestCore() =
 
     [<TestMethod>]
     member this.``Can make cell sets``() =
-        let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
+        let p = Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
         let (actual, expected) = pick_more p.cells in
 

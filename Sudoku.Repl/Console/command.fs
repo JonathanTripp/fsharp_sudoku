@@ -7,7 +7,7 @@ open Sudoku.Lib.compat.smap
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Puzzlemap
 open Sudoku.Lib.core.Hint
-open Sudoku.Lib
+open Sudoku.Lib.hints
 
 type parse_column_or_row_results =
     | CROk of int
@@ -201,19 +201,19 @@ let supportedHints : Map<string, (puzzleMap -> cellCandidates -> descriptions)> 
 
     let command key =
         match key with
-        | "fh" -> hints.FullHouse.find
-        | "hs" -> hints.Hidden.find 1
-        | "hp" -> hints.Hidden.find 2
-        | "ht" -> hints.Hidden.find 3
-        | "hq" -> hints.Hidden.find 4
-        | "ns" -> hints.Naked.find 1
-        | "np" -> hints.Naked.find 2
-        | "nt" -> hints.Naked.find 3
-        | "nq" -> hints.Naked.find 4
-        | "pp" -> hints.Intersection.pointingPairs
-        | "bl" -> hints.Intersection.boxLineReductions
-        | "x" -> hints.Wing.xWings
-        | "y" -> hints.Wing.yWings
+        | "fh" -> FullHouse.find
+        | "hs" -> Hidden.find 1
+        | "hp" -> Hidden.find 2
+        | "ht" -> Hidden.find 3
+        | "hq" -> Hidden.find 4
+        | "ns" -> Naked.find 1
+        | "np" -> Naked.find 2
+        | "nt" -> Naked.find 3
+        | "nq" -> Naked.find 4
+        | "pp" -> Intersection.pointingPairs
+        | "bl" -> Intersection.boxLineReductions
+        | "x" -> Wing.xWings
+        | "y" -> Wing.yWings
         in
 
     keys |> List.map (fun c -> (c, command c)) |> Map.ofList

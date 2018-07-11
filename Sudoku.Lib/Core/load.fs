@@ -4,7 +4,6 @@ open Sudoku.Lib.compat
 open Sudoku.Lib.compat.oset
 open Sudoku.Lib.compat.smap
 open Sudoku.Lib.core.Sudoku
-open Sudoku.Lib
 
 (* Load a sudoku given as a single line of gridSize*gridSize characters *)
 let loadPuzzle (cells : cells) (alphabetisedLine : digit option list) : given =
@@ -26,7 +25,7 @@ let load (puzzleShape : puzzleShape) (sudoku : string) : solution =
         |> List.map charToDigit
         in
 
-    let p = core.Puzzlemap.tPuzzleMap puzzleShape in
+    let p = Puzzlemap.tPuzzleMap puzzleShape in
 
     let given = loadPuzzle p.cells alphabetisedLine in
 
