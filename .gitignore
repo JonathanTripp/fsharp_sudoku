@@ -10,3 +10,4 @@ packages/
 ._bcdi/
 ._d/
 .vs/
+_build/
