@@ -1,4 +1,4 @@
-module Sudoku.Repl.input.Load
+module Sudoku.Lib.core.Load
 
 open Sudoku.Lib.compat
 open Sudoku.Lib.compat.oset

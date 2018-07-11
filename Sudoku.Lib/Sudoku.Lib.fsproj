@@ -30,6 +30,8 @@
     <Compile Include="Core\setCell.fs" />
     <Compile Include="Core\force.fsi" />
     <Compile Include="Core\force.fs" />
+    <Compile Include="Core\load.fsi" />
+    <Compile Include="Core\load.fs" />
     <Compile Include="Hints\fullHouse.fsi" />
     <Compile Include="Hints\fullHouse.fs" />
     <Compile Include="Hints\hidden.fsi" />
@@ -40,8 +42,6 @@
     <Compile Include="Hints\naked.fs" />
     <Compile Include="Hints\wing.fsi" />
     <Compile Include="Hints\wing.fs" />
-    <Compile Include="Input\load.fsi" />
-    <Compile Include="Input\load.fs" />
   </ItemGroup>
 
   <ItemGroup>

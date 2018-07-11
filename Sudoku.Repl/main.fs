@@ -5,11 +5,12 @@ open Sudoku.Repl.console.Command
 open Sudoku.Repl.console.Console
 open Sudoku.Repl.console.Format
 open Sudoku.Repl.console.Console_win
+
+open Sudoku.Lib.core
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Puzzlemap
 open Sudoku.Lib.core.Hint
 open Sudoku.Lib
-open Sudoku.Repl
 
 let parse (p : puzzleMap) (item : string) (solution : solution) (puzzle : puzzleShape) 
     (cellCandidates : cellCandidates) puzzleDrawFull2 print_last : solution * descriptions = 
@@ -153,7 +154,7 @@ let repl (sudoku : string) (puzzleShape : puzzleShape) : unit =
 
     let p = core.Puzzlemap.tPuzzleMap puzzleShape in
 
-    let solution = ref (input.Load.load puzzleShape sudoku) in
+    let solution = ref (Load.load puzzleShape sudoku) in
 
     let centreDigit : digit = OSet.item ((OSet.count puzzleShape.alphabet) / 2) puzzleShape.alphabet in
 

@@ -2,12 +2,12 @@ module Sudoku.Tests.Test_naked
 
 open Microsoft.VisualStudio.TestTools.UnitTesting
 
+open Sudoku.Lib.compat.oset
+
+open Sudoku.Lib
+open Sudoku.Lib.core
 open Sudoku.Lib.core.Sudoku
 open Sudoku.Lib.core.Hint
-
-open Sudoku.Lib.compat.oset
-open Sudoku.Lib
-open Sudoku.Repl
 
 [<TestClass>]
 type TestFullHouse() =
@@ -18,7 +18,7 @@ type TestFullHouse() =
 
         let p = core.Puzzlemap.tPuzzleMap PuzzleShape.default' in
 
-        let solution = input.Load.load PuzzleShape.default' sudoku in
+        let solution = Load.load PuzzleShape.default' sudoku in
 
         let candidateReductions = core.LoadEliminate.find p solution.current in
         let newSolution = core.LoadEliminate.step p solution candidateReductions in
